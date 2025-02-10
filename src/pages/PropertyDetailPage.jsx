@@ -25,6 +25,7 @@ function PropertyDetail() {
   const [activeIndex, setActiveIndex] = useState(0);
   const { mutate } = useAddReviewQuery(id);
 
+
   const handleReviewSubmit = (e) => {
     e.preventDefault();
     const [textArea] = e.target.elements;
@@ -38,7 +39,7 @@ function PropertyDetail() {
     });
   };
 
-  function handleInputChange(e) {
+ function handleInputChange(e) {
     const { name, value } = e.target;
     setFormData({
       ...formData,

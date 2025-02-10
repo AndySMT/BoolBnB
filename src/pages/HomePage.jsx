@@ -4,6 +4,7 @@ import Card from "../components/Card";
 import { useGetPropertiesQuery } from "../hooks/useDataQuery";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useRefsContext } from "../Context/RefsContext";
 
 function HomePage() {
     const [activeFilter, setActiveFilter] = useState(null);
@@ -76,11 +77,12 @@ function SearchAndFilterSection({ activeFilter, onFilterChange }) {
 }
 
 function Jumbotron() {
-    const jumboRef = useRef(null);
+
+    const {jumboRef, headerRef} = useRefsContext()
 
     const handleExploreClick = () => {
         window.scrollTo({
-            top: jumboRef.current.offsetHeight + 5,
+            top: jumboRef.current.offsetHeight + headerRef.current.offsetHeight,
             behavior: "smooth",
         });
     };
@@ -88,7 +90,7 @@ function Jumbotron() {
     return (
         <motion.section
             ref={jumboRef}
-            className="sm:h-[80vh] h-[87vh] relative z-30 bg-linear-90/oklch from-[#d4c685] to-[#a7d3a6] text-stone-800 text-center lg:text-start flex items-center p-6 lg:px-[10vw] lg:py-12 justify-center lg:gap-32 lg:[&>div]:w-1/2 rounded-b-4xl"
+            className="sm:h-[80vh] h-[87vh] relative z-30 bg-linear-90/oklch from-[#d4c685] to-[#a7d3a6] text-stone-800 text-center lg:text-start flex items-center p-6 px-3 lg:px-[10vw] lg:py-12 justify-center lg:gap-32 lg:[&>div]:w-1/2 rounded-b-4xl"
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -103,17 +105,17 @@ function Jumbotron() {
                     style={{ fontFamily: `"Noto Sans", serif` }}
                     className="flex flex-col gap-4"
                 >
-                    <p className="text-4xl lg:text-6xl tracking-wide font-black">
+                    <p className="text-5xl lg:text-6xl tracking-wide font-black">
                         Your Dream Getaway Awaits
                     </p>
-                    <p className="font-black tracking-wide lg:text-2xl">
+                    <p className="font-black tracking-wide text-xl text-stone-700 lg:text-2xl">
                         From cozy cottages to luxurious villas, discover the
                         ideal space for your next adventure
                     </p>
                 </div>
                 <div
                     style={{ fontFamily: `"Noto Sans", serif` }}
-                    className="flex flex-col  rounded-lg p-4 text-sm gap-4 shadow-lg"
+                    className="flex flex-col  rounded-lg p-4 text-sm gap-4 shadow-lg "
                 >
                     <div className="font-semibold lg:font-light lg:text-base">
                         <span>

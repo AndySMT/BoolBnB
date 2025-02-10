@@ -7,6 +7,7 @@ import PropertyDetail from "./pages/PropertyDetailPage";
 import ErrorPage from "./pages/ErrorPage";
 // import { GlobalProvider } from "./Context/GlobalContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RefsProvider } from "./Context/RefsContext";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ function App() {
     return (
         <QueryClientProvider client={queryClient}>
             {/* <GlobalProvider> */}
+            <RefsProvider>
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" Component={DefaultLayout}>
@@ -31,13 +33,11 @@ function App() {
                                 path="detail/:id"
                                 Component={PropertyDetail}
                             />
-                            <Route
-                                path="*"
-                                Component={ErrorPage}
-                            />
+                            <Route path="*" Component={ErrorPage} />
                         </Route>
                     </Routes>
                 </BrowserRouter>
+            </RefsProvider>
             {/* </GlobalProvider> */}
         </QueryClientProvider>
     );

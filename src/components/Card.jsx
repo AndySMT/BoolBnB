@@ -11,7 +11,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
 function Card({ property }) {
-    const {
+    let {
         id,
         title,
         host,
@@ -23,6 +23,7 @@ function Card({ property }) {
         n_bathrooms,
         img_endpoints,
     } = property;
+    img_endpoints = img_endpoints.reverse();
     const settings = {
         dots: true,
         infinite: true,
@@ -33,7 +34,6 @@ function Card({ property }) {
         autoplay: false,
         className: "slides-container",
     };
-    console.log(property);
 
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true });
@@ -51,10 +51,7 @@ function Card({ property }) {
             animate={isInView ? "visible" : "hidden"}
             transition={{ duration: 0.5, delay: id * 0.1 }}
         >
-            <Link
-                to={"detail/" + id}
-                className="group cursor-pointer"
-            >
+            <Link to={"detail/" + id} className="group cursor-pointer">
                 {/* Image carousel */}
                 <div className="relative w-full aspect-square rounded-xl overflow-hidden">
                     {img_endpoints && img_endpoints.length > 0 ? (
@@ -80,44 +77,46 @@ function Card({ property }) {
                     </button>
                 </div>
                 {/* location and rating */}
-                <div className="flex flex-col py-2 gap-1">
-                    <div className="flex justify-between items-center px-1">
-                        <span className="font-medium">{title}</span>
+                <div className="flex flex-col py-1 text-xl lg:text-base whitespace-nowrap">
+                    <div className="flex justify-between items-center px-1 gap-8 text-2xl lg:text-lg">
+                        <span
+                            title={title}
+                            className="font-semibold overflow-ellipsis overflow-hidden"
+                        >
+                            {title}
+                        </span>
                         <span className="flex items-center gap-1">
-                            <AiFillStar className="text-sm" />
+                            <AiFillStar className="translate-y-[1.5px]" />
                             {total_likes}
                         </span>
                     </div>
-                    <span className="text-gray-500 text-sm px-1">Host: {host}</span>
+                    <span className="text-gray-500 text-lg lg:text-sm px-1">
+                        Host: {host}
+                    </span>
 
                     {/* details */}
-                    <div className="flex flex-col gap-2 mt-1 text-gray-500 text-sm">
-                        <div className="flex justify-between">
-                            <div className="flex items-center gap-1">
-                                <MdLocationOn className="text-lg" />
-                                <span>{`${address}, ${city}`}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <MdBed className="text-lg" />
-
-                                <span>
-                                    {n_bedrooms}{" "}
-                                    {n_bedrooms === 1 ? "Stanza" : "Stanze"}
-                                </span>
-                            </div>
+                    <div className="grid grid-cols-2 grid-rows-2 [&>*:nth-child(even)]:justify-end mt-1 text-lg text-gray-500 lg:text-sm">
+                        <div className="-translate-x-0.5 overflow-hidden overflow-ellipsis">
+                            <MdLocationOn className="text-xl -translate-y-0.5 inline-block mr-0.5" />
+                            <span>{`${address}, ${city}`}</span>
                         </div>
-                        <div className="flex justify-between">
-                            <div className="flex items-center gap-1">
-                                <MdBathroom className="text-lg" />
-                                <span>
-                                    {n_bathrooms}{" "}
-                                    {n_bathrooms === 1 ? "Bagno" : "Bagni"}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <TbRulerMeasure className="text-lg" />
-                                <span>{square_meters} m²</span>
-                            </div>
+                        <div className="flex items-center gap-1">
+                            <MdBed className="text-lg" />
+                            <span>
+                                {n_bedrooms}{" "}
+                                {n_bedrooms === 1 ? "Stanza" : "Stanze"}
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <MdBathroom className="text-lg" />
+                            <span>
+                                {n_bathrooms}{" "}
+                                {n_bathrooms === 1 ? "Bagno" : "Bagni"}
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <TbRulerMeasure className="text-lg" />
+                            <span>{square_meters} m²</span>
                         </div>
                     </div>
                 </div>
