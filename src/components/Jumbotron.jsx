@@ -109,7 +109,7 @@ function JumboImages() {
   if (width < 1300) {
     baseScale = 85;
   } else {
-    baseScale = 105;
+    baseScale = 95;
   }
 
   return (
