@@ -10,12 +10,8 @@ const animationConfig = {
     },
     images: {
         duration: 0.8,
-        delays: [0.3, 0.4, 0.5, 0.6],
+        delays: [0.6, 0.7, 0.8, 0.9],
         easing: "easeInOut",
-    },
-    children: {
-        staggerChildren: 0.2,
-        delayChildren: 0.5,
     },
 };
 
@@ -28,16 +24,10 @@ function Jumbotron() {
             initial={animationConfig.section.initial}
             animate={animationConfig.section.animate}
             transition={animationConfig.section.transition}
+            className="md:h-[65vh] lg:h-[80vh] h-[87vh] relative z-30 bg-linear-90/oklch from-[#d4c685] to-[#a7d3a6] text-stone-800 text-center lg:text-start flex items-center p-6 px-3 lg:px-[10vw] lg:py-12 justify-center lg:gap-32 lg:[&>div]:w-1/2 rounded-b-4xl will-change-[opacity, transform]"
         >
-            <motion.div
-                className="md:h-[65vh] lg:h-[80vh] h-[87vh] relative z-30 bg-linear-90/oklch from-[#d4c685] to-[#a7d3a6] text-stone-800 text-center lg:text-start flex items-center p-6 px-3 lg:px-[10vw] lg:py-12 justify-center lg:gap-32 lg:[&>div]:w-1/2 rounded-b-4xl will-change-[opacity, transform]"
-                initial="hidden"
-                animate="visible"
-                variants={animationConfig.children}
-            >
-                <JumboSlogan jumboRef={jumboRef} headerRef={headerRef} />
-                <JumboImages />
-            </motion.div>
+            <JumboSlogan jumboRef={jumboRef} headerRef={headerRef} />
+            <JumboImages />
         </motion.section>
     );
 }
@@ -50,12 +40,16 @@ function JumboSlogan({ headerRef, jumboRef }) {
         });
     };
 
+    const width = document.documentElement.clientWidth;
+
+    const initial = { opacity: 0, x: width < 1024 ? 0 : -100, y: -40 };
+
     return (
         <motion.div
             className="flex flex-col gap-8 items-center md:mx-20 lg:mx-0 lg:items-start"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
+            initial={initial}
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
         >
             <div
                 style={{ fontFamily: `"Noto Sans", serif` }}
@@ -119,15 +113,7 @@ function JumboImages() {
     ];
 
     return (
-        <motion.div
-            className="hidden lg:grid grid-cols-2 grid-rows-2 h-full"
-            initial="hidden"
-            animate="visible"
-            variants={{
-                hidden: { opacity: 0 },
-                visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
-            }}
-        >
+        <div className="hidden lg:grid grid-cols-2 grid-rows-2 h-full">
             {imageAnimations.map((animation, index) => (
                 <motion.div
                     key={index}
@@ -147,7 +133,7 @@ function JumboImages() {
                     />
                 </motion.div>
             ))}
-        </motion.div>
+        </div>
     );
 }
 
