@@ -7,11 +7,13 @@ function NavbarMobile() {
     const location = useLocation();
     const [isVisible, setIsVisible] = useState(true);
 
-    useEffect(() => {
-        location.pathname.includes("/detail")
-            ? setIsVisible(false)
-            : setIsVisible(true);
-    }, [location.pathname]);
+    // per nascondere navbar in detail page
+    // useEffect(() => {
+    //     location.pathname.includes("/detail")
+    //         ? setIsVisible(false)
+    //         : setIsVisible(true);
+    // }, [location.pathname]);
+
     return (
         <>
             {isVisible && (
