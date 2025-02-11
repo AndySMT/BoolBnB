@@ -76,7 +76,7 @@ function SearchPropertyPage() {
         {/* date section */}
         <div className='grid grid-cols-2 gap-4'>
           {/* date checkIn section */}
-          <div>
+          {/* <div>
             <label htmlFor="start-date">Check-In</label>
             <input
               type="date"
@@ -86,9 +86,9 @@ function SearchPropertyPage() {
               placeholder='Check-In'
               className='bg-amber-100 h-12 p-3 w-full'
             />
-          </div>
+          </div> */}
           {/* date checkOut section */}
-          <div>
+          {/* <div>
             <label htmlFor="end-date">Check-Out</label>
             <input
               type="date"
@@ -97,7 +97,7 @@ function SearchPropertyPage() {
               placeholder='Check-Out'
               className='bg-amber-100 h-12 p-3 w-full'
             />
-          </div>
+          </div> */}
         </div>
         {/* # People Section */}
         <div className='md:grid md:grid-cols-3 gap-4 flex flex-col'>
@@ -121,8 +121,8 @@ function SearchPropertyPage() {
 
       <div className='bg-linear-90/oklch  from-[#85d4c3] to-[#a6b8d3] mx-10 my-20 md:my-5 py-5'>
         <h2 className='text-center'>Dove vuoi andare</h2>
-        <div className='m-4 w-50 bg-red-300 mx-auto h-50 sm:w-full [&_div]:mx-4 [&_div]:h-full [&_div]:w-100'>
-          <Slider {...settings}>
+        <div className='flex gap-4 overflow-auto'>
+          {/* <Slider {...settings}> */}
             <div className='bg-blue-300 '>
               <img src="./regions/flexibility.jpg" alt="earth" className=' ' />
               <h2>Sono flessibile</h2>
@@ -147,7 +147,7 @@ function SearchPropertyPage() {
               <img src="./regions/usa.jpg" alt="usa" className='  ' />
               <h2>USA</h2>
             </div>
-          </Slider>
+          {/* </Slider> */}
         </div>
       </div>
     </>
