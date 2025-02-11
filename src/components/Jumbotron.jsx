@@ -106,17 +106,27 @@ function JumboImages() {
     const { duration, delays, easing } = animationConfig.images;
 
     const imageAnimations = [
-        { x: 35, y: -30, rotate: -3 },
-        { x: -30, y: 15, rotate: 14 },
-        { x: 0, y: -40, rotate: -10 },
-        { x: -25, y: -25, rotate: 10 },
+        { x: 35, y: -20, rotate: -3 },
+        { x: -35, y: 15, rotate: 14 },
+        { x: 20, y: -40, rotate: -10 },
+        { x: -35, y: -30, rotate: 10 },
     ];
+
+    const width = document.documentElement.clientWidth;
+
+    let baseScale;
+    if(width < 1536) {
+        baseScale = 85;
+    } else {
+        baseScale = 95
+    }
 
     return (
         <div className="hidden lg:grid grid-cols-2 grid-rows-2 h-full">
             {imageAnimations.map((animation, index) => (
                 <motion.div
                     key={index}
+                    style={{scale: (baseScale + index * 15) / 100}}
                     className={`mx-auto scale-${
                         100 + index * 15
                     } max-h-64`}
