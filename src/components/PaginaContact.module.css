@@ -1,0 +1,87 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  font-family: inherit;
+  gap: 10px;
+  padding-inline: 2em;
+  padding-bottom: 0.4em;
+  background-color: white;
+  border-radius: 20px;
+  border: 1px solide #bace94;
+  margin-bottom: 15px;
+}
+
+.form-heading {
+  text-align: center;
+  margin: 2em;
+  color: black;
+  font-size: 1.2em;
+  background-color: transparent;
+  align-self: center;
+}
+
+.formField {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  border-radius: 10px;
+  padding: 0.6em;
+  border: none;
+  outline: none;
+  color: white;
+  background-color: white;
+  box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+}
+
+.inputField {
+  background: none;
+  border: none;
+  outline: none;
+  width: 100%;
+  color: black;
+  padding-inline: 1em;
+}
+
+.sendMessageBtn {
+  cursor: pointer;
+  margin-bottom: 3em;
+  padding: 1em;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: #bace94;
+  font-weight: bold;
+  outline: 1px solid #bace94;
+  transition: all ease-in-out 0.3s;
+}
+
+.sendMessageBtn:hover {
+  transition: all ease-in-out 0.3s;
+  background-color: #bace94;
+  color: #000;
+  cursor: pointer;
+  box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+}
+
+.formCard1 {
+  background-image: linear-gradient(163deg, #bace94 0%, #bace94 100%);
+  border-radius: 22px;
+  transition: all 0.3s;
+}
+
+.formCard1:hover {
+  box-shadow: #bace94;
+}
+
+.formCard2 {
+  border-radius: 0;
+  transition: all 0.2s;
+}
+
+.formCard2:hover {
+  transform: scale(0.98);
+  border-radius: 20px;
+}

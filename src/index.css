@@ -1,51 +1,85 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
 body {
-    @apply bg-[#fcfcfc] dark:bg-black overflow-x-hidden;
+  @apply bg-[#fcfcfc] dark:bg-black overflow-x-hidden;
 }
 
 /* Stili per i dots */
 .slick-dots {
-    bottom: 16px !important;
-    z-index: 10;
+  bottom: 16px !important;
+  z-index: 10;
 }
 
 .slick-dots li button:before {
-    color: white !important;
-    font-size: 8px !important;
-    opacity: 0.7 !important;
+  color: white !important;
+  font-size: 8px !important;
+  opacity: 0.7 !important;
 }
 
 .slick-dots li.slick-active button:before {
-    opacity: 1 !important;
+  opacity: 1 !important;
 }
 
 /* Stili per le frecce */
 .slick-prev,
 .slick-next {
-    z-index: 10;
-    width: 30px;
-    height: 30px;
+  z-index: 10 !important;
+  width: 50px !important;
+  height: 50px !important;
+  scale: 1.5;
+  border-radius: 50%;
+  transition: all .15s;
+}
+
+.slick-prev:hover, .slick-next:hover {
+  scale: 2;
+  translate: 0 15px;
 }
 
 .slick-prev {
-    left: 10px;
+  left: 10px !important;
 }
 
 .slick-next {
-    right: 10px;
+  right: 10px !important;
 }
 
 .slick-prev:before,
 .slick-next:before {
-    font-size: 30px;
-    opacity: 0.75;
+  font-size: 30px;
+  opacity: 0.75;
 }
 
 /* Hover effects */
 .slick-prev:hover:before,
 .slick-next:hover:before {
-    opacity: 1;
+  opacity: 1;
+}
+
+/* Dimensione della mappa  */
+.leaflet-container {
+  width: 100%;
+  height: 200px;
+  max-width: 1200px;
+  margin: auto;
+  border: 1px solid black;
+  border-radius: 10px;
+  z-index: 0;
+}
+
+/* Foto album Detail page */
+.scrollP {
+  overflow: scroll;
+  overflow-x: hidden;
+}
+::-webkit-scrollbar {
+  width: 0;
+}
+
+.boxShad {
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+  border-radius: 10px;
 }

@@ -10,6 +10,7 @@ export const getProperty = async (id) => {
 };
 
 export const addProperty = async (newProperty) => {
+    if (!newProperty) return undefined;
     const {
         title,
         description,
@@ -44,8 +45,8 @@ export const getReviews = async (propertyId) => {
     return await axios.get(`${baseUrl}${revsEndpoint}/${propertyId}`);
 };
 
-export const addReview = async (property_id, newReview) => {
-    const { title, description } = newReview;
+export const addReview = async (newReview) => {
+    const { property_id, title, description } = newReview;
     if (!title || !description) return undefined;
     return await axios.post(baseUrl + revsEndpoint, {
         user_id: null,

@@ -1,20 +1,30 @@
-import { address } from "motion/react-client";
+import { address, img } from "motion/react-client";
 import React from "react";
 import { useState, useContext } from "react";
 import { CgDanger } from "react-icons/cg";
+import { baseUrl, propsEndpoint } from "../globals/apiUrls";
 // import { GlobalContext } from "../Context/GlobalContext";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
 function AddPropertyPage() {
+  const [range, setRange] = useState(0);
+  const handleRangeChange = (event) => {
+    setRange(event.target.value);
+  };
+  const estimatedEarnings = (range * 56.12).toFixed(2);
+
   // const { AddProperty } = useContext(GlobalContext);
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     address: "",
     city: "",
-    rooms: "",
-    bathrooms: "",
-    beds: "",
-    squareMeters: "",
+    n_bedrooms: "",
+    n_bathrooms: "",
+    n_beds: "",
+    square_meters: "",
     pricePerNight: "",
   });
   const handleInputChange = (event) => {
@@ -30,11 +40,11 @@ function AddPropertyPage() {
       "title",
       "address",
       "city",
-      "squareMeters",
+      "square_meters",
       "pricePerNight",
-      "rooms",
-      "beds",
-      "bathrooms",
+      "n_bedrooms",
+      "n_beds",
+      "n_bathrooms",
     ];
 
     requiredFields.forEach((field) => {
@@ -66,7 +76,24 @@ function AddPropertyPage() {
     event.preventDefault();
 
     if (validateForm()) {
-      // AddProperty(formData);
+      const formDataToSend = new FormData();
+
+      Object.keys(formData).forEach((key) => {
+        formDataToSend.append(key, formData[key]);
+      });
+
+      if (selectedFile) {
+        formDataToSend.append("file", selectedFile);
+      }
+      fetch(baseUrl + propsEndpoint, {
+        method: "POST",
+        body: formDataToSend,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Risposta del server:", data);
+          setIsOpen(false);
+        });
       console.log("Form data inviato:", formData);
     } else {
       console.log("Form data non inviato:", formData);
@@ -89,13 +116,15 @@ function AddPropertyPage() {
             </p>
             <div className="flex flex-col items-center md:items-start mt-5">
               <p className="text-gray-700 font-medium">
-                Stima il tuo guadagno:
+                Stima il tuo guadagno: {estimatedEarnings}€
               </p>
               <input
                 type="range"
                 className="mt-2 w-full cursor-pointer"
                 min={0}
-                max={31}
+                max={30}
+                value={range}
+                onChange={handleRangeChange}
               />
             </div>
             <button
@@ -107,13 +136,19 @@ function AddPropertyPage() {
           </div>
 
           {/* Immagine */}
-          <div className="w-full md:w-1/2">
-            <img
-              src="https://media.istockphoto.com/id/480607057/it/foto/milano.jpg?s=1024x1024&w=is&k=20&c=dLyiemAhDSGcnfAJi88hobG-lIFTV8VL9bvwuktadlg="
-              alt="Vista panoramica di Milano"
-              className="w-full h-auto rounded-2xl shadow-lg"
-            />
-          </div>
+          <MapContainer
+            center={[45.4642, 9.19]} // Milano}
+            zoom={13}
+            style={{ height: "500px", width: "100%" }}
+            className="z-10"
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+            <Marker position={[45.4642, 9.19]}>
+              {" "}
+              <Popup>Fittizio Point</Popup>
+            </Marker>
+          </MapContainer>
         </div>
       </section>
 
@@ -138,7 +173,7 @@ function AddPropertyPage() {
       </section>
 
       {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-400 bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-500 opacity-100">
           <div className="bg-white p-6 rounded-lg shadow-xl w-[600px] relative animate-fade-in">
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -209,20 +244,22 @@ function AddPropertyPage() {
                 <div>
                   <label className="flex justify-between text-gray-700">
                     Square Meters
-                    {errors.squareMeters && (
+                    {errors.square_meters && (
                       <span className="text-red-500">
-                        {errors.squareMeters}
+                        {errors.square_meters}
                       </span>
                     )}
                   </label>
                   <input
                     type="number"
                     className={`w-full p-2 border rounded ${
-                      errors.squareMeters ? "border-red-500" : "border-gray-300"
+                      errors.square_meters
+                        ? "border-red-500"
+                        : "border-gray-300"
                     }`}
                     placeholder="Es: 40"
-                    name="squareMeters"
-                    value={formData.squareMeters}
+                    name="square_meters"
+                    value={formData.square_meters}
                     onChange={handleInputChange}
                     min={0}
                   />
@@ -256,20 +293,20 @@ function AddPropertyPage() {
                 <div>
                   <label className="flex justify-between text-gray-700">
                     Number of Rooms
-                    {errors.beds && (
-                      <span className="text-red-500">{errors.beds}</span>
+                    {errors.n_beds && (
+                      <span className="text-red-500">{errors.n_beds}</span>
                     )}
                   </label>
                   <select
                     className={`w-full p-2 border rounded ${
-                      errors.rooms ? "border-red-500" : "border-gray-300"
+                      errors.n_bedrooms ? "border-red-500" : "border-gray-300"
                     }`}
-                    name="rooms"
-                    value={formData.rooms}
+                    name="n_bedrooms"
+                    value={formData.n_bedrooms}
                     onChange={handleInputChange}
                   >
                     <option value="" disabled hidden>
-                      Select the number of rooms
+                      Select the number of bedrooms
                     </option>
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -281,16 +318,16 @@ function AddPropertyPage() {
                 <div>
                   <label className="flex justify-between text-gray-700">
                     Number of Bathrooms
-                    {errors.bathrooms && (
-                      <span className="text-red-500">{errors.bathrooms}</span>
+                    {errors.n_bathrooms && (
+                      <span className="text-red-500">{errors.n_bathrooms}</span>
                     )}
                   </label>
                   <select
                     className={`w-full p-2 border rounded ${
-                      errors.bathrooms ? "border-red-500" : "border-gray-300"
+                      errors.n_bathrooms ? "border-red-500" : "border-gray-300"
                     }`}
-                    name="bathrooms"
-                    value={formData.bathrooms}
+                    name="n_bathrooms"
+                    value={formData.n_bathrooms}
                     onChange={handleInputChange}
                   >
                     <option value="" disabled hidden>
@@ -304,16 +341,16 @@ function AddPropertyPage() {
                 <div>
                   <label className="flex justify-between text-gray-700">
                     Number of Beds
-                    {errors.beds && (
-                      <span className="text-red-500">{errors.beds}</span>
+                    {errors.n_beds && (
+                      <span className="text-red-500">{errors.n_beds}</span>
                     )}
                   </label>
                   <select
                     className={`w-full p-2 border rounded ${
-                      errors.beds ? "border-red-500" : "border-gray-300"
+                      errors.n_beds ? "border-red-500" : "border-gray-300"
                     }`}
-                    name="beds"
-                    value={formData.beds}
+                    name="n_beds"
+                    value={formData.n_beds}
                     onChange={handleInputChange}
                   >
                     <option value="" disabled hidden>
@@ -329,6 +366,25 @@ function AddPropertyPage() {
               </div>
 
               <div className="col-span-2">
+                <div className="relative">
+                  <label className="text-gray-700">Upload Image</label>
+                  <input
+                    name="file"
+                    type="file"
+                    className="w-full p-2 border rounded border-gray-300"
+                    onChange={(e) => setSelectedFile(e.target.files[0])}
+                    id="imageInput"
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-[33px] right-1 p-0.5 bg-blue-600 hover:bg-blue-700 text-white px-4 text-sm rounded"
+                    onClick={() => {
+                      document.getElementById("imageInput").click();
+                    }}
+                  >
+                    Upload
+                  </button>
+                </div>
                 <button
                   type="submit"
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg mt-3 transition"
