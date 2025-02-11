@@ -37,7 +37,7 @@ function SearchPropertyPage() {
     // nextArrow: <CustomNextArrow />,
     responsive: [
       {
-        breakpoint: 1024, // A 992px, mostra 3 cards
+        breakpoint: 1024, // A 1024px, mostra 3 cards
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
@@ -51,7 +51,7 @@ function SearchPropertyPage() {
         },
       },
       {
-        breakpoint: 540, // A 567px, mostra 1 card
+        breakpoint: 540, // A 540px, mostra 1 card
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
@@ -121,34 +121,34 @@ function SearchPropertyPage() {
 
       <div className='bg-linear-90/oklch  from-[#85d4c3] to-[#a6b8d3] mx-10 my-20 md:my-5 py-5'>
         <h2 className='text-center'>Dove vuoi andare</h2>
-        <div className='m-4'>
-        <Slider {...settings}>
-          <div>
-            <img src="./regions/flexibility.jpg" alt="earth" className='w-50 aspect-square' />
-            <h2>Sono flessibile</h2>
-          </div>
-          <div>
-            <img src="./regions/africa.jpg" alt="africa" className='w-50 aspect-square' />
-            <h2>Africa</h2>
-          </div>
-          <div>
-            <img src="./regions/spagna.jpg" alt="spagna" className='w-50  aspect-square' />
-            <h2>Spagna</h2>
-          </div>
-          <div>
-            <img src="./regions/sudamerica.jpg" alt="sudamerica" className='w-50 aspect-square ' />
-            <h2>Sud America</h2>
-          </div>
-          <div>
-            <img src="./regions/sudestasia.jpg" alt="sudestasia" className='w-50 aspect-square ' />
-            <h2>Sud-est Asia</h2>
-          </div>
-          <div>
-            <img src="./regions/usa.jpg" alt="usa" className='w-50 aspect-square ' />
-            <h2>USA</h2>
-          </div>
+        <div className='m-4 w-50 bg-red-300 mx-auto h-50 sm:w-full [&_div]:mx-4 [&_div]:h-full [&_div]:w-100'>
+          <Slider {...settings}>
+            <div className='bg-blue-300 '>
+              <img src="./regions/flexibility.jpg" alt="earth" className=' ' />
+              <h2>Sono flessibile</h2>
+            </div>
+            <div>
+              <img src="./regions/africa.jpg" alt="africa" className=' ' />
+              <h2>Africa</h2>
+            </div>
+            <div>
+              <img src="./regions/spagna.jpg" alt="spagna" className='  ' />
+              <h2>Spagna</h2>
+            </div>
+            <div>
+              <img src="./regions/sudamerica.jpg" alt="sudamerica" className='  ' />
+              <h2>Sud America</h2>
+            </div>
+            <div>
+              <img src="./regions/sudestasia.jpg" alt="sudestasia" className='  ' />
+              <h2>Sud-est Asia</h2>
+            </div>
+            <div>
+              <img src="./regions/usa.jpg" alt="usa" className='  ' />
+              <h2>USA</h2>
+            </div>
           </Slider>
-        </div>      
+        </div>
       </div>
     </>
 
