@@ -123,30 +123,30 @@ function SearchPropertyPage() {
         <h2 className='text-center'>Dove vuoi andare</h2>
         <div className='m-4'>
         <Slider {...settings}>
-          <figure>
+          <div>
             <img src="./regions/flexibility.jpg" alt="earth" className='w-50 aspect-square' />
-            <figcaption>Sono flessibile</figcaption>
-          </figure>
-          <figure>
+            <h2>Sono flessibile</h2>
+          </div>
+          <div>
             <img src="./regions/africa.jpg" alt="africa" className='w-50 aspect-square' />
-            <figcaption>Africa</figcaption>
-          </figure>
-          <figure>
+            <h2>Africa</h2>
+          </div>
+          <div>
             <img src="./regions/spagna.jpg" alt="spagna" className='w-50  aspect-square' />
-            <figcaption>Spagna</figcaption>
-          </figure>
-          <figure>
+            <h2>Spagna</h2>
+          </div>
+          <div>
             <img src="./regions/sudamerica.jpg" alt="sudamerica" className='w-50 aspect-square ' />
-            <figcaption>Sud America</figcaption>
-          </figure>
-          <figure>
+            <h2>Sud America</h2>
+          </div>
+          <div>
             <img src="./regions/sudestasia.jpg" alt="sudestasia" className='w-50 aspect-square ' />
-            <figcaption>Sud-est Asia</figcaption>
-          </figure>
-          <figure>
+            <h2>Sud-est Asia</h2>
+          </div>
+          <div>
             <img src="./regions/usa.jpg" alt="usa" className='w-50 aspect-square ' />
-            <figcaption>USA</figcaption>
-          </figure>
+            <h2>USA</h2>
+          </div>
           </Slider>
         </div>      
       </div>
