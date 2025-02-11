@@ -35,7 +35,7 @@ const Header = () => {
                     !isVisible && "hidden sm:flex"
                 }
             rounded-b-2xl sm:rounded-b-none
-            sm:!-translate-0 flex bg-linear-90/oklch sm:drop-shadow-lg from-[#d4c685] to-[#a7d3a6] text-center p-5 lg:px-8 justify-between fixed sm:sticky w-screen top-[-1px] z-40 text-stone-800 text-sm transition-all duration-200 ease-in`}
+            sm:!-translate-0 flex bg-linear-90/oklch sm:drop-shadow-lg from-15% from-[#d4c685] to-[#a7d3a6] text-center p-5 lg:px-8 justify-between fixed sm:sticky w-screen top-[-1px] z-40 text-stone-800 text-sm transition-all duration-200 ease-in`}
             >
                 <Link to="/">
                     <img

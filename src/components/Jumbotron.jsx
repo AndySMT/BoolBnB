@@ -24,7 +24,7 @@ function Jumbotron() {
             initial={animationConfig.section.initial}
             animate={animationConfig.section.animate}
             transition={animationConfig.section.transition}
-            className="md:h-[65vh] lg:h-[80vh] h-[87vh] relative z-30 bg-linear-90/oklch from-[#d4c685] to-[#a7d3a6] text-stone-800 text-center lg:text-start flex items-center p-6 px-3 lg:px-[10vw] lg:py-12 justify-center lg:gap-32 lg:[&>div]:w-1/2 rounded-b-4xl will-change-[opacity, transform]"
+            className="md:h-[65vh] lg:h-[80vh] h-[87vh] relative z-30 bg-linear-90/oklch from-15% from-[#d4c685] to-[#a7d3a6] text-stone-800 text-center lg:text-start flex items-center p-6 px-3 lg:px-[10vw] lg:py-12 justify-center lg:gap-32 lg:[&>div]:w-1/2 rounded-b-4xl will-change-[opacity, transform]"
         >
             <JumboSlogan jumboRef={jumboRef} headerRef={headerRef} />
             <JumboImages />
