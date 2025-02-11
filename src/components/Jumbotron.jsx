@@ -117,7 +117,9 @@ function JumboImages() {
             {imageAnimations.map((animation, index) => (
                 <motion.div
                     key={index}
-                    className={`mx-auto scale-${100 + index * 15}`}
+                    className={`mx-auto scale-${
+                        100 + index * 15
+                    } max-h-64`}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1, ...animation }}
                     transition={{
@@ -129,7 +131,7 @@ function JumboImages() {
                     <img
                         src="/cardtest2.png"
                         alt={`villaschiera-${index}`}
-                        className="h-full rounded-lg"
+                        className="h-full object-contain rounded-lg"
                     />
                 </motion.div>
             ))}
