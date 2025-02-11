@@ -8,6 +8,8 @@ import ErrorPage from "./pages/ErrorPage";
 // import { GlobalProvider } from "./Context/GlobalContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RefsProvider } from "./Context/RefsContext";
+import { lazy, Suspense } from "react";
+const LazyHomePage = lazy(() => import("./pages/HomePage"));
 
 const queryClient = new QueryClient();
 
@@ -20,7 +22,14 @@ function App() {
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" Component={DefaultLayout}>
-                            <Route index Component={HomePage} />
+                            <Route
+                                index
+                                element={
+                                    <Suspense fallback={<>Loading...</>}>
+                                        <LazyHomePage />
+                                    </Suspense>
+                                }
+                            />
                             <Route
                                 path="search"
                                 Component={SearchPropertyPage}
