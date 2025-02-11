@@ -112,13 +112,12 @@ function JumboImages() {
         { x: -35, y: -30, rotate: 10 },
     ];
 
-    const width = document.documentElement.clientWidth;
-
+    const width = document.documentElement.offsetWidth;
     let baseScale;
-    if(width < 1536) {
+    if (width < 1300) {
         baseScale = 85;
     } else {
-        baseScale = 95
+        baseScale = 95;
     }
 
     return (
@@ -126,10 +125,8 @@ function JumboImages() {
             {imageAnimations.map((animation, index) => (
                 <motion.div
                     key={index}
-                    style={{scale: (baseScale + index * 15) / 100}}
-                    className={`mx-auto scale-${
-                        100 + index * 15
-                    } max-h-64`}
+                    style={{ scale: (baseScale + index * 15) / 100 }}
+                    className={`mx-auto scale-${100 + index * 15} max-h-64`}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1, ...animation }}
                     transition={{
