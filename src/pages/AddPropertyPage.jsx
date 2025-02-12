@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useAddPropertyQuery } from "../hooks/useDataQuery";
 import AddPropertyForm from "../components/AddPropertyForm";
+import { useNavigate } from "react-router-dom";
 
 // TODO: RIFARE VALIDAZIONE SPECIFICA: VEDERE handleSubmit
 
@@ -12,7 +13,8 @@ function AddPropertyPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [errors, setErrors] = useState({});
-    const { mutate, isSuccess, isError, error } = useAddPropertyQuery();
+    const { mutate, isSuccess, isError, error, data } = useAddPropertyQuery();
+    const navigate = useNavigate();
 
     // * ACTIONS
     const handleSubmit = async (event) => {
@@ -62,9 +64,10 @@ function AddPropertyPage() {
         }
         if (isSuccess) {
             // isSuccess indica la proprieta salvata nel db correttamente
-            console.log("proprieta salvata");
+            console.log(data);
             setIsOpen(false);
             setSelectedFile(null);
+            data.id && navigate(`/detail/${data.id}`);
         }
     }, [isSuccess, isError]);
 
