@@ -59,7 +59,19 @@ const schema = yup.object().shape({
 
   type: yup.string().required("Type is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
-  file: yup.mixed().required("Image is required"),
+  file: yup
+    .mixed()
+    .test("required", "Il file è obbligatorio", (value) => {
+      return value && value.length > 0; // Deve esserci almeno un file
+    })
+    .test("fileSize", "Il file è troppo grande", (value) => {
+      return value && value[0] && value[0].size <= 2 * 1024 * 1024; // Max 2MB
+    })
+    .test("fileType", "Formato non supportato", (value) => {
+      return (
+        value && value[0] && ["image/jpeg", "image/png"].includes(value[0].type)
+      );
+    }),
 });
 
 function AddPropertyForm({ setSelectedFile }) {
