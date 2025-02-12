@@ -9,6 +9,14 @@ const schema = yup.object().shape({
   address: yup.string().required("Address is required"),
   city: yup.string().required("City is required"),
 
+  zipcode: yup
+    .number()
+    .transform((value, originalValue) =>
+      originalValue === "" ? undefined : value
+    )
+    .required("Zipcode is required")
+    .positive("Must be a positive number"),
+
   square_meters: yup
     .number()
     .transform((value, originalValue) =>
@@ -128,6 +136,20 @@ function AddPropertyForm({ setSelectedFile }) {
             <span className="text-red-500">{errors.city.message}</span>
           )}
         </div>
+        <div>
+          <label className="text-gray-700">Zip</label>
+          <input
+            {...register("zipcode")}
+            type="number"
+            className={`w-full p-2 border rounded ${
+              errors.zipcode ? "border-red-500" : "border-gray-300"
+            }`}
+            placeholder="Es: Milano"
+          />
+          {errors.zipcode && (
+            <span className="text-red-500">{errors.zipcode.message}</span>
+          )}
+        </div>
 
         <div>
           <label className="text-gray-700">Square Meters</label>
@@ -142,29 +164,6 @@ function AddPropertyForm({ setSelectedFile }) {
           />
           {errors.square_meters && (
             <span className="text-red-500">{errors.square_meters.message}</span>
-          )}
-        </div>
-
-        <div>
-          <label className="text-gray-700">Property Type</label>
-          <select
-            {...register("type")}
-            className={`w-full p-2 border rounded ${
-              errors.type ? "border-red-500" : "border-gray-300"
-            }`}
-          >
-            <option value="" hidden>
-              Select Type
-            </option>
-            <option value="Baita">Baita</option>
-            <option value="Schiera">Schiera</option>
-            <option value="Indipendente">Indipendente</option>
-            <option value="Villa">Villa</option>
-            <option value="Appartamento">Appartamento</option>
-            <option value="Chalet">Chalet</option>
-          </select>
-          {errors.type && (
-            <span className="text-red-500">{errors.type.message}</span>
           )}
         </div>
       </div>
@@ -264,6 +263,28 @@ function AddPropertyForm({ setSelectedFile }) {
           </select>
           {errors.n_beds && (
             <span className="text-red-500">{errors.n_beds.message}</span>
+          )}
+        </div>
+        <div>
+          <label className="text-gray-700">Property Type</label>
+          <select
+            {...register("type")}
+            className={`w-full p-2 border rounded ${
+              errors.type ? "border-red-500" : "border-gray-300"
+            }`}
+          >
+            <option value="" hidden>
+              Select Type
+            </option>
+            <option value="Baita">Baita</option>
+            <option value="Schiera">Schiera</option>
+            <option value="Indipendente">Indipendente</option>
+            <option value="Villa">Villa</option>
+            <option value="Appartamento">Appartamento</option>
+            <option value="Chalet">Chalet</option>
+          </select>
+          {errors.type && (
+            <span className="text-red-500">{errors.type.message}</span>
           )}
         </div>
       </div>
