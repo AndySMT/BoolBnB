@@ -1,239 +1,285 @@
 import React from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
-function AddPropertyForm({ handleSubmit, setSelectedFile, errors }) {
+const schema = yup.object().shape({
+  name: yup.string().required("Name is required"),
+  title: yup.string().required("Title is required"),
+  address: yup.string().required("Address is required"),
+  city: yup.string().required("City is required"),
+
+  square_meters: yup
+    .number()
+    .transform((value, originalValue) =>
+      originalValue === "" ? undefined : value
+    )
+    .required("Square meters are required")
+    .positive("Must be a positive number"),
+
+  pricePerNight: yup
+    .number()
+    .transform((value, originalValue) =>
+      originalValue === "" ? undefined : value
+    )
+    .required("Price is required")
+    .positive("Must be a positive number"),
+
+  n_bedrooms: yup
+    .number()
+    .transform((value, originalValue) =>
+      originalValue === "" ? undefined : value
+    )
+    .required("Bedrooms required")
+    .min(1, "At least 1 bedroom required"),
+
+  n_bathrooms: yup
+    .number()
+    .transform((value, originalValue) =>
+      originalValue === "" ? undefined : value
+    )
+    .required("Bathrooms required")
+    .min(1, "At least 1 bathroom required"),
+
+  n_beds: yup
+    .number()
+    .transform((value, originalValue) =>
+      originalValue === "" ? undefined : value
+    )
+    .required("Beds required")
+    .min(1, "At least 1 bed required"),
+
+  type: yup.string().required("Type is required"),
+  email: yup.string().email("Invalid email").required("Email is required"),
+  file: yup.mixed().required("Image is required"),
+});
+
+function AddPropertyForm({ setSelectedFile }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
+
+  const onSubmit = (data) => {
+    console.log("Form data:", data);
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-      {/*parte sinistra */}
+    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4">
+      {/* Sinistra */}
       <div className="flex flex-col gap-3">
         <div>
-          <label className="text-gray-700 flex justify-between">
-            Name
-            {<errors className="name"></errors> && (
-              <span className="text-red-500">{errors.name}</span>
-            )}
-          </label>
+          <label className="text-gray-700">Name</label>
           <input
+            {...register("name")}
             type="text"
             className={`w-full p-2 border rounded ${
               errors.name ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="Es: Marcolino"
-            name="name"
           />
+          {errors.name && (
+            <span className="text-red-500">{errors.name.message}</span>
+          )}
         </div>
+
         <div>
-          <label className="text-gray-700 flex justify-between">
-            Title
-            {errors.title && (
-              <span className="text-red-500">{errors.title}</span>
-            )}
-          </label>
+          <label className="text-gray-700">Title</label>
           <input
+            {...register("title")}
             type="text"
             className={`w-full p-2 border rounded ${
               errors.title ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="Es: Perfect house in Milan"
-            name="title"
           />
+          {errors.title && (
+            <span className="text-red-500">{errors.title.message}</span>
+          )}
         </div>
+
         <div>
-          <label className=" text-gray-700 flex justify-between">
-            Address
-            {errors.address && (
-              <span className="text-red-500">{errors.address}</span>
-            )}
-          </label>
+          <label className="text-gray-700">Address</label>
           <input
+            {...register("address")}
             type="text"
             className={`w-full p-2 border rounded ${
               errors.address ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="Es: Via Roma 10"
-            name="address"
           />
+          {errors.address && (
+            <span className="text-red-500">{errors.address.message}</span>
+          )}
         </div>
 
         <div>
-          <label className="flex justify-between text-gray-700">
-            City
-            {errors.city && <span className="text-red-500">{errors.city}</span>}
-          </label>
+          <label className="text-gray-700">City</label>
           <input
+            {...register("city")}
             type="text"
             className={`w-full p-2 border rounded ${
               errors.city ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="Es: Milano"
-            name="city"
           />
+          {errors.city && (
+            <span className="text-red-500">{errors.city.message}</span>
+          )}
         </div>
 
         <div>
-          <label className="flex justify-between text-gray-700">
-            Square Meters
-            {errors.square_meters && (
-              <span className="text-red-500">{errors.square_meters}</span>
-            )}
-          </label>
+          <label className="text-gray-700">Square Meters</label>
           <input
+            {...register("square_meters")}
             type="number"
             className={`w-full p-2 border rounded ${
               errors.square_meters ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="Es: 40"
-            name="square_meters"
-            min={0}
+            min={1}
           />
+          {errors.square_meters && (
+            <span className="text-red-500">{errors.square_meters.message}</span>
+          )}
         </div>
+
         <div>
-          <label className="flex justify-between text-gray-700">
-            Propriery type
-            {errors.type && <span className="text-red-500">{errors.type}</span>}
-          </label>
+          <label className="text-gray-700">Property Type</label>
           <select
+            {...register("type")}
             className={`w-full p-2 border rounded ${
               errors.type ? "border-red-500" : "border-gray-300"
             }`}
-            name="type"
           >
             <option value="" hidden>
-              Proprierty type
+              Select Type
             </option>
-            <option value="1">Baita</option>
-            <option value="2">Schiera</option>
-            <option value="3">Indipendente</option>
-            <option value="4">Villa</option>
-            <option value="5">Appartamento</option>
-            <option value="6">Challet</option>
+            <option value="Baita">Baita</option>
+            <option value="Schiera">Schiera</option>
+            <option value="Indipendente">Indipendente</option>
+            <option value="Villa">Villa</option>
+            <option value="Appartamento">Appartamento</option>
+            <option value="Chalet">Chalet</option>
           </select>
+          {errors.type && (
+            <span className="text-red-500">{errors.type.message}</span>
+          )}
         </div>
       </div>
 
-      {/* destra */}
+      {/* Destra */}
       <div className="flex flex-col gap-3">
         <div>
-          <label className="flex justify-between text-gray-700">
-            Email
-            {errors.email && (
-              <span className="text-red-500">{errors.email}</span>
-            )}
-          </label>
+          <label className="text-gray-700">Email</label>
           <input
-            type="text"
+            {...register("email")}
+            type="email"
             className={`w-full p-2 border rounded ${
               errors.email ? "border-red-500" : "border-gray-300"
             }`}
-            placeholder="Es: Marcolino@example.com"
-            name="email"
+            placeholder="Es: example@mail.com"
           />
+          {errors.email && (
+            <span className="text-red-500">{errors.email.message}</span>
+          )}
         </div>
+
         <div>
-          <label className="flex justify-between text-gray-700">
-            Price per Night (€)
-            {errors.pricePerNight && (
-              <span className="text-red-500">{errors.pricePerNight}</span>
-            )}
-          </label>
+          <label className="text-gray-700">Price per Night (€)</label>
           <input
+            {...register("pricePerNight")}
             type="number"
             className={`w-full p-2 border rounded ${
               errors.pricePerNight ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="Es: 100"
-            name="pricePerNight"
           />
+          {errors.pricePerNight && (
+            <span className="text-red-500">{errors.pricePerNight.message}</span>
+          )}
         </div>
+
         <div>
-          <label className="flex justify-between text-gray-700">
-            Number of Rooms
-            {errors.n_beds && (
-              <span className="text-red-500">{errors.n_beds}</span>
-            )}
-          </label>
+          <label className="text-gray-700">Number of Bedrooms</label>
           <select
+            {...register("n_bedrooms")}
             className={`w-full p-2 border rounded ${
               errors.n_bedrooms ? "border-red-500" : "border-gray-300"
             }`}
-            name="n_bedrooms"
           >
             <option value="" hidden>
-              Select the number of bedrooms
+              Select bedrooms
             </option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5+</option>
+            {[1, 2, 3, 4, 5].map((num) => (
+              <option key={num} value={num}>
+                {num}
+              </option>
+            ))}
           </select>
+          {errors.n_bedrooms && (
+            <span className="text-red-500">{errors.n_bedrooms.message}</span>
+          )}
         </div>
+
         <div>
-          <label className="flex justify-between text-gray-700">
-            Number of Bathrooms
-            {errors.n_bathrooms && (
-              <span className="text-red-500">{errors.n_bathrooms}</span>
-            )}
-          </label>
+          <label className="text-gray-700">Number of Bathrooms</label>
           <select
+            {...register("n_bathrooms")}
             className={`w-full p-2 border rounded ${
               errors.n_bathrooms ? "border-red-500" : "border-gray-300"
             }`}
-            name="n_bathrooms"
           >
             <option value="" hidden>
-              Select the number of bathrooms
+              Select bathrooms
             </option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
+            {[1, 2, 3].map((num) => (
+              <option key={num} value={num}>
+                {num}
+              </option>
+            ))}
           </select>
+          {errors.n_bathrooms && (
+            <span className="text-red-500">{errors.n_bathrooms.message}</span>
+          )}
         </div>
+
         <div>
-          <label className="flex justify-between text-gray-700">
-            Number of Beds
-            {errors.n_beds && (
-              <span className="text-red-500">{errors.n_beds}</span>
-            )}
-          </label>
+          <label className="text-gray-700">Number of Beds</label>
           <select
+            {...register("n_beds")}
             className={`w-full p-2 border rounded ${
               errors.n_beds ? "border-red-500" : "border-gray-300"
             }`}
-            name="n_beds"
           >
             <option value="" hidden>
-              Select the number of beds
+              Select beds
             </option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5+</option>
+            {[1, 2, 3, 4, 5].map((num) => (
+              <option key={num} value={num}>
+                {num}
+              </option>
+            ))}
           </select>
+          {errors.n_beds && (
+            <span className="text-red-500">{errors.n_beds.message}</span>
+          )}
         </div>
       </div>
 
       <div className="col-span-2">
-        <div className="relative">
-          <label className="text-gray-700">Upload Image</label>
-          <input
-            name="file"
-            type="file"
-            className="w-full p-2 border rounded border-gray-300"
-            onChange={(e) => setSelectedFile(e.target.files[0])}
-            id="imageInput"
-            accept="image/png, image/jpeg"
-          />
-          <button
-            type="button"
-            className="absolute top-[33px] right-1 p-0.5 bg-blue-600 hover:bg-blue-700 text-white px-4 text-sm rounded"
-            onClick={() => {
-              document.getElementById("imageInput").click();
-            }}
-          >
-            Upload
-          </button>
-        </div>
+        <label className="text-gray-700">Upload Image</label>
+        <input
+          type="file"
+          {...register("file")}
+          className="w-full p-2 border rounded border-gray-300"
+          onChange={(e) => setSelectedFile(e.target.files[0])}
+          accept="image/png, image/jpeg"
+        />
+        {errors.file && (
+          <span className="text-red-500">{errors.file.message}</span>
+        )}
         <button
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg mt-3 transition"
