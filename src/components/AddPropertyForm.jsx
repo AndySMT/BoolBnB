@@ -271,6 +271,7 @@ function AddPropertyForm({ setSelectedFile }) {
       <div className="col-span-2">
         <label className="text-gray-700">Upload Image</label>
         <input
+          multiple={true}
           type="file"
           {...register("file")}
           className="w-full p-2 border rounded border-gray-300"
