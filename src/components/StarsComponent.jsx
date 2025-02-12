@@ -5,7 +5,7 @@ function StarsComponent() {
   const [rating, setRating] = useState(null);
 
   return (
-    <section className="flex gap-1">
+    <section className="flex gap-1 mb-4 text-2xl">
       {[...Array(5)].map((star, index) => {
         const currentRate = index + 1;
 
