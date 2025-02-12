@@ -73,7 +73,7 @@ function PaginaContact() {
     setTimeout(() => {
       setMessageSent(false);
     }, 2000);
-    setFormData(newPost); // Resetta il form dopo l'invio
+    setFormData(newPost);
   };
 
   function handleChange(e) {
@@ -92,7 +92,7 @@ function PaginaContact() {
   };
 
   return (
-    <div className={style.formCard1}>
+    <div className={`{style.formCard1} md:w-1/2 w-full md:h-auto boxShad`}>
       <div className={style.formCard2}>
         <form
           className={style.form}
