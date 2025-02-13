@@ -10,7 +10,7 @@ import { baseUrl, imagesUrl, propsEndpoint } from "../globals/apiUrls";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
-function Card({ property }) {
+function Card({ property, index }) {
     let {
         id,
         title,
@@ -49,7 +49,7 @@ function Card({ property }) {
             variants={cardVariants}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
-            transition={{ duration: 0.5, delay: id * 0.1 }}
+            transition={{ duration: 0.3, delay: (index + 1) * 0.1 }}
         >
             <Link to={"detail/" + id} className="group cursor-pointer">
                 {/* Image carousel */}
