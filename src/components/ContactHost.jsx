@@ -13,7 +13,7 @@ const schema = yup.object().shape({
     message: yup.string().required("Inserisci una descrizione"),
 });
 
-function PaginaContact() {
+function PaginaContact({ showContactForm }) {
     const [messageSent, setMessageSent] = useState(false);
 
     const {
@@ -38,7 +38,7 @@ function PaginaContact() {
     };
 
     return (
-        <div className={`{style.formCard1} md:w-1/2 w-full md:h-auto boxShad`}>
+        <div className={`${showContactForm ? 'block sm:block' : 'hidden sm:block'} md:w-1/2 w-full md:h-auto boxShad`}>
             <form
                 className="flex flex-col gap-6 px-8 py-4"
                 onSubmit={handleSubmit(onSubmit)} // Usato onSubmit di React Hook Form

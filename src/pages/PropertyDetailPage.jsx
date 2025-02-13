@@ -34,6 +34,7 @@ function PropertyDetail() {
   const [formData, setFormData] = useState(newReview);
   const [formError, setFormError] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [showContactForm, setShowContactForm] = useState(false);
   const { mutate } = useAddReviewQuery(id);
   const navigate = useNavigate();
   const {
@@ -305,8 +306,15 @@ function PropertyDetail() {
                 vel, rerum aliquid quos atque voluptates.
               </div>
             </div>
+            {/* Mobile toggle button */}
+          <button 
+            className="sm:hidden w-full py-2 px-4 bg-teal-700 text-white rounded-lg mb-4"
+            onClick={() => setShowContactForm(!showContactForm)}
+          >
+            {showContactForm ? 'Nascondi form contatto' : 'Mostra form contatto'}
+          </button>
             {/* Contact Form */}
-            <PaginaContact />
+            <PaginaContact showContactForm={showContactForm} />
           </section>
         </section>
 
