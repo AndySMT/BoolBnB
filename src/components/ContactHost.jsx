@@ -33,7 +33,8 @@ function PaginaContact({ showContactForm, propertyId }) {
         axios.post(baseUrl + contactEndpoint, {
           propertyId: propertyId,
           userMail: data.email,
-          text: data.message
+          text: data.message,
+          name: data.nome
         })
         .then(response => {
           setMessageSent(true);
