@@ -27,8 +27,7 @@ function PaginaContact({ showContactForm, propertyId }) {
     } = useForm({ resolver: yupResolver(schema) });
 
     const onSubmit = (data) => {
-        console.log("Dati inviati:", data);
-        
+       
         setTimeout(() => setMessageSent(false), 3500);
         reset(); // Reset del form dopo invio
         axios.post(baseUrl + contactEndpoint, {
@@ -37,11 +36,9 @@ function PaginaContact({ showContactForm, propertyId }) {
           text: data.message
         })
         .then(response => {
-          console.log("Email inviata con successo:", response.data);
           setMessageSent(true);
         })
         .catch(error => {
-          console.error("Errore nell'invio dell'email:", error);
           setError(true);
           setTimeout(() => setError(false), 3500);
         });
