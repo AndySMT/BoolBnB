@@ -17,12 +17,12 @@ function NavbarMobile() {
     return (
         <>
             {isVisible && (
-                <nav className="bg-[#fcfcfc] bottom-[-1px] w-screen py-3 border-t-2 rounded-2xl border-t-stone-300 z-30 fixed grid grid-cols-3 md:hidden">
+                <nav className="bg-[#fcfcfc] bottom-[-1px] w-screen py-3 border-t-2 rounded-2xl border-t-stone-300 z-30 fixed grid grid-cols-3 md:hidden text-stone-900">
                     <NavLink
                         to="/search"
                         className={({ isActive }) =>
                             "flex justify-center items-center  flex-col " +
-                            (isActive ? "text-red-500" : "")
+                            (isActive ? "text-[#3c9b3b]" : "")
                         }
                     >
                         <IoMdSearch className="text-2xl" />
@@ -32,7 +32,7 @@ function NavbarMobile() {
                         to="/"
                         className={({ isActive }) =>
                             "flex justify-center items-center  flex-col " +
-                            (isActive ? "text-red-500" : "")
+                            (isActive ? "text-[#3c9b3b]" : "")
                         }
                     >
                         <AiFillHome className="text-2xl" />
@@ -43,7 +43,7 @@ function NavbarMobile() {
                         to="/addproperty"
                         className={({ isActive }) =>
                             "flex justify-center items-center  flex-col " +
-                            (isActive ? "text-red-500" : "")
+                            (isActive ? "text-[#3c9b3b]" : "")
                         }
                     >
                         <IoMdAddCircleOutline className="text-2xl" />
