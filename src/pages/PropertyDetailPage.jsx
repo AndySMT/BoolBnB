@@ -314,7 +314,7 @@ function PropertyDetail() {
             {showContactForm ? 'Nascondi form contatto' : 'Mostra form contatto'}
           </button>
             {/* Contact Form */}
-            <PaginaContact showContactForm={showContactForm} />
+            <PaginaContact showContactForm={showContactForm} propertyId={id} />
           </section>
         </section>
 
