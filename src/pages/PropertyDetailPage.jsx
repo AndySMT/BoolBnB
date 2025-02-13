@@ -96,7 +96,7 @@ function PropertyDetail() {
                             key={index}
                             src={`${imagesUrl}/${property.id}${img}`}
                             alt={`Thumbnail ${index + 1}`}
-                            className="min-w-screen snap-start"
+                            className="min-w-screen h-[37vh] object-cover snap-start"
                         />
                     ))}
                 </div>
