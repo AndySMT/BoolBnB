@@ -29,7 +29,7 @@ function PaginaContact({ showContactForm, propertyId }) {
     const onSubmit = (data) => {
         console.log("Dati inviati:", data);
         
-        setTimeout(() => setMessageSent(false), 3000);
+        setTimeout(() => setMessageSent(false), 3500);
         reset(); // Reset del form dopo invio
         axios.post(baseUrl + contactEndpoint, {
           propertyId: propertyId,
@@ -43,7 +43,7 @@ function PaginaContact({ showContactForm, propertyId }) {
         .catch(error => {
           console.error("Errore nell'invio dell'email:", error);
           setError(true);
-          setTimeout(() => setError(false), 3000);
+          setTimeout(() => setError(false), 3500);
         });
     };
 
