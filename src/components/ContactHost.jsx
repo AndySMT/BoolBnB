@@ -4,172 +4,221 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import style from "../components/ContactHost.module.css";
 
+const schema = yup.object().shape({
+    nome: yup.string().required("Inserisci un nome"),
+    email: yup
+        .string()
+        .email()
+        .required("Inserisci il tuo indirizzo email"),
+    message: yup.string().required("Inserisci una descrizione"),
+});
+
+function PaginaContact() {
+    const [messageSent, setMessageSent] = useState(false);
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset,
+    } = useForm({ resolver: yupResolver(schema) });
+
+    const onSubmit = (data) => {
+        console.log("Dati inviati:", data);
+        setMessageSent(true);
+        setTimeout(() => setMessageSent(false), 3000);
+        reset(); // Reset del form dopo invio
+    };
+
+    const handleInvalid = (e) => {
+        e.preventDefault();
+        if (!formError) {
+            setFormError("Per favore completa tutti i campi.");
+        }
+    };
+
+    return (
+        <div className={`{style.formCard1} md:w-1/2 w-full md:h-auto boxShad`}>
+            <form
+                className="flex flex-col gap-6 px-8 py-4"
+                onSubmit={handleSubmit(onSubmit)} // Usato onSubmit di React Hook Form
+                noValidate
+                onInvalid={handleInvalid}
+            >
+                <div className="m-auto mt-2 p-2">
+                    <p style={{ fontSize: "1.5rem" }}>Contattaci </p>
+                </div>
+
+                <div className="flex flex-col">
+                    {errors.nome ? (
+                        <span className="text-red-600">
+                            {errors.nome.message}
+                        </span> // Gestito errore nome
+                    ) : (
+                        <span className="opacity-0">placeholder</span>
+                    )}
+                    <input
+                        {...register("nome")} // Usato register per il campo nome
+                        placeholder="Nome"
+                        className="py-2 px-1 border-b border-b-[#bace94] rounded-lg"
+                        type="text"
+                    />
+                </div>
+                <div className="flex flex-col">
+                    {errors.email ? (
+                        <span className="text-red-600">
+                            {errors.email.message}
+                        </span> // Gestito errore message
+                    ) : (
+                        <span className="opacity-0">placeholder</span>
+                    )}
+                    <input
+                        {...register("email")} // Usato register per il campo message
+                        placeholder="Email"
+                        className="py-2 px-1 border-b border-b-[#bace94] rounded-lg"
+                        type="email"
+                    />
+                </div>
+                <div className="flex flex-col">
+                    {errors.message ? (
+                        <span className="text-red-600">
+                            {errors.message.message}
+                        </span> // Gestito errore messaggio
+                    ) : (
+                        <span className="opacity-0">placeholder</span>
+                    )}
+                    <textarea
+                        required
+                        placeholder="Messaggio"
+                        cols="30"
+                        rows="3"
+                        {...register("message")} // Usato register per il campo messaggio
+                        className="py-2 px-1 border-b border-b-[#bace94] rounded-lg"
+                    ></textarea>
+                </div>
+
+                <button type="submit" className={style.sendMessageBtn}>
+                    Invia Messaggio
+                </button>
+
+                {/* Messaggio di conferma */}
+                {messageSent && (
+                    <section>
+                        <div className="space-y-2 p-4">
+                            <div
+                                role="alert"
+                                className="bg-green-100 dark:bg-green-900 border-l-4 border-green-500 dark:border-green-700 text-green-900 dark:text-green-100 p-2 rounded-lg flex items-center transition duration-300 ease-in-out hover:bg-green-200 dark:hover:bg-green-800 transform hover:scale-105"
+                            >
+                                <svg
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    className="h-5 w-5 flex-shrink-0 mr-2 text-green-600"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M13 16h-1v-4h1m0-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        strokeWidth="2"
+                                        strokeLinejoin="round"
+                                        strokeLinecap="round"
+                                    ></path>
+                                </svg>
+                                <p className="text-xs font-semibold">
+                                    Messaggio inviato con successo!
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                )}
+            </form>
+        </div>
+    );
+}
+
+export default PaginaContact;
+
+// =============================================================================
+//
+// =============================================================================
+
 /* const newPost = {
   nome: "",
   email: "",
   message: "",
 }; */
 
-const schema = yup.object().shape({
-  nome: yup.string().required("Per favore inserisci un nome"),
-  email: yup
-    .string()
-    .email()
-    .required("Per favore inserisci il tuo indirizzo email"),
-  message: yup.string().required("Per favore inserisci una descrizione"),
-});
-/* const validateForm = () => {
-  let newErrors = {};
-  const requiredFields = ["name", "email", "message"];
-}; */
+/* const [formData, setFormData] = useState(); */
+/* const [formError, setFormError] = useState(""); */
 
-function PaginaContact() {
-  const [messageSent, setMessageSent] = useState(false);
-  /* const [formData, setFormData] = useState(); */
-  /* const [formError, setFormError] = useState(""); */
+// const handleSubmit = (e) => {
+//     e.preventDefault();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({ resolver: yupResolver(schema) });
+//     // Controllo del nome
+//     if (!formData.nome.trim()) {
+//         setFormError("Per favore inserisci un nome");
+//         setTimeout(() => setFormError(""), 2000);
+//         return;
+//     }
 
-  /* const handleSubmit = (e) => {
-    e.preventDefault(); */
+//     // Controllo dell'email
+//     const email = formData.email;
+//     if (!email || email.trim() === "") {
+//         setFormError("Per favore inserisci una email");
+//         return;
+//     }
+//     if (email.indexOf("@") === -1 || email.indexOf(".") === -1) {
+//         setFormError("Per favore inserisci una email valida");
+//         setTimeout(() => setFormError(""), 2000);
+//         return;
+//     }
+//     const [localPart, domainPart] = email.split("@");
+//     if (
+//         !localPart ||
+//         !domainPart ||
+//         localPart.trim() === "" ||
+//         domainPart.trim() === ""
+//     ) {
+//         setFormError("Per favore inserisci una email valida");
+//         setTimeout(() => setFormError(""), 2000);
+//         return;
+//     }
+//     if (domainPart.indexOf(".") === -1) {
+//         setFormError("Per favore inserisci una email valida");
+//         setTimeout(() => setFormError(""), 2000);
+//         return;
+//     }
+//     const [domainName, extension] = domainPart.split(".");
+//     if (
+//         !domainName ||
+//         !extension ||
+//         domainName.trim() === "" ||
+//         extension.trim() === ""
+//     ) {
+//         setFormError("Per favore inserisci una email valida");
+//         setTimeout(() => setFormError(""), 2000);
+//         return;
+//     }
 
-  // Controllo del nome
-  /* if (!formData.nome.trim()) {
-      setFormError("Per favore inserisci un nome");
-      setTimeout(() => setFormError(""), 2000);
-      return;
-    } */
+//     // Controllo del messaggio
+//     if (!formData.message.trim()) {
+//         setFormError("Per favore inserisci un messaggio");
+//         setTimeout(() => setFormError(""), 2000);
+//         return;
+//     }
 
-  // Controllo dell'email
-  /* const email = formData.email;
-    if (!email || email.trim() === "") {
-      setFormError("Per favore inserisci una email");
-      return;
-    }
-    if (email.indexOf("@") === -1 || email.indexOf(".") === -1) {
-      setFormError("Per favore inserisci una email valida");
-      setTimeout(() => setFormError(""), 2000);
-      return;
-    }
-    const [localPart, domainPart] = email.split("@");
-    if (
-      !localPart ||
-      !domainPart ||
-      localPart.trim() === "" ||
-      domainPart.trim() === ""
-    ) {
-      setFormError("Per favore inserisci una email valida");
-      setTimeout(() => setFormError(""), 2000);
-      return;
-    }
-    if (domainPart.indexOf(".") === -1) {
-      setFormError("Per favore inserisci una email valida");
-      setTimeout(() => setFormError(""), 2000);
-      return;
-    }
-    const [domainName, extension] = domainPart.split(".");
-    if (
-      !domainName ||
-      !extension ||
-      domainName.trim() === "" ||
-      extension.trim() === ""
-    ) {
-      setFormError("Per favore inserisci una email valida");
-      setTimeout(() => setFormError(""), 2000);
-      return;
-    }
+//     setFormError("");
+//     setMessageSent(true);
+//     setTimeout(() => {
+//         setMessageSent(false);
+//     }, 2000);
+//     setFormData(newPost);
+// };
 
-    // Controllo del messaggio
-    if (!formData.message.trim()) {
-      setFormError("Per favore inserisci un messaggio");
-      setTimeout(() => setFormError(""), 2000);
-      return;
-    } */
-
-  /* setFormError("");
-    setMessageSent(true);
-    setTimeout(() => {
-      setMessageSent(false);
-    }, 2000);
-    setFormData(newPost); */
-  /* }; */
-
-  const onSubmit = (data) => {
-    console.log("Dati inviati:", data);
-    setMessageSent(true);
-    setTimeout(() => setMessageSent(false), 3000);
-    reset(); // Reset del form dopo invio
-  };
-
-  /*  const handleInvalid = (e) => {
-    e.preventDefault();
-    if (!formError) {
-      setFormError("Per favore completa tutti i campi.");
-    }
-  }; */
-
-  return (
-    <div className={`{style.formCard1} md:w-1/2 w-full md:h-auto boxShad`}>
-      <div className={style.formCard2}>
-        <form
-          className={style.form}
-          onSubmit={handleSubmit(onSubmit)} // Usato onSubmit di React Hook Form
-          noValidate
-          /* onInvalid={handleInvalid} */
-        >
-          <div className="m-auto mt-2  p-2">
-            <p style={{ fontSize: "1.5rem" }}>Contattaci </p>
-          </div>
-
-          <div className={style.formField}>
-            <input
-              {...register("nome")} // Usato register per il campo nome
-              placeholder="Nome"
-              className={style.inputField}
-              type="text"
-            />
-            {errors.nome && (
-              <span className="text-red-500">{errors.nome.message}</span> // Gestito errore nome
-            )}
-          </div>
-
-          <div className={style.formField}>
-            <input
-              required
-              placeholder="Email"
-              className={style.inputField}
-              type="email"
-              {...register("email")} // Usato register per il campo email
-            />
-            {errors.email && (
-              <span className="text-red-500">{errors.email.message}</span> // Gestito errore email
-            )}
-          </div>
-
-          <div className={style.formField}>
-            <textarea
-              required
-              placeholder="Messaggio"
-              cols="30"
-              rows="3"
-              {...register("message")} // Usato register per il campo messaggio
-              className={style.inputField}
-            ></textarea>
-            {errors.message && (
-              <span className="text-red-500">{errors.message.message}</span> // Gestito errore messaggio
-            )}
-          </div>
-
-          <button type="submit" className={style.sendMessageBtn}>
-            Invia Messaggio
-          </button>
-          {/* messagio di errore  */}
-          {/* {formError && (
+{
+    /* messagio di errore  */
+}
+{
+    /* {formError && (
             <div className="text-red-500 mt-4">
               <div className="relative w-full m-auto max-w-80 flex flex-wrap items-center justify-center py-1 pl-4 pr-14 rounded-lg text-base font-medium [transition:all_0.5s_ease] border-solid border border-[#f85149] text-[#b22b2b] [&_svg]:text-[#b22b2b] group bg-[linear-gradient(#f851491a,#f851491a)]">
                 <p className="flex flex-row items-center mr-auto gap-x-2">
@@ -193,40 +242,5 @@ function PaginaContact() {
                 </p>
               </div>
             </div>
-          )} */}
-          {/* Messaggio di conferma */}
-          {messageSent && (
-            <section>
-              <div className="space-y-2 p-4">
-                <div
-                  role="alert"
-                  className="bg-green-100 dark:bg-green-900 border-l-4 border-green-500 dark:border-green-700 text-green-900 dark:text-green-100 p-2 rounded-lg flex items-center transition duration-300 ease-in-out hover:bg-green-200 dark:hover:bg-green-800 transform hover:scale-105"
-                >
-                  <svg
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="h-5 w-5 flex-shrink-0 mr-2 text-green-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M13 16h-1v-4h1m0-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      strokeWidth="2"
-                      strokeLinejoin="round"
-                      strokeLinecap="round"
-                    ></path>
-                  </svg>
-                  <p className="text-xs font-semibold">
-                    Messaggio inviato con successo!
-                  </p>
-                </div>
-              </div>
-            </section>
-          )}
-        </form>
-      </div>
-    </div>
-  );
+          )} */
 }
-
-export default PaginaContact;

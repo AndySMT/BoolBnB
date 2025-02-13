@@ -127,8 +127,8 @@ function PropertyDetail() {
   return (
     <>
       {/* sezione immagini mobile */}
-      <section className="block sm:hidden bg-red-300">
-        <div className="flex overflow-auto snap-x snap-mandatory">
+      <section className="block sm:hidden p-4">
+        <div className="flex overflow-auto rounded-lg snap-x snap-mandatory">
           {property.img_endpoints.map((img, index) => (
             <img
               key={index}
