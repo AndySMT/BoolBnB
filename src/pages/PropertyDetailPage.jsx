@@ -19,10 +19,10 @@ import {
   useGetReviewsQuery,
 } from "../hooks/useDataQuery";
 import "leaflet/dist/leaflet.css";
-/* const newReview = {
+const newReview = {
   userName: "",
   review: "",
-}; */
+};
 
 const schema = yup.object().shape({
   userName: yup.string().trim().required("Il nome è obbligatorio"),
