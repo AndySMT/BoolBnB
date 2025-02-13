@@ -188,7 +188,7 @@ function PropertyDetail() {
             </span>
           </div>
           {/* Amato dagli ospiti */}
-          <div className="mt-3" onClick={handleScroll}>
+          <div className="cursor-pointer mt-3" onClick={handleScroll}>
             <div className="rounded-lg flex items-center gap-5 w-fit px-8 py-2 boxShad font-semibold">
               <div className="flex justify-between">
                 <img
