@@ -112,6 +112,11 @@ function PropertyDetail() {
   if (isErrorP || isErrorR) return <pre>Error</pre>;
   // risposta ricevuta
 
+  const handleScroll = () => {
+    const section = document.getElementById("reviews");
+    section.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <>
       {/* sezione immagini mobile */}
@@ -183,7 +188,7 @@ function PropertyDetail() {
             </span>
           </div>
           {/* Amato dagli ospiti */}
-          <div className="mt-3">
+          <div className="mt-3" onClick={handleScroll}>
             <div className="rounded-lg flex items-center gap-5 w-fit px-8 py-2 boxShad font-semibold">
               <div className="flex justify-between">
                 <img
@@ -292,7 +297,10 @@ function PropertyDetail() {
 
         {/* sezione recensioni*/}
         <section className="reviews-section px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400 ">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
+          <h1
+            className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4"
+            id="reviews"
+          >
             Recensioni
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
