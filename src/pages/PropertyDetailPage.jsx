@@ -116,12 +116,14 @@ function PropertyDetail() {
     section.scrollIntoView({ behavior: "smooth" });
   };
   const savePost = () => {
-    // const Preferite = JSON.parse(localStorage.getItem("Preferite")) || [];
-    // if (!Preferite.includes(id)) {
-    //   Preferite.push(id);
-    //   localStorage.setItem("Preferite", JSON.stringify(Preferite));
-    // }
-    // navigate(`/detail/${id}/preferiti`);
+    const preferite = JSON.parse(localStorage.getItem("Preferite")) || [];
+
+    if (!preferite.includes(property.id)) {
+      preferite.push(property.id);
+      localStorage.setItem("Preferite", JSON.stringify(preferite));
+    }
+
+    navigate(`/detail/${property.id}/preferiti`);
   };
 
   return (
@@ -142,21 +144,22 @@ function PropertyDetail() {
       {/* immagini desktop e dettaglio  */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-8 border-b border-stone-400">
         <section className="hidden sm:flex gap-2 aspect-video h-full w-full">
-          <div className="">
+          <div className="relative">
             <button
-              className="absolute z-20"
+              className="absolute top-0 right-0 z-20"
               style={{ cursor: "pointer" }}
               onClick={savePost}
             >
-              <PiBookmarks />
+              <PiBookmarks className=" w-15 h-20 text-red-500" />
             </button>
 
             <img
               src={`${imagesUrl}/${property.id}${property.img_endpoints[activeIndex]}`}
               alt={`Property Image ${activeIndex + 1}`}
-              className="h-full aspect-video object-cover rounded-lgrelative "
+              className="h-full aspect-video object-cover rounded-lg"
             />
           </div>
+
           {/* Miniature */}
           <div className="overflow-auto w-1/4 flex flex-col gap-2 p-1 border-y border-y-gray-600 rounded-md">
             {property.img_endpoints.map((img, index) => (
@@ -338,11 +341,13 @@ function PropertyDetail() {
 
         {/* sezione form recensione */}
         <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 ">
-          <div>
-            <h2 className="boxShad w-60 m-auto text-center p-2">
-              Lascia la tua recensione
-            </h2>
-          </div>
+          <h1
+            className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4"
+            id="reviews"
+          >
+            Lascia la tua Recensioni
+          </h1>
+
           <form onSubmit={handleSubmit(onSubmit)}>
             <input
               type="text"
