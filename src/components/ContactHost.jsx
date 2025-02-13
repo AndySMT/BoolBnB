@@ -8,7 +8,7 @@ const schema = yup.object().shape({
     nome: yup.string().required("Inserisci un nome"),
     email: yup
         .string()
-        .email()
+        .email("Inserisci una mail valida")
         .required("Inserisci il tuo indirizzo email"),
     message: yup.string().required("Inserisci una descrizione"),
 });
@@ -60,7 +60,7 @@ function PaginaContact() {
                     <input
                         {...register("nome")} // Usato register per il campo nome
                         placeholder="Nome"
-                        className="py-2 px-1 border-b border-b-[#bace94] rounded-lg"
+                        className="p-1 border-b border-b-[#bace94] rounded-lg  focus:outline-0 focus:border-b-2"
                         type="text"
                     />
                 </div>
@@ -75,7 +75,7 @@ function PaginaContact() {
                     <input
                         {...register("email")} // Usato register per il campo message
                         placeholder="Email"
-                        className="py-2 px-1 border-b border-b-[#bace94] rounded-lg"
+                        className="p-1 border-b border-b-[#bace94] rounded-lg  focus:outline-0 focus:border-b-2"
                         type="email"
                     />
                 </div>
@@ -93,11 +93,11 @@ function PaginaContact() {
                         cols="30"
                         rows="3"
                         {...register("message")} // Usato register per il campo messaggio
-                        className="py-2 px-1 border-b border-b-[#bace94] rounded-lg"
+                        className="p-1 border-b border-b-[#bace94] rounded-lg  focus:outline-0 focus:border-b-2"
                     ></textarea>
                 </div>
 
-                <button type="submit" className={style.sendMessageBtn}>
+                <button type="submit" className="border rounded-xl py-2">
                     Invia Messaggio
                 </button>
 
