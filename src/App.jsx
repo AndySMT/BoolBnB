@@ -30,9 +30,9 @@ function App() {
               <Route path="search" Component={SearchPropertyPage} />
               <Route path="addproperty" Component={AddPropertyPage} />
 
-              <Route path="detail/:id" Component={PropertyDetail}>
-                {/* <Route path="preferiti" component={Preferiti} /> */}
-              </Route>
+              <Route path="detail/:id" Component={PropertyDetail} />
+              <Route path="detail/:id/preferiti" Component={Preferiti} />
+
               <Route path="*" Component={ErrorPage} />
             </Route>
           </Routes>

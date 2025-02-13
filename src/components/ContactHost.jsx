@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import style from "../components/ContactHost.module.css";
+import axios from "axios";
+import { baseUrl, contactEndpoint } from "../globals/apiUrls";
 
 const schema = yup.object().shape({
     nome: yup.string().required("Inserisci un nome"),
@@ -13,8 +15,9 @@ const schema = yup.object().shape({
     message: yup.string().required("Inserisci una descrizione"),
 });
 
-function PaginaContact() {
+function PaginaContact({ showContactForm, propertyId }) {
     const [messageSent, setMessageSent] = useState(false);
+    const [error, setError] = useState(false);
 
     const {
         register,
@@ -24,10 +27,22 @@ function PaginaContact() {
     } = useForm({ resolver: yupResolver(schema) });
 
     const onSubmit = (data) => {
-        console.log("Dati inviati:", data);
-        setMessageSent(true);
-        setTimeout(() => setMessageSent(false), 3000);
+       
+        setTimeout(() => setMessageSent(false), 3500);
         reset(); // Reset del form dopo invio
+        axios.post(baseUrl + contactEndpoint, {
+          propertyId: propertyId,
+          userMail: data.email,
+          text: data.message,
+          name: data.nome
+        })
+        .then(response => {
+          setMessageSent(true);
+        })
+        .catch(error => {
+          setError(true);
+          setTimeout(() => setError(false), 3500);
+        });
     };
 
     const handleInvalid = (e) => {
@@ -38,7 +53,7 @@ function PaginaContact() {
     };
 
     return (
-        <div className={`{style.formCard1} md:w-1/2 w-full md:h-auto boxShad`}>
+        <div className={`${showContactForm ? 'block sm:block' : 'hidden sm:block'} md:w-1/2 w-full md:h-auto boxShad`}>
             <form
                 className="flex flex-col gap-6 px-8 py-4"
                 onSubmit={handleSubmit(onSubmit)} // Usato onSubmit di React Hook Form
@@ -125,6 +140,34 @@ function PaginaContact() {
                                 </svg>
                                 <p className="text-xs font-semibold">
                                     Messaggio inviato con successo!
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                )}
+                {error && (
+                    <section>
+                        <div className="space-y-2 p-4">
+                            <div
+                                role="alert"
+                                className="bg-red-100 dark:bg-red-950 border-l-4 border-red-500 dark:border-red-700 text-red-900 dark:text-red-100 p-2 rounded-lg flex items-center transition duration-300 ease-in-out hover:bg-red-200 dark:hover:bg-red-800 transform hover:scale-105"
+                            >
+                                <svg
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    className="h-5 w-5 flex-shrink-0 mr-2 text-red-600"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M13 16h-1v-4h1m0-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        strokeWidth="2"
+                                        strokeLinejoin="round"
+                                        strokeLinecap="round"
+                                    ></path>
+                                </svg>
+                                <p className="text-xs font-semibold">
+                                    Errore nell'invio dell'email riprova più tardi!
                                 </p>
                             </div>
                         </div>
