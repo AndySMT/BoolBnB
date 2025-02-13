@@ -1,29 +1,52 @@
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import style from "../components/ContactHost.module.css";
 
-const newPost = {
+/* const newPost = {
   nome: "",
   email: "",
   message: "",
-};
+}; */
+
+const schema = yup.object().shape({
+  nome: yup.string().required("Per favore inserisci un nome"),
+  email: yup
+    .string()
+    .email()
+    .required("Per favore inserisci il tuo indirizzo email"),
+  message: yup.string().required("Per favore inserisci una descrizione"),
+});
+/* const validateForm = () => {
+  let newErrors = {};
+  const requiredFields = ["name", "email", "message"];
+}; */
 
 function PaginaContact() {
   const [messageSent, setMessageSent] = useState(false);
-  const [formData, setFormData] = useState(newPost);
-  const [formError, setFormError] = useState("");
+  /* const [formData, setFormData] = useState(); */
+  /* const [formError, setFormError] = useState(""); */
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({ resolver: yupResolver(schema) });
 
-    // Controllo del nome
-    if (!formData.nome.trim()) {
+  /* const handleSubmit = (e) => {
+    e.preventDefault(); */
+
+  // Controllo del nome
+  /* if (!formData.nome.trim()) {
       setFormError("Per favore inserisci un nome");
       setTimeout(() => setFormError(""), 2000);
       return;
-    }
+    } */
 
-    // Controllo dell'email
-    const email = formData.email;
+  // Controllo dell'email
+  /* const email = formData.email;
     if (!email || email.trim() === "") {
       setFormError("Per favore inserisci una email");
       return;
@@ -66,39 +89,38 @@ function PaginaContact() {
       setFormError("Per favore inserisci un messaggio");
       setTimeout(() => setFormError(""), 2000);
       return;
-    }
+    } */
 
-    setFormError("");
+  /* setFormError("");
     setMessageSent(true);
     setTimeout(() => {
       setMessageSent(false);
     }, 2000);
-    setFormData(newPost);
+    setFormData(newPost); */
+  /* }; */
+
+  const onSubmit = (data) => {
+    console.log("Dati inviati:", data);
+    setMessageSent(true);
+    setTimeout(() => setMessageSent(false), 3000);
+    reset(); // Reset del form dopo invio
   };
 
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  }
-
-  const handleInvalid = (e) => {
+  /*  const handleInvalid = (e) => {
     e.preventDefault();
     if (!formError) {
       setFormError("Per favore completa tutti i campi.");
     }
-  };
+  }; */
 
   return (
     <div className={`{style.formCard1} md:w-1/2 w-full md:h-auto boxShad`}>
       <div className={style.formCard2}>
         <form
           className={style.form}
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)} // Usato onSubmit di React Hook Form
           noValidate
-          onInvalid={handleInvalid}
+          /* onInvalid={handleInvalid} */
         >
           <div className="m-auto mt-2  p-2">
             <p style={{ fontSize: "1.5rem" }}>Contattaci </p>
@@ -106,14 +128,14 @@ function PaginaContact() {
 
           <div className={style.formField}>
             <input
-              required
+              {...register("nome")} // Usato register per il campo nome
               placeholder="Nome"
               className={style.inputField}
               type="text"
-              name="nome"
-              value={formData.nome}
-              onChange={handleChange}
             />
+            {errors.nome && (
+              <span className="text-red-500">{errors.nome.message}</span> // Gestito errore nome
+            )}
           </div>
 
           <div className={style.formField}>
@@ -122,10 +144,11 @@ function PaginaContact() {
               placeholder="Email"
               className={style.inputField}
               type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
+              {...register("email")} // Usato register per il campo email
             />
+            {errors.email && (
+              <span className="text-red-500">{errors.email.message}</span> // Gestito errore email
+            )}
           </div>
 
           <div className={style.formField}>
@@ -134,18 +157,19 @@ function PaginaContact() {
               placeholder="Messaggio"
               cols="30"
               rows="3"
+              {...register("message")} // Usato register per il campo messaggio
               className={style.inputField}
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
             ></textarea>
+            {errors.message && (
+              <span className="text-red-500">{errors.message.message}</span> // Gestito errore messaggio
+            )}
           </div>
 
           <button type="submit" className={style.sendMessageBtn}>
             Invia Messaggio
           </button>
           {/* messagio di errore  */}
-          {formError && (
+          {/* {formError && (
             <div className="text-red-500 mt-4">
               <div className="relative w-full m-auto max-w-80 flex flex-wrap items-center justify-center py-1 pl-4 pr-14 rounded-lg text-base font-medium [transition:all_0.5s_ease] border-solid border border-[#f85149] text-[#b22b2b] [&_svg]:text-[#b22b2b] group bg-[linear-gradient(#f851491a,#f851491a)]">
                 <p className="flex flex-row items-center mr-auto gap-x-2">
@@ -169,7 +193,7 @@ function PaginaContact() {
                 </p>
               </div>
             </div>
-          )}
+          )} */}
           {/* Messaggio di conferma */}
           {messageSent && (
             <section>

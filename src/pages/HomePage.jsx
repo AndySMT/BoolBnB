@@ -27,8 +27,8 @@ function HomePage() {
                 onFilterChange={setActiveFilter}
             />
             <CardsSection title={""}>
-                {filteredProperties?.map((prop) => (
-                    <Card key={prop.id} property={prop} />
+                {filteredProperties?.map((prop, index) => (
+                    <Card key={prop.id} index={index} property={prop} />
                 ))}
             </CardsSection>
         </>

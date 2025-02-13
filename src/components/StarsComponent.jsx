@@ -5,7 +5,7 @@ function StarsComponent() {
   const [rating, setRating] = useState(null);
 
   return (
-    <section className="flex gap-1 mb-4 text-2xl">
+    <div className="flex gap-1 text-2xl">
       {[...Array(5)].map((star, index) => {
         const currentRate = index + 1;
 
@@ -19,13 +19,12 @@ function StarsComponent() {
               style={{ display: "none" }}
             />
             <FaHeart
-              className="max-w-96 mt-1"
-              color={currentRate <= rating ? "red" : "grey"}
+              className={`max-w-96 cursor-pointer ${currentRate <= rating ? "text-red-600" : "text-stone-300"}`}
             />
           </label>
         );
       })}
-    </section>
+    </div>
   );
 }
 
