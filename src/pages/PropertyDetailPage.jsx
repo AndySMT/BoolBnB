@@ -34,6 +34,7 @@ function PropertyDetail() {
   const [formData, setFormData] = useState(newReview);
   const [formError, setFormError] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [showContactForm, setShowContactForm] = useState(false);
   const { mutate } = useAddReviewQuery(id);
   const navigate = useNavigate();
   const {
@@ -129,8 +130,8 @@ function PropertyDetail() {
   return (
     <>
       {/* sezione immagini mobile */}
-      <section className="block sm:hidden bg-red-300">
-        <div className="flex overflow-auto snap-x snap-mandatory">
+      <section className="block sm:hidden p-4">
+        <div className="flex overflow-auto rounded-lg snap-x snap-mandatory">
           {property.img_endpoints.map((img, index) => (
             <img
               key={index}
@@ -308,8 +309,15 @@ function PropertyDetail() {
                 vel, rerum aliquid quos atque voluptates.
               </div>
             </div>
+            {/* Mobile toggle button */}
+          <button 
+            className="sm:hidden w-full py-2 px-4 bg-teal-700 text-white rounded-lg mb-4 cursor-pointer"
+            onClick={() => setShowContactForm(!showContactForm)}
+          >
+            {showContactForm ? 'Nascondi form contatto' : 'Mostra form contatto'}
+          </button>
             {/* Contact Form */}
-            <PaginaContact />
+            <PaginaContact showContactForm={showContactForm} propertyId={id} />
           </section>
         </section>
 
