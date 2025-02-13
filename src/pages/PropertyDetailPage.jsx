@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
-import { FaHouse } from "react-icons/fa6";
+import { useParams, useNavigate } from "react-router-dom";
+import { PiBookmarks } from "react-icons/pi";
 import { MdBed, MdBathroom } from "react-icons/md";
 import { TbRulerMeasure } from "react-icons/tb";
 import { FaMapMarkerAlt, FaBed, FaBath } from "react-icons/fa";
@@ -26,6 +26,7 @@ function PropertyDetail() {
   const [formError, setFormError] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const { mutate } = useAddReviewQuery(id);
+  const navigate = useNavigate();
 
   const handleReviewSubmit = (e) => {
     e.preventDefault();
@@ -85,6 +86,14 @@ function PropertyDetail() {
   // chiamata fallita
   if (isErrorP || isErrorR) return <pre>Error</pre>;
   // risposta ricevuta
+  const savePost = () => {
+    // const Preferite = JSON.parse(localStorage.getItem("Preferite")) || [];
+    // if (!Preferite.includes(id)) {
+    //   Preferite.push(id);
+    //   localStorage.setItem("Preferite", JSON.stringify(Preferite));
+    // }
+    // navigate(`/detail/${id}/preferiti`);
+  };
 
   return (
     <div className="property-detail flex flex-col p-4 max-w-[1650px] mt-4  mx-auto">
@@ -92,10 +101,18 @@ function PropertyDetail() {
       <section className="flex flex-col sm:flex-row justify-between gap-5 scroll-auto">
         <div className="flex flex-col sm:flex-row sm:space-x-4">
           <div className="flex-1 h-[250px] sm:h-[300px] lg:h-[350px]   mb-4">
+            <button
+              className="absolute z-20"
+              style={{ cursor: "pointer" }}
+              onClick={savePost}
+            >
+              <PiBookmarks />
+            </button>
+
             <img
               src={`${imagesUrl}/${property.id}${property.img_endpoints[activeIndex]}`}
               alt={`Property Image ${activeIndex + 1}`}
-              className="w-full h-[250px] sm:h-[300px] lg:h-[350px] rounded-lg object-cover "
+              className="w-full h-[250px] sm:h-[300px] lg:h-[350px] rounded-lg object-cover relative "
             />
           </div>
           {/* Miniature */}
