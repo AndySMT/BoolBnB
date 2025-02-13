@@ -53,19 +53,19 @@ function JumboSlogan({ headerRef, jumboRef }) {
             transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
         >
             <div
-                style={{ fontFamily: `"Noto Sans", serif` }}
+                // style={{ fontFamily: ` "Delius", serif` }}
                 className="flex flex-col gap-4"
             >
-                <p className="text-5xl md:text-7xl lg:text-6xl tracking-wide font-black">
+                <h1 className="text-5xl md:text-7xl lg:text-6xl tracking-wide font-black">
                     Your Dream Getaway Awaits
-                </p>
+                </h1>
                 <p className="font-black tracking-wide text-xl text-stone-700 md:text-2xl">
                     From cozy cottages to luxurious villas, discover the ideal
                     space for your next adventure
                 </p>
             </div>
             <div
-                style={{ fontFamily: `"Noto Sans", serif` }}
+                // style={{ fontFamily: `"Noto Sans", serif` }}
                 className="flex flex-col rounded-lg p-4 text-sm gap-4 shadow-lg"
             >
                 <div className="font-semibold lg:font-light lg:text-base">

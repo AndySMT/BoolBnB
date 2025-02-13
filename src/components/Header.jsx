@@ -28,24 +28,28 @@ const Header = () => {
   }, [location.pathname]);
 
   return (
-    <>
-      <header
-        ref={headerRef}
-        className={`${!transAnim && "-translate-y-20"} ${
-          !isVisible && "hidden sm:flex"
-        }
+      <>
+          <header
+              ref={headerRef}
+              className={`${!transAnim && "-translate-y-20"} ${
+                  !isVisible && "hidden sm:flex"
+              }
             rounded-b-2xl sm:rounded-b-none
             sm:!-translate-0 flex bg-linear-90/oklch sm:drop-shadow-lg from-15% from-[#d4c685] to-[#a7d3a6] text-center p-5 lg:px-8 justify-between fixed sm:sticky w-screen top-[-1px] z-40 text-stone-800 text-sm transition-all duration-200 ease-in`}
-      >
-        <Link to="/">
-          <img src="/bed-and-breakfast.png" alt="logo" className="w-10 h-10" />
-        </Link>
-        <NavLink className="flex items-center gap-1">
-          <IoIosStarOutline className="text-xl" />
-          <NavLink to={"/addproperty"}>Rent with BoolB&B</NavLink>
-        </NavLink>
-      </header>
-    </>
+          >
+              <Link to="/">
+                  <img
+                      src="/bed-and-breakfast.png"
+                      alt="logo"
+                      className="w-10 h-10"
+                  />
+              </Link>
+              <NavLink to={"/addproperty"} className="flex items-center gap-1">
+                  <IoIosStarOutline className="text-xl" />
+                  <span>Rent with BoolB&B</span>
+              </NavLink>
+          </header>
+      </>
   );
 };
 
