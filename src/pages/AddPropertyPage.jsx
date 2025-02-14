@@ -7,27 +7,27 @@ import { FaCheck } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 
 function AddPropertyPage() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   return (
     <>
       {/* Hero Section */}
-      <HeroSection setIsOpen={setIsOpen} />
+      <HeroSection setIsFormOpen={setIsFormOpen} />
 
       <InfoSection />
 
       <InfoSection2 />
 
-      {isOpen && (
-        <FormSection setIsOpen={setIsOpen}>
-          <AddPropertyForm setIsOpen={setIsOpen} />
+      {isFormOpen && (
+        <FormSection setIsFormOpen={setIsFormOpen}>
+          <AddPropertyForm setIsFormOpen={setIsFormOpen} />
         </FormSection>
       )}
     </>
   );
 }
 
-function HeroSection({ setIsOpen }) {
+function HeroSection({ setIsFormOpen }) {
   const [range, setRange] = useState(16);
   const [showTooltip, setShowTooltip] = useState(false);
 
@@ -83,7 +83,7 @@ function HeroSection({ setIsOpen }) {
           </div>
           <button
             className="mt-6 lg:ml-61 bg-red-500 hover:bg-red-600 text-white py-3 px-6 rounded-lg shadow-md transition"
-            onClick={() => setIsOpen(true)}
+            onClick={() => setIsFormOpen(true)}
           >
             💵 Apri il tuo BnB
           </button>
@@ -277,13 +277,13 @@ function InfoSection2() {
   );
 }
 
-function FormSection({ children, setIsOpen }) {
+function FormSection({ children, setIsFormOpen }) {
   return (
     <section className="fixed inset-0 flex items-center justify-center z-50 bg-black/80">
       <div className="bg-white p-6 rounded-lg shadow-xl w-[600px] relative animate-fade-in">
         <button
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-          onClick={() => setIsOpen(false)}
+          onClick={() => setIsFormOpen(false)}
         >
           ✖️
         </button>
