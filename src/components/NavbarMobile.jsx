@@ -18,7 +18,7 @@ function NavbarMobile() {
   return (
     <>
       {isVisible && (
-        <nav className="bg-[#fcfcfc] bottom-[-1px] w-screen py-3 border-t-2 rounded-2xl border-t-stone-300 z-30 fixed grid grid-cols-3 md:hidden text-stone-900">
+        <nav className="bg-[#fcfcfc] bottom-[-1px] w-screen py-3 border-t-2 rounded-2xl border-t-stone-300 z-30 fixed grid grid-cols-4 md:hidden text-stone-900">
           <NavLink
             to="/search"
             className={({ isActive }) =>

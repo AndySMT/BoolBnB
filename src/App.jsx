@@ -15,7 +15,7 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RefsProvider>
+      {/* <RefsProvider> */}
         <BrowserRouter>
           <Routes>
             <Route path="/" Component={DefaultLayout}>
@@ -35,7 +35,7 @@ function App() {
             </Route>
           </Routes>
         </BrowserRouter>
-      </RefsProvider>
+      {/* </RefsProvider> */}
     </QueryClientProvider>
   );
 }

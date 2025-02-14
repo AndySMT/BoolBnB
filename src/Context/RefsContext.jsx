@@ -1,6 +1,5 @@
 import { createContext, useContext, useRef } from "react";
 
-
 const refsContext = createContext();
 
 const RefsProvider = ({ children }) => {
