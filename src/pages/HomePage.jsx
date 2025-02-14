@@ -47,7 +47,7 @@ function SearchAndFilterSection({ activeFilter, onFilterChange }) {
     ];
 
     return (
-        <div className="border-b p-3 bg-white w-screen border-gray-300 fixed md:sticky top-[-1px] sm:top-19 z-20 rounded-b-2xl">
+        <div className="border-b p-3 bg-white w-screen border-gray-300 fixed md:sticky top-[-1px] sm:top-20 z-20 rounded-b-2xl">
             <div className="overflow-x-auto">
                 <div className="flex justify-center gap-10 min-w-max px-2 [&>div]:w-[40px]">
                     {filters.map((filter) => (

@@ -6,9 +6,33 @@ import { useRefsContext } from "../Context/RefsContext";
 import { PiBookmarks } from "react-icons/pi";
 
 const Header = () => {
+    const { jumboRef, headerRef } = useRefsContext();
+    const location = useLocation();
+
+    const isVisible = useScroll(
+        jumboRef.current?.offsetHeight - headerRef.current?.offsetHeight / 1.5
+    );
+
+    const bookLinkClass = `
+        ${
+            !isVisible &&
+            "visible sm:opacity-100 sm:!translate-x-0 sm:!translate-y-0"
+        }  
+        ${
+            location.pathname === "/" &&
+            "invisible sm:opacity-0 sm:translate-x-[50px] sm:translate-y-[20px] lg:translate-x-[-250px] lg:translate-y-[20px] transition-all duration-500"
+        }  
+        hidden sm:block bg-[#d4c685] py-2 rounded-md border-2 border-stone-500 hover:bg-[#cabc7d] cursor-pointer
+        min-w-72 px-16 text-lg font-semibold text-stone-900`;
+
     return (
         <>
-            <HeaderComp>
+            <HeaderComp
+                jumboRef={jumboRef}
+                headerRef={headerRef}
+                isVisible={isVisible}
+                location={location}
+            >
                 <Link to="/">
                     <img
                         src="/bed-and-breakfast.png"
@@ -16,7 +40,12 @@ const Header = () => {
                         className="w-10 h-10"
                     />
                 </Link>
-                <div className="flex gap-8">
+                {/* Book Now */}
+                <Link to={"search"} className={bookLinkClass}>
+                    Cerca l'alloggio che fa per te
+                </Link>
+                {/* Nav */}
+                <nav className="flex gap-8">
                     <HeaderLink
                         to={"/addproperty"}
                         text={"Affitta con BoolB&B"}
@@ -26,7 +55,7 @@ const Header = () => {
                     <HeaderLink to={"/favourites"} text={"I tuoi preferiti"}>
                         <PiBookmarks className="text-xl" />
                     </HeaderLink>
-                </div>
+                </nav>
             </HeaderComp>
         </>
     );
@@ -37,7 +66,8 @@ function HeaderLink({ to, text, children }) {
         <NavLink
             to={to}
             className={({ isActive }) =>
-                "flex items-center gap-1 pb-1 px-1 text-stone-600" + (isActive ? " text-stone-900 font-semibold" : "")
+                "flex items-center gap-1 pb-1 px-1 text-stone-600" +
+                (isActive ? " text-stone-900 font-semibold" : "")
             }
         >
             {children}
@@ -46,16 +76,8 @@ function HeaderLink({ to, text, children }) {
     );
 }
 
-function HeaderComp({ children }) {
-    const location = useLocation();
+function HeaderComp({ children, headerRef, isVisible: transAnim, location }) {
     const [isVisible, setIsVisible] = useState(true);
-
-    const { jumboRef, headerRef } = useRefsContext();
-
-    // bad practice => numero magico: altezza in px della jumbo
-    const transAnim = useScroll(
-        jumboRef.current?.offsetHeight - headerRef.current?.offsetHeight / 2
-    );
 
     useEffect(() => {
         location.pathname === "/" ? setIsVisible(true) : setIsVisible(false);
