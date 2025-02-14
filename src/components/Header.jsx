@@ -9,10 +9,13 @@ const Header = () => {
     const { jumboRef, headerRef } = useRefsContext();
     const location = useLocation();
 
+    // booleano controllato dallo scroll della window, useScroll prende come param l'offset
     const isVisible = useScroll(
         jumboRef.current?.offsetHeight - headerRef.current?.offsetHeight / 1.5
     );
 
+    // isVisible controlla la visibilita del bookLink
+    // location limita l'animazione in HomePage ("/")
     const bookLinkClass = `
         ${
             !isVisible &&
@@ -76,17 +79,19 @@ function HeaderLink({ to, text, children }) {
     );
 }
 
-function HeaderComp({ children, headerRef, isVisible, location }) {
-    const [isMobile, setIsMobile] = useState(true);
+function HeaderComp({ children, headerRef, isVisible: isNotTriggeredAnim, location }) {
+    const [isVisible, setIsVisible] = useState(true);
 
+    // controllo della visibilita dell header in base alla location pathname
     useEffect(() => {
-        location.pathname === "/" ? setIsMobile(true) : setIsMobile(false);
+        location.pathname === "/" ? setIsVisible(true) : setIsVisible(false);
     }, [location.pathname]);
     return (
         <header
             ref={headerRef}
-            className={`${!isVisible && "-translate-y-20"} ${
-                !isMobile && "hidden sm:flex"
+            // 
+            className={`${!isNotTriggeredAnim && "-translate-y-20"} ${
+                !isVisible && "hidden sm:flex"
             } 
             lg:px-[4vw] items-center rounded-b-2xl sm:rounded-b-none sm:!-translate-0 flex 
             bg-linear-90/oklch sm:drop-shadow-lg from-15% from-[#d4c685] to-[#a7d3a6] text-center p-5 
