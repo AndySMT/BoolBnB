@@ -41,7 +41,7 @@ function NavbarMobile() {
             <span className="capitalize text-sm">Home</span>
           </NavLink>
           <NavLink
-            to="detail/:id/preferiti"
+            to="/favourites"
             className={({ isActive }) =>
               "flex justify-center items-center  flex-col " +
               (isActive ? "text-[#3c9b3b]" : "")
