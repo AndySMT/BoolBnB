@@ -1,41 +1,43 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DefaultLayout from "./pages/DefaultLayout";
-import HomePage from "./pages/HomePage";
 import SearchPropertyPage from "./pages/SearchPropertyPage";
 import AddPropertyPage from "./pages/AddPropertyPage";
 import PropertyDetail from "./pages/PropertyDetailPage";
-// import { GlobalProvider } from "./Context/GlobalContext";
+import ErrorPage from "./pages/ErrorPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RefsProvider } from "./Context/RefsContext";
+import { lazy, Suspense } from "react";
+import FavouritesPage from "./pages/FavouritesPage";
+const LazyHomePage = lazy(() => import("./pages/HomePage"));
 
 const queryClient = new QueryClient();
 
-// ! NON USARE GlobalProvider => GUARDARE cartella hooks
 function App() {
-    return (
-        <QueryClientProvider client={queryClient}>
-            {/* <GlobalProvider> */}
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/" Component={DefaultLayout}>
-                            <Route index Component={HomePage} />
-                            <Route
-                                path="search"
-                                Component={SearchPropertyPage}
-                            />
-                            <Route
-                                path="addproperty"
-                                Component={AddPropertyPage}
-                            />
-                            <Route
-                                path="detail/:id"
-                                Component={PropertyDetail}
-                            />
-                        </Route>
-                    </Routes>
-                </BrowserRouter>
-            {/* </GlobalProvider> */}
-        </QueryClientProvider>
-    );
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RefsProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" Component={DefaultLayout}>
+              <Route
+                index
+                element={
+                  <Suspense fallback={<>Suspense Loading...</>}>
+                    <LazyHomePage />
+                  </Suspense>
+                }
+              />
+              <Route path="search" Component={SearchPropertyPage} />
+              <Route path="addproperty" Component={AddPropertyPage} />
+              <Route path="detail/:id" Component={PropertyDetail} />
+              <Route path="favourites" Component={FavouritesPage} />
+              <Route path="*" Component={ErrorPage} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </RefsProvider>
+    </QueryClientProvider>
+  );
 }
 
 export default App;

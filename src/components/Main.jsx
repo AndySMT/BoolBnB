@@ -1,7 +1,7 @@
 import React from "react";
 
 function Main({ children }) {
-    return <main className="">{children}</main>;
+    return <main className="pb-16">{children}</main>;
 }
 
 export default Main;
