@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import style from "../components/ContactHost.module.css";
 import axios from "axios";
 import { baseUrl, contactEndpoint } from "../globals/apiUrls";
 
