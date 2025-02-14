@@ -7,7 +7,9 @@ const useScroll = (threshold = 200) => {
         const handleScroll = () => {
             const scrollTop =
                 window.scrollY || document.documentElement.scrollTop;
-            setIsVisible(scrollTop < threshold);
+            scrollTop === 0
+                ? setIsVisible(true)
+                : setIsVisible(scrollTop < threshold);
         };
 
         window.addEventListener("scroll", handleScroll);
