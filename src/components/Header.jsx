@@ -1,16 +1,9 @@
-import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
-import {
-    IoIosStarOutline,
-    IoMdHeartEmpty,
-    IoMdSearch,
-    IoMdAddCircleOutline,
-} from "react-icons/io";
-import { AiFillHome } from "react-icons/ai";
+import React, { useEffect, useState } from "react";
+import { IoIosStarOutline } from "react-icons/io";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import useScroll from "../hooks/useScroll";
-import NavbarMobile from "./NavbarMobile";
 import { useRefsContext } from "../Context/RefsContext";
+import { PiBookmarks } from "react-icons/pi";
 
 const Header = () => {
     return (
@@ -23,17 +16,35 @@ const Header = () => {
                         className="w-10 h-10"
                     />
                 </Link>
-                <NavLink
-                    to={"/addproperty"}
-                    className="flex items-center gap-1"
-                >
-                    <IoIosStarOutline className="text-xl" />
-                    <span>Rent with BoolB&B</span>
-                </NavLink>
+                <div className="flex gap-8">
+                    <HeaderLink
+                        to={"/addproperty"}
+                        text={"Affitta con BoolB&B"}
+                    >
+                        <IoIosStarOutline className="text-xl" />
+                    </HeaderLink>
+                    <HeaderLink to={"/favourites"} text={"I tuoi preferiti"}>
+                        <PiBookmarks className="text-xl" />
+                    </HeaderLink>
+                </div>
             </HeaderComp>
         </>
     );
 };
+
+function HeaderLink({ to, text, children }) {
+    return (
+        <NavLink
+            to={to}
+            className={({ isActive }) =>
+                "flex items-center gap-1 pb-1 px-1 text-stone-600" + (isActive ? " text-stone-900 font-semibold" : "")
+            }
+        >
+            {children}
+            <span>{text}</span>
+        </NavLink>
+    );
+}
 
 function HeaderComp({ children }) {
     const location = useLocation();
@@ -54,9 +65,10 @@ function HeaderComp({ children }) {
             ref={headerRef}
             className={`${!transAnim && "-translate-y-20"} ${
                 !isVisible && "hidden sm:flex"
-            }
-            rounded-b-2xl sm:rounded-b-none
-            sm:!-translate-0 flex bg-linear-90/oklch sm:drop-shadow-lg from-15% from-[#d4c685] to-[#a7d3a6] text-center p-5 lg:px-8 justify-between fixed sm:sticky w-screen top-[-1px] z-40 text-stone-800 text-sm transition-all duration-200 ease-in`}
+            } 
+            lg:px-[4vw] items-center rounded-b-2xl sm:rounded-b-none sm:!-translate-0 flex 
+            bg-linear-90/oklch sm:drop-shadow-lg from-15% from-[#d4c685] to-[#a7d3a6] text-center p-5 
+            justify-between fixed sm:sticky w-screen top-[-1px] z-40 text-stone-800 text-sm transition-all duration-200 ease-in`}
         >
             {children}
         </header>
