@@ -1,10 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
 import { useGetPropertiesQuery } from "../hooks/useDataQuery";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { useRefsContext } from "../Context/RefsContext";
 import Jumbotron from "../components/Jumbotron";
 
 function HomePage() {

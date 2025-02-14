@@ -5,15 +5,6 @@ import * as yup from "yup";
 import axios from "axios";
 import { baseUrl, contactEndpoint } from "../globals/apiUrls";
 
-const schema = yup.object().shape({
-    nome: yup.string().required("Inserisci un nome"),
-    email: yup
-        .string()
-        .email("Inserisci una mail valida")
-        .required("Inserisci il tuo indirizzo email"),
-    message: yup.string().required("Inserisci una descrizione"),
-});
-
 function PaginaContact({ showContactForm, propertyId }) {
     const [messageSent, setMessageSent] = useState(false);
     const [error, setError] = useState(false);
@@ -23,7 +14,7 @@ function PaginaContact({ showContactForm, propertyId }) {
         handleSubmit,
         formState: { errors },
         reset,
-    } = useForm({ resolver: yupResolver(schema) });
+    } = useForm({ resolver: yupResolver(schema) }); // schema si trova sotto
 
     const onSubmit = (data) => {
        
@@ -177,112 +168,13 @@ function PaginaContact({ showContactForm, propertyId }) {
     );
 }
 
+const schema = yup.object().shape({
+    nome: yup.string().required("Inserisci un nome"),
+    email: yup
+        .string()
+        .email("Inserisci una mail valida")
+        .required("Inserisci il tuo indirizzo email"),
+    message: yup.string().required("Inserisci una descrizione"),
+});
+
 export default PaginaContact;
-
-// =============================================================================
-//
-// =============================================================================
-
-/* const newPost = {
-  nome: "",
-  email: "",
-  message: "",
-}; */
-
-/* const [formData, setFormData] = useState(); */
-/* const [formError, setFormError] = useState(""); */
-
-// const handleSubmit = (e) => {
-//     e.preventDefault();
-
-//     // Controllo del nome
-//     if (!formData.nome.trim()) {
-//         setFormError("Per favore inserisci un nome");
-//         setTimeout(() => setFormError(""), 2000);
-//         return;
-//     }
-
-//     // Controllo dell'email
-//     const email = formData.email;
-//     if (!email || email.trim() === "") {
-//         setFormError("Per favore inserisci una email");
-//         return;
-//     }
-//     if (email.indexOf("@") === -1 || email.indexOf(".") === -1) {
-//         setFormError("Per favore inserisci una email valida");
-//         setTimeout(() => setFormError(""), 2000);
-//         return;
-//     }
-//     const [localPart, domainPart] = email.split("@");
-//     if (
-//         !localPart ||
-//         !domainPart ||
-//         localPart.trim() === "" ||
-//         domainPart.trim() === ""
-//     ) {
-//         setFormError("Per favore inserisci una email valida");
-//         setTimeout(() => setFormError(""), 2000);
-//         return;
-//     }
-//     if (domainPart.indexOf(".") === -1) {
-//         setFormError("Per favore inserisci una email valida");
-//         setTimeout(() => setFormError(""), 2000);
-//         return;
-//     }
-//     const [domainName, extension] = domainPart.split(".");
-//     if (
-//         !domainName ||
-//         !extension ||
-//         domainName.trim() === "" ||
-//         extension.trim() === ""
-//     ) {
-//         setFormError("Per favore inserisci una email valida");
-//         setTimeout(() => setFormError(""), 2000);
-//         return;
-//     }
-
-//     // Controllo del messaggio
-//     if (!formData.message.trim()) {
-//         setFormError("Per favore inserisci un messaggio");
-//         setTimeout(() => setFormError(""), 2000);
-//         return;
-//     }
-
-//     setFormError("");
-//     setMessageSent(true);
-//     setTimeout(() => {
-//         setMessageSent(false);
-//     }, 2000);
-//     setFormData(newPost);
-// };
-
-{
-    /* messagio di errore  */
-}
-{
-    /* {formError && (
-            <div className="text-red-500 mt-4">
-              <div className="relative w-full m-auto max-w-80 flex flex-wrap items-center justify-center py-1 pl-4 pr-14 rounded-lg text-base font-medium [transition:all_0.5s_ease] border-solid border border-[#f85149] text-[#b22b2b] [&_svg]:text-[#b22b2b] group bg-[linear-gradient(#f851491a,#f851491a)]">
-                <p className="flex flex-row items-center mr-auto gap-x-2">
-                  <svg
-                    stroke="currentColor"
-                    fill="none"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    height="28"
-                    width="28"
-                    className="h-7 w-7"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-                    <path d="M12 9v4"></path>
-                    <path d="M12 17h.01"></path>
-                  </svg>
-                  {formError}
-                </p>
-              </div>
-            </div>
-          )} */
-}

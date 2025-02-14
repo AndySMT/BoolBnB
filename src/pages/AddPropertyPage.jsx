@@ -1,76 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
-import { CgDanger } from "react-icons/cg";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { useAddPropertyQuery } from "../hooks/useDataQuery";
 import AddPropertyForm from "../components/AddPropertyForm";
-import { useNavigate } from "react-router-dom";
-/* import { useForm, SubmitHandleer } from "react-hook-form"; */
-
-// TODO: RIFARE VALIDAZIONE SPECIFICA: VEDERE handleSubmit
 
 function AddPropertyPage() {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [errors, setErrors] = useState({});
-  const { mutate, isSuccess, isError, error, data } = useAddPropertyQuery();
-  const navigate = useNavigate();
-
-  // * ACTIONS
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    let isValid = true;
-    // oggetto formData per l'encoding automatico
-    const formDataToSend = new FormData();
-    // creo un array degli elementi del form
-    const formArray = Array.from(event.target.elements);
-    // creo un oggetto a partire dagli elementi di input
-    // prendo solo gli elementi necessari, es text number.. NO submit NO file ecc
-    const formObj = formArray.reduce((acc, curr) => {
-      if (
-        curr.type == "text" ||
-        curr.type == "number" ||
-        curr.tagName.toLowerCase() == "select"
-      ) {
-        return { ...acc, [curr.name]: curr.value };
-      }
-      return acc;
-    }, {});
-    // validation, da completare
-    for (const [key, value] of Object.entries(formObj)) {
-      // generalizzato => specificare in base a key il tipo di validazione
-      // usare la var reattiva errors per aggiungere gli errori di validazione per ogni campo
-      if (!value || !value.trim().length) {
-        isValid = false;
-        console.log("campi non validati");
-      } else {
-        formDataToSend.append(key, value);
-      }
-    }
-    if (!isValid) return;
-    // appendo il tipo file al formData
-    if (selectedFile) {
-      formDataToSend.append("file", selectedFile);
-    }
-    // eseguo la mutazione per la chiamata in post
-    // vedere useAddPropertyQuery
-    mutate(formDataToSend);
-  };
-
-  useEffect(() => {
-    // isError indica che la query è fallita
-    if (isError) {
-      console.log(error.message);
-    }
-    if (isSuccess) {
-      // isSuccess indica la proprieta salvata nel db correttamente
-      console.log(data);
-      setIsOpen(false);
-      setSelectedFile(null);
-      data.id && navigate(`/detail/${data.id}`);
-    }
-  }, [isSuccess, isError]);
 
   return (
     <>
@@ -82,13 +17,9 @@ function AddPropertyPage() {
       {isOpen && (
         <FormSection
           setIsOpen={setIsOpen}
-          setSelectedFile={setSelectedFile}
-          handleSubmit={handleSubmit}
         >
           <AddPropertyForm
-            setSelectedFile={setSelectedFile}
-            handleSubmit={handleSubmit}
-            errors={errors}
+            setIsOpen={setIsOpen}
           />
         </FormSection>
       )}
@@ -176,7 +107,7 @@ function InfoSection() {
   );
 }
 
-function FormSection({ setIsOpen, children }) {
+function FormSection({ children }) {
   return (
     <section className="fixed inset-0 flex items-center justify-center z-50 bg-black/80">
       <div className="bg-white p-6 rounded-lg shadow-xl w-[600px] relative animate-fade-in">
@@ -196,35 +127,3 @@ function FormSection({ setIsOpen, children }) {
 }
 
 export default AddPropertyPage;
-
-// const validateForm = () => {
-//     let newErrors = {};
-//     const requiredFields = [
-//         "title",
-//         "address",
-//         "city",
-//         "square_meters",
-//         "pricePerNight",
-//         "n_bedrooms",
-//         "n_beds",
-//         "n_bathrooms",
-//     ];
-//     requiredFields.forEach((field) => {
-//         if (!formData[field]?.trim()) {
-//             newErrors[field] = (
-//                 <span className="flex items-center gap-1 text-red-500">
-//                     <CgDanger /> Required
-//                 </span>
-//             );
-//         }
-//     });
-//     if (formData.title && formData.title.length < 10) {
-//         newErrors.title = (
-//             <span className="flex items-center gap-1 text-red-500">
-//                 <CgDanger /> Title must be at least 10 characters
-//             </span>
-//         );
-//     }
-//     setErrors(newErrors);
-//     return Object.keys(newErrors).length === 0;
-// };

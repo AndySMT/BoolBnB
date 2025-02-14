@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useRefsContext } from "../Context/RefsContext";
-import { easeIn } from "motion";
 
 const animationConfig = {
     section: {

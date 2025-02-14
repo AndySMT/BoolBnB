@@ -6,7 +6,7 @@ import { TbRulerMeasure } from "react-icons/tb";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { baseUrl, imagesUrl, propsEndpoint } from "../globals/apiUrls";
+import {  imagesUrl } from "../globals/apiUrls";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
