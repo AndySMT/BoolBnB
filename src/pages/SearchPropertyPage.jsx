@@ -1,11 +1,15 @@
 import React from 'react'
 import { useState } from 'react';
 import { useGetPropertiesQuery } from "../hooks/useDataQuery";
+import CardsSection from "../components/CardsSection";
+import Card from "../components/Card";
 // import { useRef, useEffect } from 'react'
 
 function SearchPropertyPage() {
+  //! Stato per il loading, l'errore e i dati
   const { isLoading, isError, data } = useGetPropertiesQuery();
-  // const [activeFilter, setActiveFilter] = useState(null);
+  //! Stato per i filtri
+  const [filter, setFilter] = useState(null);
   //! Utilizza useState per tracciare lo stato "active"
   const [isActive, setIsActive] = useState(false);
 
@@ -23,6 +27,9 @@ function SearchPropertyPage() {
     setIsActive(false);  //? Disattiva lo stato quando l'input perde il focus
   };
 
+  const filteredProperties = !filter ? data : data.filter(prop => prop.property_type?.toLowerCase().includes(filter.toLowerCase()));
+
+
   return (
     <>
       <form
@@ -39,7 +46,7 @@ function SearchPropertyPage() {
           {/* property_type section */}
           <div>
             <label htmlFor="propriety_type">Tipo di proprietà</label>
-            <select name='propriety_type' id='propriety_type' className='h-12 p-3 w-full bg-[#e2e2e2] rounded-3xl shadow-[0_7px_7px_rgba(0,0,0,0.25)] focus:outline-none'>
+            <select name='propriety_type' id='propriety_type' className='h-12 p-3 w-full bg-[#e2e2e2] rounded-3xl shadow-[0_7px_7px_rgba(0,0,0,0.25)] focus:outline-none' value={filter.data}>
               <option value="prop">Scegli la proprietà</option>
               <option value="villa">Villa</option>
               <option value="appartamento">Appartamento</option>
@@ -126,6 +133,11 @@ function SearchPropertyPage() {
           </div>
         </div>
       )}
+      <CardsSection title={""}>
+        {filteredProperties?.map((prop, index) => (
+          <Card key={prop.id} index={index} property={prop} />
+        ))}
+      </CardsSection>
     </>
   )
 }
