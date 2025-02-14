@@ -23,7 +23,7 @@ const Header = () => {
             "invisible sm:opacity-0 sm:translate-x-[50px] sm:translate-y-[20px] lg:translate-x-[-250px] lg:translate-y-[20px] transition-all duration-500"
         }  
         hidden sm:block bg-[#d4c685] py-2 rounded-md border-2 border-stone-500 hover:bg-[#cabc7d] cursor-pointer
-        min-w-72 px-16 text-lg font-semibold text-stone-900`;
+        min-w-72 lg:px-16 text-lg font-semibold text-stone-900`;
 
     return (
         <>
@@ -76,17 +76,17 @@ function HeaderLink({ to, text, children }) {
     );
 }
 
-function HeaderComp({ children, headerRef, isVisible: transAnim, location }) {
-    const [isVisible, setIsVisible] = useState(true);
+function HeaderComp({ children, headerRef, isVisible, location }) {
+    const [isMobile, setIsMobile] = useState(true);
 
     useEffect(() => {
-        location.pathname === "/" ? setIsVisible(true) : setIsVisible(false);
+        location.pathname === "/" ? setIsMobile(true) : setIsMobile(false);
     }, [location.pathname]);
     return (
         <header
             ref={headerRef}
-            className={`${!transAnim && "-translate-y-20"} ${
-                !isVisible && "hidden sm:flex"
+            className={`${!isVisible && "-translate-y-20"} ${
+                !isMobile && "hidden sm:flex"
             } 
             lg:px-[4vw] items-center rounded-b-2xl sm:rounded-b-none sm:!-translate-0 flex 
             bg-linear-90/oklch sm:drop-shadow-lg from-15% from-[#d4c685] to-[#a7d3a6] text-center p-5 

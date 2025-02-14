@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 
 const useScroll = (threshold = 200) => {
     const [isVisible, setIsVisible] = useState(true);
