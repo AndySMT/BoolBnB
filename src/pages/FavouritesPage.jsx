@@ -177,7 +177,8 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
                             </svg>
                         </button> Elimina
                     </button>
-                    <button
+                    <Link
+                        to={`/detail/${property.id}`}
                         class="group relative px-10 py-5 rounded-xl bg-green-600 text-white font-bold tracking-widest uppercase text-sm border-b-4 border-green-400/50 hover:border-green-400 transition-all duration-300 ease-in-out hover:text-green-200 shadow-[0_10px_20px_rgba(34,197,94,0.15)] hover:shadow-[0_15px_30px_rgba(34,197,94,0.25)] active:border-b-0 active:translate-y-1 scale-75"
                     >
                         <span class="flex items-center gap-3 relative z-10">
@@ -196,7 +197,7 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
                         <div
                             class="absolute -inset-1 rounded-xl bg-gradient-to-br from-green-500/20 to-lime-500/20 blur-2xl group-hover:blur-xl transition-all duration-300 -z-10 opacity-0 group-hover:opacity-100"
                         ></div>
-                    </button>
+                    </Link>
 
                 </div>
             </section>
