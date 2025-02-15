@@ -3,6 +3,8 @@ import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
 import { useGetPropertiesQuery } from "../hooks/useDataQuery";
 import { useRefsContext } from "../Context/RefsContext";
+import SkeleCard from "../components/SkeleCard";
+import { useNavigate } from "react-router-dom";
 
 function HomePage() {
     // Stato per i parametri di filtro
@@ -21,20 +23,31 @@ function HomePage() {
 const CardsSectionContainer = ({ params }) => {
     const { isLoading, isError, data, refetch } = useGetPropertiesQuery(params);
 
+    const navigate = useNavigate();
+
+    const skeleCardsArr = Array.from({ length: 8 });
+
     // Ricarica i dati ogni volta che i parametri cambiano
     useEffect(() => {
         refetch();
     }, [params]);
 
     // Gestione dello stato di caricamento e errore
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <pre>Error</pre>;
+    if (isError) {
+        navigate("*");
+    }
 
     return (
         <CardsSection title={""}>
-            {data.map((prop) => (
-                <Card key={prop.id} property={prop} />
-            ))}
+            {isLoading ? (
+                skeleCardsArr.map((_, index) => <SkeleCard key={index} />)
+            ) : (
+                <>
+                    {data.map((prop, index) => (
+                        <Card key={prop.id} property={prop} index={index} />
+                    ))}
+                </>
+            )}
         </CardsSection>
     );
 };

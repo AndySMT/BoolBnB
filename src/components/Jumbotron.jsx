@@ -6,26 +6,25 @@ const animationConfig = {
     section: {
         initial: { opacity: 0, y: -60 },
         animate: { opacity: 1, y: 0 },
-        transition: { duration: 1.7, ease: "easeOut" },
+        transition: { duration: 2, ease: "easeInOut" },
     },
     images: {
-        duration: 0.8,
-        delays: [0.6, 0.7, 0.8, 0.9],
+        duration: 1,
+        delays: [0.8, 0.9, 1, 1.1],
         easing: "easeInOut",
     },
 };
 
 function Jumbotron() {
     const { jumboRef, headerRef } = useRefsContext();
-    const location = useLocation();
 
-    return location.pathname !== "/" ? null : (
+    return (
         <motion.section
             ref={jumboRef}
             initial={animationConfig.section.initial}
             animate={animationConfig.section.animate}
             transition={animationConfig.section.transition}
-            className="md:h-[65vh] lg:h-[80vh] h-[87vh] relative z-30 bg-linear-90/oklch from-15% from-[#d4c685] to-[#a7d3a6] text-stone-800 text-center lg:text-start flex items-center p-6 px-3 lg:px-[10vw] lg:py-12 justify-center lg:gap-32 lg:[&>div]:w-1/2 rounded-b-4xl will-change-[opacity, transform]"
+            className="md:h-[65vh] lg:h-[80vh] h-[87vh] relative z-30 bg-linear-90/oklch from-15% from-[#d4c685] to-[#a7d3a6] text-stone-800 text-center lg:text-start flex items-center p-6 px-3 lg:px-[10vw] lg:py-12 justify-center lg:gap-32 lg:[&>div]:w-1/2 rounded-b-4xl will-change-[opacity, transform, translate]"
         >
             <JumboSlogan jumboRef={jumboRef} headerRef={headerRef} />
             <JumboImages />
@@ -50,7 +49,7 @@ function JumboSlogan({ headerRef, jumboRef }) {
             className="flex flex-col gap-8 items-center md:mx-20 lg:mx-0 lg:items-start"
             initial={initial}
             animate={{ opacity: 1, x: 0, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
+            transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
         >
             <div
                 // style={{ fontFamily: ` "Delius", serif` }}
