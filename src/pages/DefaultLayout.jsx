@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import Main from "../components/Main";
@@ -11,12 +11,15 @@ const LazyJumbotron = lazy(() => import("../components/Jumbotron"));
 
 function DefaultLayout() {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    const location = useLocation();
     return (
         <RefsProvider>
             <Header />
-            <Suspense fallback={<SkeleJumbotron/>}>
-                <LazyJumbotron />
-            </Suspense>
+            {location.pathname === "/" && (
+                <Suspense fallback={<SkeleJumbotron />}>
+                    <LazyJumbotron />
+                </Suspense>
+            )}
             <Main>
                 <Outlet />
                 <NavbarMobile />

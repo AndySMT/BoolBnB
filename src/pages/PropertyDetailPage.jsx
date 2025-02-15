@@ -19,6 +19,7 @@ import {
     useGetReviewsQuery,
 } from "../hooks/useDataQuery";
 import { useRefsContext } from "../Context/RefsContext";
+import SkeleDetailSection from "../components/SkeleDetailSection";
 const schema = yup.object().shape({
     userName: yup.string().trim().required("Il nome è obbligatorio"),
     reviewText: yup.string().trim().required("La recensione è obbligatoria"),
@@ -67,7 +68,7 @@ function PropertyDetail() {
     } = useGetReviewsQuery(id);
     //* RETURNS
     // attesa risposta
-    if (isLoadingP || isLoadingR) return <div>Loading...</div>;
+    if (isLoadingP || isLoadingR) return <SkeleDetailSection/>;
     // chiamata fallita
     if (isErrorP || isErrorR) return <pre>Error</pre>;
     // risposta ricevuta

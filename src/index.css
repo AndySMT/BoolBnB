@@ -87,8 +87,9 @@ body {
     border-radius: 10px;
 }
 
-.card.is-loading {
+.is-loading {
     .image,
+    h1, button
     span,
     p {
         border: 1px solid rgba(128, 128, 128, 0.1);
@@ -105,7 +106,7 @@ body {
         color: transparent;
     }
 }
-.jumbo.is-loading {
+.is-loading {
     .image,
     h1,
     p,
@@ -121,17 +122,12 @@ body {
         );
         border-radius: 5px;
         background-size: 200% 100%;
-        animation: 1.5s shine2 linear infinite;
+        animation: 1.5s shine linear infinite;
         color: transparent;
     }
 }
 
 @keyframes shine {
-    to {
-        background-position-x: -200%;
-    }
-}
-@keyframes shine2 {
     to {
         background-position-x: -200%;
     }

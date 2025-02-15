@@ -17,9 +17,8 @@ const animationConfig = {
 
 function Jumbotron() {
     const { jumboRef, headerRef } = useRefsContext();
-    const location = useLocation();
 
-    return location.pathname !== "/" ? null : (
+    return (
         <motion.section
             ref={jumboRef}
             initial={animationConfig.section.initial}

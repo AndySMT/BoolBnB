@@ -78,7 +78,7 @@ function Card({ property, index }) {
                         </div>
                     )}
                     {/* hearth */}
-                    <button className="absolute top-3 right-3 p-2 transition-opacity z-10">
+                    <button id={id} className="absolute top-3 right-3 p-2 transition-opacity z-10">
                         <FaHeart className="text-2xl hover:text-red-500 text-white opacity-70 drop-shadow-lg hover:cursor-pointer" />
                     </button>
                 </div>
