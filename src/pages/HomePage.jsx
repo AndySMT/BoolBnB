@@ -50,7 +50,7 @@ const CardsSectionContainer = ({ params }) => {
         if (currPage > 1 && isFetched) {
             window.scroll({
                 left: 0,
-                top: document.documentElement.offsetHeight + 400,
+                top: document.documentElement.scrollTop + 600, // ? offset da calcolare invece con l'altezza della card (useRefsContext)
                 behavior: "smooth",
             });
         }
@@ -79,7 +79,7 @@ const CardsSectionContainer = ({ params }) => {
                     {/* Skeleton durante il fetch */}
                     {(isFetchingNextPage || isLoading) && (
                         <>
-                            {Array.from({ length: 6 }).map((_, index) => (
+                            {Array.from({ length: 4 }).map((_, index) => (
                                 <SkeleCard key={index} />
                             ))}
                         </>
