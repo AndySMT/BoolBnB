@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { FaHeart } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
+
 
 function StarsComponent() {
   const [rating, setRating] = useState(null);
@@ -18,9 +19,9 @@ function StarsComponent() {
               onChange={() => setRating(currentRate)}
               style={{ display: "none" }}
             />
-            <FaHeart
-              className={`max-w-96 cursor-pointer ${currentRate <= rating ? "text-red-600" : "text-stone-300"}`}
-            />
+            <FaStar className={`max-w-96 cursor-pointer ${currentRate <= rating ? "text-yellow-500" : "text-stone-300"}`} />
+
+
           </label>
         );
       })}

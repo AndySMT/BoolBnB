@@ -15,11 +15,12 @@ const initialOptions = {
 };
 
 function SearchPropertyPage() {
+
     const [inputValue, setInputValue] = useState(""); // controllo dinamico dell'input della citta
     const [params, setParams] = useState({}); // per salvare l'oggetto params per la query in get
     const [isEnabled, setIsEnabled] = useState(false); // booleano che abilita o no il fetch (controllare useGetPropertiesQuery)
     const [optSelected, setOptSelected] = useState(initialOptions); // oggetto che salva le options
-
+    
     const { data, isLoading, isError, refetch } = useGetPropertiesQuery(
         params,
         isEnabled

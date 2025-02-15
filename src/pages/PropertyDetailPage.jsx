@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { PiBookmarks } from "react-icons/pi";
+import { CiShare2 } from "react-icons/ci";
 import { MdBed, MdBathroom } from "react-icons/md";
 import { TbRulerMeasure } from "react-icons/tb";
 import { FaMapMarkerAlt, FaBed } from "react-icons/fa";
@@ -12,6 +13,9 @@ import { MdOutlineLocationCity } from "react-icons/md";
 import { imagesUrl } from "../globals/apiUrls";
 import PaginaContact from "../components/ContactHost";
 import MyMapComponent from "../components/MapComponent";
+import StarsComponent from "../components/StarsComponent"
+import Heart from "../components/Heart";
+import PopUp from "./PopUp";
 import "leaflet/dist/leaflet.css";
 import {
     useAddReviewQuery,
@@ -19,11 +23,13 @@ import {
     useGetReviewsQuery,
 } from "../hooks/useDataQuery";
 import { useRefsContext } from "../Context/RefsContext";
+import SkeleDetailSection from "../components/SkeleDetailSection";
 const schema = yup.object().shape({
     userName: yup.string().trim().required("Il nome è obbligatorio"),
     reviewText: yup.string().trim().required("La recensione è obbligatoria"),
 });
 function PropertyDetail() {
+
     const { id } = useParams();
     const { mutate } = useAddReviewQuery(id);
     const navigate = useNavigate();
@@ -50,7 +56,7 @@ function PropertyDetail() {
             favouritesIds.push(property.id);
             localStorage.setItem("favourites", JSON.stringify(favouritesIds));
         }
-        navigate("/favourites");
+        // navigate("/favourites");
     };
     //* QUERIES
     // query per la proprieta
@@ -65,11 +71,13 @@ function PropertyDetail() {
         isError: isErrorR,
         data: reviews,
     } = useGetReviewsQuery(id);
+
+
     //* RETURNS
     // attesa risposta
-    if (isLoadingP || isLoadingR) return <div>Loading...</div>;
+    if (isLoadingP || isLoadingR) return <SkeleDetailSection />;
     // chiamata fallita
-    if (isErrorP || isErrorR) return <pre>Error</pre>;
+    if (isErrorP || isErrorR) navigate("*");
     // risposta ricevuta
     return (
         <>
@@ -175,21 +183,29 @@ function SectionDetails({ property, savePost, reviews }) {
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider">
                         {property.title}
                     </h1>
-                    <div className="hidden sm:flex gap-2 items-center whitespace-nowrap">
-                        {/* <StarsComponent /> */}
-                        <div className="flex items-center">
+                    <div className="hidden sm:flex gap-2 items-center text-2xl">
+                        {/* HEART */}
+                        <div className=" flex items-center p-1  rounded-xl boxShad ">
+                            <Heart propertyId={property.id} />
+
+                        </div>
+
+                        <div className="flex items-center boxShad p-3  rounded-xl">
+
+
                             {/* icona condividi */}
                             <span className="text-xs underline underline-offset-2">
-                                Condividi
+
+                                <CiShare2 />
                             </span>
                         </div>
+
                         <button
                             onClick={savePost}
-                            className="flex items-center cursor-pointer"
+                            className="flex items-center cursor-pointer boxShad p-1 rounded-xl"
                         >
                             <PiBookmarks className="text-2xl text-gray-700" />
                             <span className="text-xs underline underline-offset-2">
-                                Salva nei Preferiti
                             </span>
                         </button>
                     </div>
@@ -273,7 +289,7 @@ function SectionPosition({ property }) {
                         <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
                             <div className="flex items-center gap-1">
                                 <FaMapMarkerAlt />
-                                <span>Numero civico:</span>{" "}
+                                <span>Zip code:{property.zipcode}</span>
                             </div>
                             <span className="font-normal">{property.address_number}</span>
                         </div>
@@ -285,12 +301,19 @@ function SectionPosition({ property }) {
                             <span className="font-normal">{property.property_type}</span>
                         </div>
                     </div>
-                    <div className="my-6">
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quibusdam
-                        ipsa aspernatur corporis error, voluptates excepturi? Veniam
-                        reprehenderit provident voluptates animi.
+                    <div className="my-6 px-4 py-2 border rounded-lg whitespace-wrap">
+                        {property.city === "Roma" ? (
+                            "Elegante quartiere di Roma, molto strategico per la sua posizione, dove troverete negozi di ogni genere, supermercati, bar, tabaccherie, caffetterie e servizi di ristorazione da asporto e non."
+                        ) : property.city === "Milano" ? (
+                            "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
+                        ) : property.city === "Firenze" ? (
+                            "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
+                        ) : (
+                            `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`
+                        )}
                     </div>
                 </div>
+
                 {/* Mappa */}
                 <div className="lg:w-1/2 lg:py-8 lg:px-4">
                     <MyMapComponent property={property} />
@@ -308,18 +331,18 @@ function SectionHost() {
             <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400">
                 <section className="flex flex-col sm:flex-row justify-between gap-4">
                     {/* Informazioni sull'Host */}
-                    <div className="md:w-1/2 space-y-2">
+                    <div className="md:w-1/2 space-y-2 border  px-4 py-2 rounded-lg whitespace-wrap">
                         <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
                             Informazioni sull'Host
                         </h1>
                         <div className="flex items-center gap-2 text-lg">
                             <MdOutlineLocationCity />
-                            <span className="font-semibold">Nome dell'host:</span>{" "}
+                            <span className="font-semibold">Nome dell'host:</span>
                             <span>Nome</span>
                         </div>
                         <div className="flex items-center gap-2 text-lg">
                             <FaMapMarkerAlt />
-                            <span className="font-semibold">Cognome dell'host:</span>{" "}
+                            <span className="font-semibold">Cognome dell'host:</span>
                             <span>Cognome</span>
                         </div>
                         <div className="my-6">
@@ -386,6 +409,7 @@ function SectionRecensioni({ reviews }) {
 
 // SECTION FORM RECENSIONI
 function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
+    const [showConfirmation, setShowConfirmation] = useState(false);
     return (
         <>
             <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 ">
@@ -397,6 +421,9 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
                 </h1>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className=" flex border w-fit rounded-lg p-2 gap-1">
+                        Voto :  <StarsComponent />
+                    </div>
                     <input
                         type="text"
                         placeholder="Inserisci il tuo nome"
@@ -417,6 +444,17 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
                         Invia recensione
                     </button>
                 </form>
+                <PopUp
+                    isOpen={showConfirmation}
+
+                    onClose={() => setShowConfirmation(false)}
+
+                >
+
+                    <h2 className="text-green-600 text-lg font-bold">
+                        ✅ Recensione pubblicata con successo!
+                    </h2>
+                </PopUp>
             </section>
         </>
     );
