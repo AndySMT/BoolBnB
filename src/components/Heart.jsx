@@ -1,10 +1,10 @@
 import React from 'react'
-import { FaHeart } from "react-icons/fa";
+import { FiHeart } from "react-icons/fi"
 function Heart() {
     return (
         <div>
             <button >
-                <FaHeart className="text-2xl hover:text-red-500 text-white opacity-70 drop-shadow-lg hover:cursor-pointer" />
+                <FiHeart className="text-2xl hover:text-red-500 text-slate-900 opacity-70 drop-shadow-lg hover:cursor-pointer" />
             </button>
         </div>
     )

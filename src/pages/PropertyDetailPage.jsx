@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { PiBookmarks } from "react-icons/pi";
+import { CiShare2 } from "react-icons/ci";
 import { MdBed, MdBathroom } from "react-icons/md";
 import { TbRulerMeasure } from "react-icons/tb";
 import { FaMapMarkerAlt, FaBed } from "react-icons/fa";
@@ -14,6 +15,7 @@ import PaginaContact from "../components/ContactHost";
 import MyMapComponent from "../components/MapComponent";
 import StarsComponent from "../components/StarsComponent"
 import Heart from "../components/Heart";
+import PopUp from "./PopUp";
 import "leaflet/dist/leaflet.css";
 import {
     useAddReviewQuery,
@@ -26,6 +28,7 @@ const schema = yup.object().shape({
     reviewText: yup.string().trim().required("La recensione è obbligatoria"),
 });
 function PropertyDetail() {
+
     const { id } = useParams();
     const { mutate } = useAddReviewQuery(id);
     const navigate = useNavigate();
@@ -52,7 +55,7 @@ function PropertyDetail() {
             favouritesIds.push(property.id);
             localStorage.setItem("favourites", JSON.stringify(favouritesIds));
         }
-        navigate("/favourites");
+        // navigate("/favourites");
     };
     //* QUERIES
     // query per la proprieta
@@ -67,11 +70,13 @@ function PropertyDetail() {
         isError: isErrorR,
         data: reviews,
     } = useGetReviewsQuery(id);
+
+
     //* RETURNS
     // attesa risposta
     if (isLoadingP || isLoadingR) return <div>Loading...</div>;
-    // chiamata fallita
-    if (isErrorP || isErrorR) return <pre>Error</pre>;
+    // chiamata fallita return <pre>Error</pre>
+    if (isErrorP || isErrorR) navigate("*");
     // risposta ricevuta
     return (
         <>
@@ -177,29 +182,29 @@ function SectionDetails({ property, savePost, reviews }) {
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider">
                         {property.title}
                     </h1>
-                    <div className="hidden sm:flex gap-2 items-center">
+                    <div className="hidden sm:flex gap-2 items-center text-2xl">
                         {/* HEART */}
-                        <div className=" flex items-center p-1  rounded-xl boxShad bg-gray-400">
+                        <div className=" flex items-center p-1  rounded-xl boxShad ">
                             <Heart propertyId={property.id} />
+
                         </div>
 
-                        <div className="flex items-center">
+                        <div className="flex items-center boxShad p-3  rounded-xl">
 
 
                             {/* icona condividi */}
                             <span className="text-xs underline underline-offset-2">
 
-                                Condividi
+                                <CiShare2 />
                             </span>
                         </div>
 
                         <button
                             onClick={savePost}
-                            className="flex items-center cursor-pointer"
+                            className="flex items-center cursor-pointer boxShad p-1 rounded-xl"
                         >
                             <PiBookmarks className="text-2xl text-gray-700" />
                             <span className="text-xs underline underline-offset-2">
-                                Salva nei Preferiti
                             </span>
                         </button>
                     </div>
@@ -403,6 +408,7 @@ function SectionRecensioni({ reviews }) {
 
 // SECTION FORM RECENSIONI
 function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
+    const [showConfirmation, setShowConfirmation] = useState(false);
     return (
         <>
             <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 ">
@@ -414,7 +420,9 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
                 </h1>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <StarsComponent />
+                    <div className=" flex border w-fit rounded-lg p-2 gap-1">
+                        Voto :  <StarsComponent />
+                    </div>
                     <input
                         type="text"
                         placeholder="Inserisci il tuo nome"
@@ -435,6 +443,17 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
                         Invia recensione
                     </button>
                 </form>
+                <PopUp
+                    isOpen={showConfirmation}
+
+                    onClose={() => setShowConfirmation(false)}
+
+                >
+
+                    <h2 className="text-green-600 text-lg font-bold">
+                        ✅ Recensione pubblicata con successo!
+                    </h2>
+                </PopUp>
             </section>
         </>
     );
