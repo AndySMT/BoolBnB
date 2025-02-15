@@ -1,8 +1,8 @@
 import axios from "axios";
 import { baseUrl, propsEndpoint, revsEndpoint } from "./apiUrls";
 
-export const getProperties = async () => {
-    return await axios.get(baseUrl + propsEndpoint);
+export const getProperties = async (params) => {
+    return await axios.get(baseUrl + propsEndpoint, { params });
 };
 
 export const getProperty = async (id) => {

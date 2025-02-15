@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useRefsContext } from "../Context/RefsContext";
 
@@ -17,8 +17,9 @@ const animationConfig = {
 
 function Jumbotron() {
     const { jumboRef, headerRef } = useRefsContext();
+    const location = useLocation();
 
-    return (
+    return location.pathname !== "/" ? null : (
         <motion.section
             ref={jumboRef}
             initial={animationConfig.section.initial}
@@ -144,7 +145,7 @@ function JumboImages() {
                     whileHover={{
                         scale: (baseScale + index * 15) / 100 + 0.04,
                         rotate: 0,
-                        transition: { duration: 0.3, ease: "easeIn"  },
+                        transition: { duration: 0.3, ease: "easeIn" },
                     }}
                 >
                     <img

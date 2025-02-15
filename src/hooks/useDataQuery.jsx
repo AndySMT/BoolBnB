@@ -7,11 +7,11 @@ import {
     getReviews,
 } from "../globals/apiCalls";
 
-export const useGetPropertiesQuery = () => {
+export const useGetPropertiesQuery = (params) => {
     return useQuery({
-        queryKey: ["properties"],
+        queryKey: ["properties", params],
         queryFn: async () => {
-            const res = await getProperties();
+            const res = await getProperties(params);
             return res.data;
         },
     });
@@ -35,8 +35,6 @@ export const useAddPropertyQuery = () => {
             const res = await addProperty(formData);
             return res.data;
         },
-        // optimistic update per aggiornare properties prima ancora che arrivi la query al server non serve.
-        // al successo della chiamata, invalido la query ebbasta => invalidazione e refetch automatico
         onSuccess: () => {
             queryClient.invalidateQueries(["properties"]);
         },
