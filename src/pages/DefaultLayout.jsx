@@ -6,6 +6,7 @@ import NavbarMobile from "../components/NavbarMobile";
 import { RefsProvider } from "../Context/RefsContext";
 import { lazy, Suspense } from "react";
 import SkeleJumbotron from "../components/SkeleJumbotron";
+import Jumbotron from "../components/Jumbotron";
 const LazyJumbotron = lazy(() => import("../components/Jumbotron"));
 
 function DefaultLayout() {
@@ -13,9 +14,9 @@ function DefaultLayout() {
     return (
         <RefsProvider>
             <Header />
-            {/* <Suspense fallback={<SkeleJumbotron/>}>
+            <Suspense fallback={<SkeleJumbotron/>}>
                 <LazyJumbotron />
-            </Suspense> */}
+            </Suspense>
             <Main>
                 <Outlet />
                 <NavbarMobile />
