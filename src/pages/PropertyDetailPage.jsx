@@ -12,6 +12,8 @@ import { MdOutlineLocationCity } from "react-icons/md";
 import { imagesUrl } from "../globals/apiUrls";
 import PaginaContact from "../components/ContactHost";
 import MyMapComponent from "../components/MapComponent";
+import StarsComponent from "../components/StarsComponent"
+import Heart from "../components/Heart";
 import "leaflet/dist/leaflet.css";
 import {
     useAddReviewQuery,
@@ -175,14 +177,22 @@ function SectionDetails({ property, savePost, reviews }) {
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider">
                         {property.title}
                     </h1>
-                    <div className="hidden sm:flex gap-2 items-center whitespace-nowrap">
-                        {/* <StarsComponent /> */}
+                    <div className="hidden sm:flex gap-2 items-center">
+                        {/* HEART */}
+                        <div className=" flex items-center p-1  rounded-xl boxShad bg-gray-400">
+                            <Heart propertyId={property.id} />
+                        </div>
+
                         <div className="flex items-center">
+
+
                             {/* icona condividi */}
                             <span className="text-xs underline underline-offset-2">
+
                                 Condividi
                             </span>
                         </div>
+
                         <button
                             onClick={savePost}
                             className="flex items-center cursor-pointer"
@@ -285,7 +295,7 @@ function SectionPosition({ property }) {
                             <span className="font-normal">{property.property_type}</span>
                         </div>
                     </div>
-                    <div className="my-6">
+                    <div className="my-6 px-4 py-2 border rounded-lg whitespace-wrap">
                         {property.city === "Roma" ? (
                             "Elegante quartiere di Roma, molto strategico per la sua posizione, dove troverete negozi di ogni genere, supermercati, bar, tabaccherie, caffetterie e servizi di ristorazione da asporto e non."
                         ) : property.city === "Milano" ? (
@@ -315,18 +325,18 @@ function SectionHost() {
             <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400">
                 <section className="flex flex-col sm:flex-row justify-between gap-4">
                     {/* Informazioni sull'Host */}
-                    <div className="md:w-1/2 space-y-2">
+                    <div className="md:w-1/2 space-y-2 border  px-4 py-2 rounded-lg whitespace-wrap">
                         <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
                             Informazioni sull'Host
                         </h1>
                         <div className="flex items-center gap-2 text-lg">
                             <MdOutlineLocationCity />
-                            <span className="font-semibold">Nome dell'host:</span>{" "}
+                            <span className="font-semibold">Nome dell'host:</span>
                             <span>Nome</span>
                         </div>
                         <div className="flex items-center gap-2 text-lg">
                             <FaMapMarkerAlt />
-                            <span className="font-semibold">Cognome dell'host:</span>{" "}
+                            <span className="font-semibold">Cognome dell'host:</span>
                             <span>Cognome</span>
                         </div>
                         <div className="my-6">
@@ -404,6 +414,7 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
                 </h1>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
+                    <StarsComponent />
                     <input
                         type="text"
                         placeholder="Inserisci il tuo nome"
