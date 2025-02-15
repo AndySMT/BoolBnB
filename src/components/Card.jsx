@@ -6,7 +6,7 @@ import { TbRulerMeasure } from "react-icons/tb";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import {  imagesUrl } from "../globals/apiUrls";
+import { imagesUrl } from "../globals/apiUrls";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
@@ -35,21 +35,27 @@ function Card({ property, index }) {
         className: "slides-container",
     };
 
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true });
+    // const ref = useRef(null);
+    // const isInView = useInView(ref, { once: true });
 
     const cardVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0 },
+        hidden: { opacity: 0 },
+        visible: { opacity: 1 },
     };
 
     return (
         <motion.div
-            ref={ref}
+            // ref={ref}
             variants={cardVariants}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-            transition={{ duration: 0.3, delay: (index + 1) * 0.1 }}
+            // variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}
+            // initial="hidden"
+            // // animate={isInView ? "visible" : "hidden"}
+            // animate="visible"
+            transition={{
+                duration: 0.7,
+                // delay: index * 0.7 * 0.3,
+                ease: "easeInOut",
+            }}
         >
             <Link to={"detail/" + id} className="group cursor-pointer">
                 {/* Image carousel */}

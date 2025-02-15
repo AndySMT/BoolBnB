@@ -4,14 +4,18 @@ import Header from "../components/Header";
 import Main from "../components/Main";
 import NavbarMobile from "../components/NavbarMobile";
 import { RefsProvider } from "../Context/RefsContext";
-import Jumbotron from "../components/Jumbotron";
+import { lazy, Suspense } from "react";
+import SkeleJumbotron from "../components/SkeleJumbotron";
+const LazyJumbotron = lazy(() => import("../components/Jumbotron"));
 
 function DefaultLayout() {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     return (
         <RefsProvider>
             <Header />
-            <Jumbotron />
+            {/* <Suspense fallback={<SkeleJumbotron/>}>
+                <LazyJumbotron />
+            </Suspense> */}
             <Main>
                 <Outlet />
                 <NavbarMobile />
