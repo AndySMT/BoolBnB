@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { AiFillStar } from "react-icons/ai";
-import { FaHeart } from "react-icons/fa";
+
 import { MdLocationOn, MdBed, MdBathroom } from "react-icons/md";
 import { TbRulerMeasure } from "react-icons/tb";
 import Slider from "react-slick";
@@ -8,6 +8,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { imagesUrl } from "../globals/apiUrls";
 import { motion, useInView } from "framer-motion";
+import Heart from "./Heart"
 import { useRef } from "react";
 
 function Card({ property, index }) {
@@ -78,9 +79,10 @@ function Card({ property, index }) {
                         </div>
                     )}
                     {/* hearth */}
-                    <button id={id} className="absolute top-3 right-3 p-2 transition-opacity z-10">
-                        <FaHeart className="text-2xl hover:text-red-500 text-white opacity-70 drop-shadow-lg hover:cursor-pointer" />
-                    </button>
+                    <div className="absolute top-3 right-3 p-2 transition-opacity z-10 ">
+                        <Heart propertyId={property.id} />
+                    </div>
+
                 </div>
                 {/* location and rating */}
                 <div className="flex flex-col py-1 text-xl lg:text-base whitespace-nowrap">
