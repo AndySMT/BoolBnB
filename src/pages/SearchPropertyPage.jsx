@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
 import Select from "react-select";
-import axios from "axios";
-import { baseUrl, propsEndpoint } from "../globals/apiUrls";
+import { useGetPropertiesQuery } from "../hooks/useDataQuery";
 
 // options delle select iniziali
 const initialOptions = {
@@ -12,79 +11,98 @@ const initialOptions = {
     n_bedrooms: 0,
     property_type: "",
 };
-// todo: refactor con react query
+
 function SearchPropertyPage() {
-    const [inputValue, setInputValue] = useState(""); // input per ricerca tramite luogo
-    const [properties, setProperties] = useState([]); // per salvare risposta proprieta dal server
-    // oggetto che salva le options
-    const [optSelected, setOptSelected] = useState(initialOptions);
-    // filtro in base a input di ricerca luogo
-    const filteredProperties = properties?.filter((prop) =>
-        prop?.city?.toLowerCase().includes(inputValue.toLowerCase())
+
+    const [inputValue, setInputValue] = useState(""); // controllo dinamico dell'input della citta
+    const [params, setParams] = useState({}); // per salvare l'oggetto params per la query in get
+    const [isEnabled, setIsEnabled] = useState(false); // booleano che abilita o no il fetch (controllare useGetPropertiesQuery)
+    const [optSelected, setOptSelected] = useState(initialOptions); // oggetto che salva le options
+    
+    const { data, isLoading, isError, refetch } = useGetPropertiesQuery(
+        params,
+        isEnabled
     );
 
     // * ACTIONS
-    const handleInputChange = (e) => {
-        setInputValue(e.target.value);
-    };
-    
-    const onSubmit = (e) => {
+    const onInputSubmit = (e) => {
         e.preventDefault();
-        const params = optSelected; // le options le indico come params da mettere nella query params
-        axios.get(baseUrl + propsEndpoint, { params }).then((res) => {
-            setProperties(res.data);
-            // al success, reset delle opzioni delle selects
-            setOptSelected(initialOptions);
-        });
+        if (inputValue.length) {
+            setParams((curr) => ({ ...curr, city: inputValue })); //setto i params in modo tale che arrivino nel formato corretto nel server
+            setInputValue(inputValue);
+            setIsEnabled(true); // dal submit in poi della prima ricerca, abilito il fetch
+            refetch(); // rifai il fetch delle properties
+        }
     };
 
-    // * QUERIES
-    useEffect(() => {
-        // fetch iniziale delle proprieta
-        axios
-            .get(baseUrl + propsEndpoint)
-            .then((res) => setProperties(res.data))
-            .catch((err) => console.error(err));
-    }, []);
-
+    const onFilterSubmit = (e) => {
+        e.preventDefault();
+        if (inputValue.length) {
+            const params = optSelected; // le options le indico come params da mettere nella query params
+            setParams({ city: inputValue, ...params }); //setto i params in modo tale che arrivino nel formato corretto nel server
+            refetch();
+        } else {
+            console.log("Cerca prima la città!");
+        }
+    };
     // * RETURNS
     return (
         <>
             <div className="grid grid-cols-2">
                 <div>
-                    <input
-                        type="text"
-                        className="border rounded-lg px-4 py-2 block mx-auto"
-                        placeholder="Inserisci città"
-                        value={inputValue}
-                        onChange={handleInputChange}
-                    />
                     <form
-                        onSubmit={onSubmit}
+                        onSubmit={onInputSubmit}
+                        className="flex justify-center gap-2"
+                    >
+                        <input
+                            type="text"
+                            className="border rounded-lg px-4 py-2"
+                            placeholder="Inserisci città"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                        />
+                        <button
+                            type="submit"
+                            className="px-4 py-2 rounded-lg bg-amber-500  "
+                        >
+                            Cerca
+                        </button>
+                    </form>
+                    <form
+                        onSubmit={onFilterSubmit}
                         className="mx-auto my-4 w-1/2 bg-amber-200 min-h-[60vh]"
                     >
                         <Selects setOptSelected={setOptSelected} />
                         {/* submit */}
                         <button
+                            disabled={!isEnabled || !inputValue.length}
                             type="submit"
-                            className="px-4 py-2 bg-amber-500 rounded-lg"
+                            className={`${
+                                !isEnabled ||
+                                (!inputValue.length &&
+                                    "!cursor-not-allowed opacity-50")
+                            } px-4 py-2 bg-amber-500 rounded-lg cursor-pointer`}
                         >
-                            Cerca
+                            Applica filtri
                         </button>
                     </form>
                 </div>
                 <Countries />
             </div>
             {/* data */}
-            <div className="bg-green-300 text-center min-h-[200px]">
-                {properties.length && inputValue.length ? (
-                    filteredProperties.map((prop) => (
+            {!data ? (
+                <p>Nessun risultato ancora</p>
+            ) : isLoading ? (
+                <div>is loading...</div>
+            ) : isError ? (
+                <pre>error</pre>
+            ) : (
+                <div className="bg-green-300 text-center min-h-[200px]">
+                    {data.map((prop) => (
                         <div key={prop.id}>{prop.title}</div>
-                    ))
-                ) : (
-                    <p>Nessun risultato ancora</p>
-                )}
-            </div>
+                    ))}
+                </div>
+            )}
         </>
     );
 }
@@ -110,8 +128,9 @@ const typeOptions = [
     { value: "appartamento", label: "Appartamento" },
     { value: "chalet", label: "Chalet" },
     { value: "baita", label: "Baita" },
+    { value: "attico", label: "Attico" },
     { value: "casa_indipendente", label: "Casa indipendente" },
-    { value: "villa_a_schiera", label: "Villa a schiera" },
+    { value: "villetta a schiera", label: "Villa a schiera" },
 ];
 
 const customStyles = {

@@ -7,13 +7,14 @@ import {
     getReviews,
 } from "../globals/apiCalls";
 
-export const useGetPropertiesQuery = (params) => {
+export const useGetPropertiesQuery = (params, enabled) => {
     return useQuery({
         queryKey: ["properties", params],
         queryFn: async () => {
             const res = await getProperties(params);
             return res.data;
         },
+        enabled
     });
 };
 
