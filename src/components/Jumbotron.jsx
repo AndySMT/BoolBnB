@@ -6,7 +6,7 @@ const animationConfig = {
     section: {
         initial: { opacity: 0, y: -60 },
         animate: { opacity: 1, y: 0 },
-        transition: { duration: 1, ease: "easeInOut" },
+        transition: { duration: 1.7, ease: "easeOut" },
     },
     images: {
         duration: 0.8,
@@ -131,7 +131,7 @@ function JumboImages() {
                     style={{
                         scale: parseFloat((baseScale + index * 15) / 100),
                     }}
-                    className={`mx-auto max-h-64 relative hover:rotate-3 hover:scale-[1.07] transition-all duration-300`}
+                    className={`mx-auto max-h-64`}
                     initial={{ opacity: 0, rotate: 0 }}
                     animate={{
                         opacity: 1,
@@ -141,6 +141,11 @@ function JumboImages() {
                         duration,
                         delay: delays[index],
                         ease: easing,
+                    }}
+                    whileHover={{
+                        scale: (baseScale + index * 15) / 100 + 0.04,
+                        rotate: 0,
+                        transition: { duration: 0.3, ease: "easeIn" },
                     }}
                 >
                     <img
