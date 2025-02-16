@@ -23,16 +23,16 @@ export const useGetPropertiesQuery = (params, enabled) => {
     });
 };
 
-export const useInfiniteGetPropsQuery = (params, enabled) => {
+export const useInfiniteGetPropsQuery = (params, enabled, currPage) => {
     return useInfiniteQuery({
-        queryKey: ["properties", params],
+        queryKey: ["propertiesInf", params],
         queryFn: async ({ pageParam }) => {
             const res = await getProperties({ ...params, page: pageParam });
             return res.data;
         },
         enabled,
         initialPageParam: 1,
-        getNextPageParam: (_, allPages) => allPages.length + 1,
+        getNextPageParam: (_, allPages) => currPage,
     });
 };
 

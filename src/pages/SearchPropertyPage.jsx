@@ -90,7 +90,7 @@ function SearchPropertyPage() {
                 <Countries />
             </div>
             {/* data */}
-            {!data ? (
+            {!data?.results ? (
                 <p>Nessun risultato ancora</p>
             ) : isLoading ? (
                 <div>is loading...</div>
@@ -98,7 +98,7 @@ function SearchPropertyPage() {
                 <pre>error</pre>
             ) : (
                 <div className="bg-green-300 text-center min-h-[200px]">
-                    {data.map((prop) => (
+                    {data.results.map((prop) => (
                         <div key={prop.id}>{prop.title}</div>
                     ))}
                 </div>

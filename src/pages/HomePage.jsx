@@ -26,19 +26,20 @@ function HomePage() {
 
 // todo: modificare risposta dal server per ricavare numero totale di risultati
 const CardsSectionContainer = ({ params }) => {
+    const [currPage, setCurrPage] = useState(1);
     const {
         isLoading,
         isFetchingNextPage,
+        hasNextPage,
         isFetched,
         isError,
         data,
         fetchNextPage,
         refetch,
-    } = useInfiniteGetPropsQuery(params, true);
+    } = useInfiniteGetPropsQuery(params, true, currPage);
 
     const navigate = useNavigate();
 
-    const [currPage, setCurrPage] = useState(1);
 
     // Ricarica i dati ogni volta che i parametri cambiano
     useEffect(() => {
@@ -67,7 +68,7 @@ const CardsSectionContainer = ({ params }) => {
                     {/* paginazione */}
                     {data?.pages.map((group, i) => (
                         <Fragment key={i}>
-                            {group?.map((prop, index) => (
+                            {group?.results?.map((prop, index) => (
                                 <Card
                                     key={prop.id}
                                     property={prop}
