@@ -495,7 +495,6 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
                 <PopUp
                     isOpen={showConfirmation}
                     onClose={() => setShowConfirmation(false)}
-                    set
                 >
                     <h2 className="text-green-600 text-lg font-bold">
                         ✅ Recensione pubblicata con successo!
