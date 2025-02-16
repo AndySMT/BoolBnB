@@ -2,6 +2,8 @@ import React from "react";
 import { useState } from "react";
 import Select from "react-select";
 import { useGetPropertiesQuery } from "../hooks/useDataQuery";
+import CardsSection from "../components/CardsSection";
+import Card from "../components/Card";
 
 // options delle select iniziali
 const initialOptions = {
@@ -48,61 +50,58 @@ function SearchPropertyPage() {
     // * RETURNS
     return (
         <>
-            <div className="grid grid-cols-2">
-                <div>
-                    <form
-                        onSubmit={onInputSubmit}
-                        className="flex justify-center gap-2"
+            <div className="grid grid-cols-1 md:grid-cols-2 ">
+                <form
+                    onSubmit={onInputSubmit}
+                    className="flex justify-center gap-2 my-5 md:items-baseline"
+                >
+                    <input
+                        type="text"
+                        className="border rounded-lg px-4 py-2 lg:w-100"
+                        placeholder="Inserisci città"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                    />
+                    <button
+                        type="submit"
+                        className="px-4 py-2 rounded-lg cursor-pointer border border-black active:border-white active:bg-black active:text-white "
                     >
-                        <input
-                            type="text"
-                            className="border rounded-lg px-4 py-2"
-                            placeholder="Inserisci città"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                        />
-                        <button
-                            type="submit"
-                            className="px-4 py-2 rounded-lg bg-amber-500  "
-                        >
-                            Cerca
-                        </button>
-                    </form>
-                    <form
-                        onSubmit={onFilterSubmit}
-                        className="mx-auto my-4 w-1/2 bg-amber-200 min-h-[60vh]"
+                        Cerca
+                    </button>
+                </form>
+                <form
+                    onSubmit={onFilterSubmit}
+                    className="my-3 mx-4 p-6 bg-white rounded-3xl inset-shadow-[0px_0px_7px_3px_rgba(0,0,0,0.35)]"
+                >
+                    <Selects setOptSelected={setOptSelected} />
+                    {/* submit */}
+                    <button
+                        disabled={!isEnabled || !inputValue.length}
+                        type="submit"
+                        className={`${(!isEnabled || !inputValue.length) &&
+                            "!cursor-not-allowed opacity-50"
+                            } px-4 py-2 my-4 md:mx-0 rounded-lg cursor-pointer mx-15 border border-black active:border-white active:bg-black active:text-white`}
                     >
-                        <Selects setOptSelected={setOptSelected} />
-                        {/* submit */}
-                        <button
-                            disabled={!isEnabled || !inputValue.length}
-                            type="submit"
-                            className={`${
-                                !isEnabled ||
-                                (!inputValue.length &&
-                                    "!cursor-not-allowed opacity-50")
-                            } px-4 py-2 bg-amber-500 rounded-lg cursor-pointer`}
-                        >
-                            Applica filtri
-                        </button>
-                    </form>
-                </div>
-                <Countries />
-            </div>
+                        Applica filtri
+                    </button>
+                </form>
+            </div >
             {/* data */}
-            {!data?.results ? (
-                <p>Nessun risultato ancora</p>
-            ) : isLoading ? (
-                <div>is loading...</div>
-            ) : isError ? (
-                <pre>error</pre>
-            ) : (
-                <div className="bg-green-300 text-center min-h-[200px]">
-                    {data.results.map((prop) => (
-                        <div key={prop.id}>{prop.title}</div>
-                    ))}
-                </div>
-            )}
+            {
+                !data?.results ? (
+                    <p>Nessun risultato ancora</p>
+                ) : isLoading ? (
+                    <div>is loading...</div>
+                ) : isError ? (
+                    <pre>error</pre>
+                ) : (
+                    <CardsSection title={""} >
+                        {data.results.map((prop) => (
+                            <Card key={prop.id} property={prop} />
+                        ))}
+                    </CardsSection>
+                )
+            }
         </>
     );
 }
@@ -134,8 +133,8 @@ const typeOptions = [
 ];
 
 const customStyles = {
-    control: () => {}, //style della select
-    option: () => {}, //style delle options
+    control: () => { }, //style della select
+    option: () => { }, //style delle options
 };
 
 const selectFields = [
@@ -183,40 +182,5 @@ const Selects = ({ setOptSelected }) => {
         </>
     );
 };
-
-function Countries() {
-    return (
-        <div className="bg-radial-[at_25%_25%] from-blue-200 to-blue-300 to-75% mx-10 my-5 md:my-5 py-5 rounded-2xl inset-shadow-[7px_7px_7px_rgba(0,0,0,0.25)]">
-            <h2 className="text-center">Dove vuoi andare</h2>{" "}
-            <div className="flex gap-4 overflow-scroll mx-5 [&_h2]:text-sm [&_div]:shrink-0 [&_div]:w-40 [&_img]:rounded-xl [&_img]:aspect-square">
-                {" "}
-                <div>
-                    <img src="./regions/flexibility.jpg" alt="earth" />
-                    <h2>Sono flessibile</h2>{" "}
-                </div>{" "}
-                <div>
-                    <img src="./regions/africa.jpg" alt="africa" />
-                    <h2>Africa</h2>{" "}
-                </div>{" "}
-                <div>
-                    <img src="./regions/spagna.jpg" alt="spagna" />
-                    <h2>Spagna</h2>{" "}
-                </div>{" "}
-                <div>
-                    <img src="./regions/sudamerica.jpg" alt="sudamerica" />
-                    <h2>Sud America</h2>{" "}
-                </div>{" "}
-                <div>
-                    <img src="./regions/sudestasia.jpg" alt="sudestasia" />
-                    <h2>Sud-est Asia</h2>{" "}
-                </div>{" "}
-                <div>
-                    <img src="./regions/usa.jpg" alt="usa" />
-                    <h2>USA</h2>{" "}
-                </div>{" "}
-            </div>{" "}
-        </div>
-    );
-}
 
 export default SearchPropertyPage;
