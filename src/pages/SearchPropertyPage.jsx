@@ -21,17 +21,17 @@ function SearchPropertyPage() {
     const [isEnabled, setIsEnabled] = useState(false); // booleano che abilita o no il fetch (controllare useGetPropertiesQuery)
     const [optSelected, setOptSelected] = useState(initialOptions); // oggetto che salva le options
 
-    const { data, isLoading, isError, isSuccess, refetch } = useGetPropertiesQuery(
-        params,
-        isEnabled
-    );
+    const { data, isLoading, isError, isSuccess, refetch } =
+        useGetPropertiesQuery(params, isEnabled);
 
     useEffect(() => {
-        window.scrollTo({
-            behavior: "smooth",
-            left: 0,
-            top: 600,
-        });
+        if (isSuccess) {
+            window.scrollTo({
+                behavior: "smooth",
+                left: 0,
+                top: 600,
+            });
+        }
     }, [isSuccess]);
 
     // * ACTIONS
