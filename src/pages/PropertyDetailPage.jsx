@@ -160,11 +160,8 @@ function SectionImages({ property, savePost }) {
                             key={index}
                             src={`${imagesUrl}/${property.id}${img}`}
                             alt={`Thumbnail ${index + 1}`}
-                            className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${
-                                activeIndex === index
-                                    ? "outline-2 outline-blue-500"
-                                    : ""
-                            }`}
+                            className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${activeIndex === index ? "outline-2 outline-blue-500" : ""
+                                }`}
                             onClick={() => handleThumbnailClick(index)}
                         />
                     ))}
@@ -333,13 +330,15 @@ function SectionPosition({ property }) {
                         </div>
                     </div>
                     <div className="my-6 px-4 py-2 border rounded-lg whitespace-wrap">
-                        {property.city === "Roma"
-                            ? "Elegante quartiere di Roma, molto strategico per la sua posizione, dove troverete negozi di ogni genere, supermercati, bar, tabaccherie, caffetterie e servizi di ristorazione da asporto e non."
-                            : property.city === "Milano"
-                            ? "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
-                            : property.city === "Firenze"
-                            ? "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
-                            : `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`}
+                        {property.city === "Roma" ? (
+                            "Elegante quartiere di Roma, molto strategico per la sua posizione, dove troverete negozi di ogni genere, supermercati, bar, tabaccherie, caffetterie e servizi di ristorazione da asporto e non."
+                        ) : property.city === "Milano" ? (
+                            "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
+                        ) : property.city === "Firenze" ? (
+                            "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
+                        ) : (
+                            `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`
+                        )}
                     </div>
                 </div>
 
