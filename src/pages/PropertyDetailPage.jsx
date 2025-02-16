@@ -98,7 +98,7 @@ function PropertyDetail() {
                 {/* sezizone posizione */}
                 <SectionPosition property={property} />
                 {/* sezione host */}
-                <SectionHost property={property}/>
+                <SectionHost property={property} />
                 {/* sezione recensioni*/}
                 <SectionRecensioni reviews={reviews} id={id} />
                 {/* sezione form recensione */}
@@ -272,9 +272,10 @@ function SectionDetails({ property, savePost, reviews }) {
                             />
                         </div>
                         <p className="text-center">
-                            {reviews.length}{" "}
-                            {reviews.length === 1 ? "recensione" : "recensioni"}
+                            {reviews && reviews.length > 0 ? reviews.length : 0} recensioni
                         </p>
+
+
                     </div>
                 </div>
             </section>
