@@ -14,7 +14,7 @@ import { MdOutlineLocationCity } from "react-icons/md";
 import { imagesUrl } from "../globals/apiUrls";
 import PaginaContact from "../components/ContactHost";
 import MyMapComponent from "../components/MapComponent";
-import StarsComponent from "../components/StarsComponent"
+import StarsComponent from "../components/StarsComponent";
 import Heart from "../components/Heart";
 import PopUp from "./PopUp";
 import "leaflet/dist/leaflet.css";
@@ -30,7 +30,6 @@ const schema = yup.object().shape({
     reviewText: yup.string().trim().required("La recensione è obbligatoria"),
 });
 function PropertyDetail() {
-
     const { id } = useParams();
     const { mutate } = useAddReviewQuery(id);
     const navigate = useNavigate();
@@ -52,7 +51,8 @@ function PropertyDetail() {
     };
     //   Funzione per salvare il Post
     const savePost = () => {
-        const favouritesIds = JSON.parse(localStorage.getItem("favourites")) || [];
+        const favouritesIds =
+            JSON.parse(localStorage.getItem("favourites")) || [];
         if (!favouritesIds.includes(property.id)) {
             favouritesIds.push(property.id);
             localStorage.setItem("favourites", JSON.stringify(favouritesIds));
@@ -64,15 +64,14 @@ function PropertyDetail() {
     const {
         isLoading: isLoadingP,
         isError: isErrorP,
-        data: property,
+        data: propertyRes,
     } = useGetPropertyQuery(id);
     // query per le recensioni della proprieta
     const {
         isLoading: isLoadingR,
         isError: isErrorR,
-        data: reviews,
+        data: reviewsRes,
     } = useGetReviewsQuery(id);
-
 
     //* RETURNS
     // attesa risposta
@@ -80,6 +79,8 @@ function PropertyDetail() {
     // chiamata fallita
     if (isErrorP || isErrorR) navigate("*");
     // risposta ricevuta
+    const property = propertyRes.results[0]
+    const reviews = reviewsRes.results[0]
     return (
         <>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-8 border-b border-stone-400">
@@ -202,7 +203,6 @@ function SectionDetails({ property, savePost, reviews }) {
                          ${clickedHeart === "heart" ? "bg-red-400" : "bg-white"}`}
                             onClick={() => toggleHeart("heart")}>
                             <Heart propertyId={property.id} />
-
                         </div>
                         {/* icona condividi */}
                         <div className={`flex items-center rounded-xl boxShad  py-2 px-1.5 sm:block  
@@ -264,7 +264,11 @@ function SectionDetails({ property, savePost, reviews }) {
                             <p className="text-center text-xl">
                                 Amato <br /> dagli ospiti
                             </p>
-                            <img src="/images/left.png" alt="" className="pl-1" />
+                            <img
+                                src="/images/left.png"
+                                alt=""
+                                className="pl-1"
+                            />
                         </div>
                         <p className="text-center">
                             {reviews.length}{" "}
@@ -301,7 +305,9 @@ function SectionPosition({ property }) {
                                 <span>Indirizzo:</span>{" "}
                             </div>
                             <div>
-                                <span className="font-normal">{property.address}</span>
+                                <span className="font-normal">
+                                    {property.address}
+                                </span>
                             </div>
                         </div>
                         <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
@@ -309,14 +315,18 @@ function SectionPosition({ property }) {
                                 <FaMapMarkerAlt />
                                 <span>Zip code:{property.zipcode}</span>
                             </div>
-                            <span className="font-normal">{property.address_number}</span>
+                            <span className="font-normal">
+                                {property.address_number}
+                            </span>
                         </div>
                         <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
                             <div className="flex items-center gap-1">
                                 <GiFamilyHouse />
                                 <span>Tipo di proprietà:</span>{" "}
                             </div>
-                            <span className="font-normal">{property.property_type}</span>
+                            <span className="font-normal">
+                                {property.property_type}
+                            </span>
                         </div>
                     </div>
                     <div className="my-6 px-4 py-2 border rounded-lg whitespace-wrap">
@@ -355,21 +365,26 @@ function SectionHost() {
                         </h1>
                         <div className="flex items-center gap-2 text-lg">
                             <MdOutlineLocationCity />
-                            <span className="font-semibold">Nome dell'host:</span>
+                            <span className="font-semibold">
+                                Nome dell'host:
+                            </span>
                             <span>Nome</span>
                         </div>
                         <div className="flex items-center gap-2 text-lg">
                             <FaMapMarkerAlt />
-                            <span className="font-semibold">Cognome dell'host:</span>
+                            <span className="font-semibold">
+                                Cognome dell'host:
+                            </span>
                             <span>Cognome</span>
                         </div>
                         <div className="my-6">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id,
-                            error in ipsum voluptate placeat ea sequi, sint eos vel natus nemo
-                            minus optio eius enim dolorum dolorem. Officia beatae laboriosam
-                            ratione eveniet perferendis suscipit delectus aliquid? Eos ut
-                            dolorum cumque esse, nesciunt, repellendus iusto vel, rerum
-                            aliquid quos atque voluptates.
+                            Lorem ipsum dolor sit amet consectetur, adipisicing
+                            elit. Id, error in ipsum voluptate placeat ea sequi,
+                            sint eos vel natus nemo minus optio eius enim
+                            dolorum dolorem. Officia beatae laboriosam ratione
+                            eveniet perferendis suscipit delectus aliquid? Eos
+                            ut dolorum cumque esse, nesciunt, repellendus iusto
+                            vel, rerum aliquid quos atque voluptates.
                         </div>
                     </div>
                     {/* Mobile toggle button */}
@@ -382,7 +397,10 @@ function SectionHost() {
                             : "Mostra form contatto"}
                     </button>
                     {/* Contact Form */}
-                    <PaginaContact showContactForm={showContactForm} propertyId={id} />
+                    <PaginaContact
+                        showContactForm={showContactForm}
+                        propertyId={id}
+                    />
                 </section>
             </section>
         </>
@@ -411,9 +429,15 @@ function SectionRecensioni({ reviews }) {
                                 key={review.id}
                                 className="review-card boxShad max-w-96 m-2 p-2"
                             >
-                                <p className="font-medium text-xl">{review.title}</p>
-                                <p className="text-md text-gray-700">{review.description}</p>
-                                <p className="text-sm text-gray-500">{review.create_at}</p>
+                                <p className="font-medium text-xl">
+                                    {review.title}
+                                </p>
+                                <p className="text-md text-gray-700">
+                                    {review.description}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                    {review.create_at}
+                                </p>
                             </div>
                         ))
                     ) : (
@@ -470,7 +494,6 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
 
                 <PopUp
                     isOpen={showConfirmation}
-
                     onClose={() => setShowConfirmation(false)}
                     set
                 >

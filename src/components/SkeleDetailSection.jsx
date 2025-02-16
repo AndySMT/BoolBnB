@@ -99,18 +99,18 @@ function SectionPosition() {
                         Posizione
                     </h1>
                     <p className="grid grid-cols-2 grid-rows-2 sm:gap-2  text-gray-500 border px-1 py-2 rounded-lg whitespace-nowrap ">
-                        <p className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
+                        <span className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
                             citta
-                        </p>
-                        <p className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
+                        </span>
+                        <span className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
                             citta
-                        </p>
-                        <p className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
+                        </span>
+                        <span className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
                             citta
-                        </p>
-                        <p className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
+                        </span>
+                        <span className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
                             citta
-                        </p>
+                        </span>
                         
                     </p>
                     <p className="my-6">
