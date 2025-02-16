@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { PiBookmarks } from "react-icons/pi";
+import { FaShareAlt } from "react-icons/fa"
 import { CiShare2 } from "react-icons/ci";
 import { MdBed, MdBathroom } from "react-icons/md";
 import { TbRulerMeasure } from "react-icons/tb";
@@ -123,13 +124,13 @@ function SectionImages({ property, savePost }) {
             {/* sezione immagini mobile */}
             <section className="block sm:hidden p-4">
                 <div className="flex overflow-auto rounded-lg snap-x snap-mandatory">
-                    <div className="absolute top-6 right-5 text-black flex items-center gap-3">
+                    {/* <div className="absolute top-6 right-5 text-black flex items-center gap-3">
                         <span className="text-xs">icona share</span>
                         <PiBookmarks
                             onClick={savePost}
                             className="text-4xl cursor-pointer"
                         />
-                    </div>
+                    </div> */}
                     {property.img_endpoints.map((img, index) => (
                         <img
                             key={index}
@@ -171,6 +172,18 @@ function SectionImages({ property, savePost }) {
 // SECTION DETAILS
 function SectionDetails({ property, savePost, reviews }) {
     const reviewsRef = useRef(null);
+    const [clickedHeart, setClickedHeart] = useState(null)
+    const [clickedShare, setClickedShare] = useState(null)
+    const [clickedSave, setClickedSave] = useState(null)
+    const toggleHeart = (Heart) => {
+        setClickedHeart(clickedHeart === Heart ? null : Heart);
+    };
+    const toggleShare = (Share) => {
+        setClickedShare(clickedShare === Share ? null : Share);
+    };
+    const toggleSave = (Save) => {
+        setClickedSave(clickedSave === Save ? null : Save);
+    };
     const handleScroll = () => {
         reviewsRef.current &&
             reviewsRef.current.scrollIntoView({ behavior: "smooth" });
@@ -180,34 +193,39 @@ function SectionDetails({ property, savePost, reviews }) {
         <>
             <section className="flex flex-col flex-wrap gap-3 px-3 sm:pt-3">
                 <div className="flex items-center gap-4 justify-between">
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider">
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider ">
                         {property.title}
                     </h1>
-                    <div className="hidden sm:flex gap-2 items-center text-2xl">
+                    <div className="flex gap-2 items-center text-2xl ">
                         {/* HEART */}
-                        <div className=" flex items-center p-1  rounded-xl boxShad ">
+                        <div className={`flex items-center rounded-xl boxShad  py-1 px-1.5 sm:block  
+                         ${clickedHeart === "heart" ? "bg-red-400" : "bg-white"}`}
+                            onClick={() => toggleHeart("heart")}>
                             <Heart propertyId={property.id} />
 
                         </div>
-
-                        <div className="flex items-center boxShad p-3  rounded-xl">
-
-
-                            {/* icona condividi */}
+                        {/* icona condividi */}
+                        <div className={`flex items-center rounded-xl boxShad  py-2 px-1.5 sm:block  
+                         ${clickedShare === "share" ? "bg-blue-400" : "bg-white"}`}
+                            onClick={() => toggleShare("share")}>
                             <span className="text-xs underline underline-offset-2">
-
-                                <CiShare2 />
+                                <CiShare2 className="text-2xl hover:text-blue-500 cursor-pointer" />
                             </span>
                         </div>
+                        {/* icona Save */}
+                        <div className={`flex items-center rounded-xl boxShad   sm:block cursor-pointer  
+                         ${clickedSave === "save" ? "bg-green-300" : "bg-white"}`}
+                            onClick={() => toggleSave("save")}>
+                            <button
+                                onClick={savePost}
+                                className="py-2 px-1.5"
+                            >
+                                <PiBookmarks className="text-2xl text-gray-700 hover:text-green-500 cursor-pointer" />
+                                <span className="text-xs underline underline-offset-2">
+                                </span>
+                            </button>
+                        </div>
 
-                        <button
-                            onClick={savePost}
-                            className="flex items-center cursor-pointer boxShad p-1 rounded-xl"
-                        >
-                            <PiBookmarks className="text-2xl text-gray-700" />
-                            <span className="text-xs underline underline-offset-2">
-                            </span>
-                        </button>
                     </div>
                 </div>
                 {/* Dettagli della proprietà */}
