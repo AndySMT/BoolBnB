@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from "axios";
+import PopUp from "../pages/PopUp";
 import { baseUrl, contactEndpoint } from "../globals/apiUrls";
 
 function PaginaContact({ showContactForm, propertyId }) {
@@ -17,28 +18,27 @@ function PaginaContact({ showContactForm, propertyId }) {
     } = useForm({ resolver: yupResolver(schema) }); // schema si trova sotto
 
     const onSubmit = (data) => {
-       
-        setTimeout(() => setMessageSent(false), 3500);
         reset(); // Reset del form dopo invio
         axios.post(baseUrl + contactEndpoint, {
-          propertyId: propertyId,
-          userMail: data.email,
-          text: data.message,
-          name: data.nome
+            propertyId: propertyId,
+            userMail: data.email,
+            text: data.message,
+            name: data.nome
         })
-        .then(response => {
-          setMessageSent(true);
-        })
-        .catch(error => {
-          setError(true);
-          setTimeout(() => setError(false), 3500);
-        });
+            .then(response => {
+                setMessageSent(true);
+                setTimeout(() => setMessageSent(false), 2000);
+            })
+            .catch(error => {
+                setError(true);
+                setTimeout(() => setError(false), 1000);
+            });
     };
 
     const handleInvalid = (e) => {
         e.preventDefault();
         if (!formError) {
-            setFormError("Per favore completa tutti i campi.");
+            setError("Per favore completa tutti i campi.");
         }
     };
 
@@ -106,35 +106,6 @@ function PaginaContact({ showContactForm, propertyId }) {
                     Invia Messaggio
                 </button>
 
-                {/* Messaggio di conferma */}
-                {messageSent && (
-                    <section>
-                        <div className="space-y-2 p-4">
-                            <div
-                                role="alert"
-                                className="bg-green-100 dark:bg-green-900 border-l-4 border-green-500 dark:border-green-700 text-green-900 dark:text-green-100 p-2 rounded-lg flex items-center transition duration-300 ease-in-out hover:bg-green-200 dark:hover:bg-green-800 transform hover:scale-105"
-                            >
-                                <svg
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    className="h-5 w-5 flex-shrink-0 mr-2 text-green-600"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        d="M13 16h-1v-4h1m0-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        strokeWidth="2"
-                                        strokeLinejoin="round"
-                                        strokeLinecap="round"
-                                    ></path>
-                                </svg>
-                                <p className="text-xs font-semibold">
-                                    Messaggio inviato con successo!
-                                </p>
-                            </div>
-                        </div>
-                    </section>
-                )}
                 {error && (
                     <section>
                         <div className="space-y-2 p-4">
@@ -164,6 +135,24 @@ function PaginaContact({ showContactForm, propertyId }) {
                     </section>
                 )}
             </form>
+            <PopUp
+                isOpen={messageSent}
+                onClose={() => setMessageSent(false)}
+            >
+                <h2 className="text-green-600 text-lg font-bold">
+                    ✅ Messaggio inviato con successo!
+                </h2>
+            </PopUp>
+
+            {/* Pop-up di errore */}
+            <PopUp
+                isOpen={error}
+                onClose={() => setError(false)}
+            >
+                <h2 className="text-red-600 text-lg font-bold">
+                    ❌ Errore nell'invio del messaggio. Riprova più tardi.
+                </h2>
+            </PopUp>
         </div>
     );
 }
@@ -178,3 +167,35 @@ const schema = yup.object().shape({
 });
 
 export default PaginaContact;
+
+
+
+{/* Messaggio di conferma */ }
+{/* {messageSent && (
+                    <section>
+                        <div className="space-y-2 p-4">
+                            <div
+                                role="alert"
+                                className="bg-green-100 dark:bg-green-900 border-l-4 border-green-500 dark:border-green-700 text-green-900 dark:text-green-100 p-2 rounded-lg flex items-center transition duration-300 ease-in-out hover:bg-green-200 dark:hover:bg-green-800 transform hover:scale-105"
+                            >
+                                <svg
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    className="h-5 w-5 flex-shrink-0 mr-2 text-green-600"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M13 16h-1v-4h1m0-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        strokeWidth="2"
+                                        strokeLinejoin="round"
+                                        strokeLinecap="round"
+                                    ></path>
+                                </svg>
+                                <p className="text-xs font-semibold">
+                                    Messaggio inviato con successo!
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                )} */}

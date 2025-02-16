@@ -428,18 +428,23 @@ function SectionRecensioni({ reviews }) {
 // SECTION FORM RECENSIONI
 function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
     const [showConfirmation, setShowConfirmation] = useState(false);
+    const handleFormSubmit = (data) => {
+        onSubmit(data);
+        setShowConfirmation(true);
+        setTimeout(() => {
+            setShowConfirmation(false);
+        }, 1000);
+    }
+
     return (
         <>
-            <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 ">
-                <h1
-                    className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4"
-                    id="reviews"
-                >
+            <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4" id="reviews">
                     Lascia la tua Recensione
                 </h1>
 
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className=" flex border w-fit rounded-lg p-2 gap-1">
+                <form onSubmit={handleSubmit(handleFormSubmit)}>
+                    <div className="flex border w-fit rounded-lg p-2 gap-1">
                         Voto :  <StarsComponent />
                     </div>
                     <input
@@ -462,13 +467,13 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
                         Invia recensione
                     </button>
                 </form>
+
                 <PopUp
                     isOpen={showConfirmation}
 
                     onClose={() => setShowConfirmation(false)}
-
+                    set
                 >
-
                     <h2 className="text-green-600 text-lg font-bold">
                         ✅ Recensione pubblicata con successo!
                     </h2>
@@ -477,4 +482,5 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
         </>
     );
 }
+
 export default PropertyDetail;
