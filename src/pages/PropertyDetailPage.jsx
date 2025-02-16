@@ -97,7 +97,7 @@ function PropertyDetail() {
                 {/* sezizone posizione */}
                 <SectionPosition property={property} />
                 {/* sezione host */}
-                <SectionHost />
+                <SectionHost property={property}/>
                 {/* sezione recensioni*/}
                 <SectionRecensioni reviews={reviews} id={id} />
                 {/* sezione form recensione */}
@@ -352,7 +352,7 @@ function SectionPosition({ property }) {
     );
 }
 // SECTION CONTACT HOST
-function SectionHost() {
+function SectionHost({ property }) {
     const [showContactForm, setShowContactForm] = useState(false);
     const { id } = useParams();
     return (
@@ -369,14 +369,14 @@ function SectionHost() {
                             <span className="font-semibold">
                                 Nome dell'host:
                             </span>
-                            <span>Nome</span>
+                            <span>{property?.first_name}</span>
                         </div>
                         <div className="flex items-center gap-2 text-lg">
                             <FaMapMarkerAlt />
                             <span className="font-semibold">
                                 Cognome dell'host:
                             </span>
-                            <span>Cognome</span>
+                            <span>{property?.last_name}</span>
                         </div>
                         <div className="my-6">
                             Lorem ipsum dolor sit amet consectetur, adipisicing

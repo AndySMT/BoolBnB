@@ -38,7 +38,7 @@ function FavouritesPage() {
 }
 
 function Favourites({ id, favouritesIds, setFavouritesIds }) {
-    const { isLoading, isError, data: property } = useGetPropertyQuery(id);
+    const { isLoading, isError, data } = useGetPropertyQuery(id);
 
     const deleteFavourite = (targetId) => {
         const updatedFavouritesIds = favouritesIds.filter(
@@ -50,6 +50,8 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
 
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <pre>Error</pre>;
+
+    const property = data.results[0]
 
     let { img_endpoints } = property;
     img_endpoints = img_endpoints.reverse();
@@ -129,12 +131,12 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
                         onClick={() => deleteFavourite(property.id)}
                         className="bg-red-600 text-white rounded-lg py-2 px-3 flex items-center gap-2 cursor-pointer scale-75 hover:border-red-400 transition-all duration-300 ease-in-out hover:text-red-200 shadow-[0_10px_20px_rgba(197,34,94,0.15)] hover:shadow-[0_15px_30px_rgba(197,34,94,0.25)]"
                     >
-                        <button
-                            class="group relative flex h-14 w-14 flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-red-800 bg-red-400 hover:bg-red-600"
+                        <div
+                            className="group relative flex h-14 w-14 flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-red-800 bg-red-400 hover:bg-red-600"
                         >
                             <svg
                                 viewBox="0 0 1.625 1.625"
-                                class="absolute -top-7 fill-white delay-100 group-hover:top-6 group-hover:animate-[spin_1.4s] group-hover:duration-1000"
+                                className="absolute -top-7 fill-white delay-100 group-hover:top-6 group-hover:animate-[spin_1.4s] group-hover:duration-1000"
                                 height="15"
                                 width="15"
                             >
@@ -152,11 +154,11 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
                                 width="16"
                                 fill="none"
                                 viewBox="0 0 39 7"
-                                class="origin-right duration-500 group-hover:rotate-90"
+                                className="origin-right duration-500 group-hover:rotate-90"
                             >
-                                <line stroke-width="4" stroke="white" y2="5" x2="39" y1="5"></line>
+                                <line strokeWidth="4" stroke="white" y2="5" x2="39" y1="5"></line>
                                 <line
-                                    stroke-width="3"
+                                    strokeWidth="3"
                                     stroke="white"
                                     y2="1.5"
                                     x2="26.0357"
@@ -164,7 +166,7 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
                                     x1="12"
                                 ></line>
                             </svg>
-                            <svg width="16" fill="none" viewBox="0 0 33 39" class="">
+                            <svg width="16" fill="none" viewBox="0 0 33 39" className="">
                                 <mask fill="white" id="path-1-inside-1_8_19">
                                     <path
                                         d="M0 0H33V35C33 37.2091 31.2091 39 29 39H4C1.79086 39 0 37.2091 0 35V0Z"
@@ -175,10 +177,10 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
                                     fill="white"
                                     d="M0 0H33H0ZM37 35C37 39.4183 33.4183 43 29 43H4C-0.418278 43 -4 39.4183 -4 35H4H29H37ZM4 43C-0.418278 43 -4 39.4183 -4 35V0H4V35V43ZM37 0V35C37 39.4183 33.4183 43 29 43V35V0H37Z"
                                 ></path>
-                                <path stroke-width="4" stroke="white" d="M12 6L12 29"></path>
-                                <path stroke-width="4" stroke="white" d="M21 6V29"></path>
+                                <path strokeWidth="4" stroke="white" d="M12 6L12 29"></path>
+                                <path strokeWidth="4" stroke="white" d="M21 6V29"></path>
                             </svg>
-                        </button> Elimina
+                        </div> Elimina
                     </button>
                     <Link
                         to={`/detail/${property.id}`}
