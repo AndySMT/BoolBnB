@@ -99,7 +99,7 @@ function PropertyDetail() {
                 {/* sezizone posizione */}
                 <SectionPosition property={property} />
                 {/* sezione host */}
-                <SectionHost property={property}/>
+                <SectionHost property={property} />
                 {/* sezione recensioni*/}
                 <SectionRecensioni reviews={reviews} id={id} />
                 {/* sezione form recensione */}
@@ -274,9 +274,10 @@ function SectionDetails({ property, savePost, reviews }) {
                             />
                         </div>
                         <p className="text-center">
-                            {reviews.length}{" "}
-                            {reviews.length === 1 ? "recensione" : "recensioni"}
+                            {reviews && reviews.length > 0 ? reviews.length : 0} recensioni
                         </p>
+
+
                     </div>
                 </div>
             </section>
@@ -381,13 +382,7 @@ function SectionHost({ property }) {
                             <span>{property?.last_name}</span>
                         </div>
                         <div className="my-6">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing
-                            elit. Id, error in ipsum voluptate placeat ea sequi,
-                            sint eos vel natus nemo minus optio eius enim
-                            dolorum dolorem. Officia beatae laboriosam ratione
-                            eveniet perferendis suscipit delectus aliquid? Eos
-                            ut dolorum cumque esse, nesciunt, repellendus iusto
-                            vel, rerum aliquid quos atque voluptates.
+                            {property?.host_description}
                         </div>
                     </div>
                     {/* Mobile toggle button */}

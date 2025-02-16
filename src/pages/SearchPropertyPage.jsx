@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import Select from "react-select";
 import { useGetPropertiesQuery } from "../hooks/useDataQuery";
 import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
+import { useRefsContext } from "../Context/RefsContext";
 
 // options delle select iniziali
 const initialOptions = {
@@ -15,16 +16,23 @@ const initialOptions = {
 };
 
 function SearchPropertyPage() {
-
     const [inputValue, setInputValue] = useState(""); // controllo dinamico dell'input della citta
     const [params, setParams] = useState({}); // per salvare l'oggetto params per la query in get
     const [isEnabled, setIsEnabled] = useState(false); // booleano che abilita o no il fetch (controllare useGetPropertiesQuery)
     const [optSelected, setOptSelected] = useState(initialOptions); // oggetto che salva le options
-    
-    const { data, isLoading, isError, refetch } = useGetPropertiesQuery(
-        params,
-        isEnabled
-    );
+
+    const { data, isLoading, isError, isSuccess, refetch } =
+        useGetPropertiesQuery(params, isEnabled);
+
+    useEffect(() => {
+        if (isSuccess) {
+            window.scrollTo({
+                behavior: "smooth",
+                left: 0,
+                top: 600,
+            });
+        }
+    }, [isSuccess]);
 
     // * ACTIONS
     const onInputSubmit = (e) => {
@@ -50,7 +58,7 @@ function SearchPropertyPage() {
     // * RETURNS
     return (
         <>
-            <div className="grid grid-cols-1 md:grid-cols-2 ">
+            <div className="grid grid-cols-1  px-6 md:px-24 mt-6">
                 <form
                     onSubmit={onInputSubmit}
                     className="flex justify-center gap-2 my-5 md:items-baseline"
@@ -69,9 +77,10 @@ function SearchPropertyPage() {
                         Cerca
                     </button>
                 </form>
+
                 <form
                     onSubmit={onFilterSubmit}
-                    className="my-3 mx-4 p-6 bg-white rounded-3xl inset-shadow-[0px_0px_7px_3px_rgba(0,0,0,0.35)]"
+                    className="my-3 mx-auto p-6 bg-white rounded-3xl inset-shadow-[0px_0px_7px_3px_rgba(0,0,0,0.35)] lg:w-1/2 sm:w-3/4"
                 >
                     <Selects setOptSelected={setOptSelected} />
                     {/* submit */}
@@ -85,23 +94,23 @@ function SearchPropertyPage() {
                         Applica filtri
                     </button>
                 </form>
-            </div >
-            {/* data */}
-            {
-                !data?.results ? (
+            </div>
+            <div className="px-6 md:px-6 mt-6">
+                {/* data */}
+                {!data?.results ? (
                     <p>Nessun risultato ancora</p>
                 ) : isLoading ? (
                     <div>is loading...</div>
                 ) : isError ? (
                     <pre>error</pre>
                 ) : (
-                    <CardsSection title={""} >
+                    <CardsSection title={""}>
                         {data.results.map((prop) => (
                             <Card key={prop.id} property={prop} />
                         ))}
                     </CardsSection>
-                )
-            }
+                )}
+            </div>
         </>
     );
 }
