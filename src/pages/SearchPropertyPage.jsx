@@ -58,7 +58,7 @@ function SearchPropertyPage() {
     // * RETURNS
     return (
         <>
-            <div className="grid grid-cols-1 md:grid-cols-2 ">
+            <div className="grid grid-cols-1  px-6 md:px-24 mt-6">
                 <form
                     onSubmit={onInputSubmit}
                     className="flex justify-center gap-2 my-5 md:items-baseline"
@@ -77,38 +77,40 @@ function SearchPropertyPage() {
                         Cerca
                     </button>
                 </form>
+
                 <form
                     onSubmit={onFilterSubmit}
-                    className="my-3 mx-4 p-6 bg-white rounded-3xl inset-shadow-[0px_0px_7px_3px_rgba(0,0,0,0.35)]"
+                    className="my-3 mx-auto p-6 bg-white rounded-3xl inset-shadow-[0px_0px_7px_3px_rgba(0,0,0,0.35)] lg:w-1/2 sm:w-3/4"
                 >
                     <Selects setOptSelected={setOptSelected} />
                     {/* submit */}
                     <button
                         disabled={!isEnabled || !inputValue.length}
                         type="submit"
-                        className={`${
-                            (!isEnabled || !inputValue.length) &&
+                        className={`${(!isEnabled || !inputValue.length) &&
                             "!cursor-not-allowed opacity-50"
-                        } px-4 py-2 my-4 md:mx-0 rounded-lg cursor-pointer mx-15 border border-black active:border-white active:bg-black active:text-white`}
+                            } px-4 py-2 my-4 md:mx-0 rounded-lg cursor-pointer mx-15 border border-black active:border-white active:bg-black active:text-white`}
                     >
                         Applica filtri
                     </button>
                 </form>
             </div>
-            {/* data */}
-            {!data?.results ? (
-                <p>Nessun risultato ancora</p>
-            ) : isLoading ? (
-                <div>is loading...</div>
-            ) : isError ? (
-                <pre>error</pre>
-            ) : (
-                <CardsSection title={""}>
-                    {data.results.map((prop) => (
-                        <Card key={prop.id} property={prop} />
-                    ))}
-                </CardsSection>
-            )}
+            <div className="px-6 md:px-6 mt-6">
+                {/* data */}
+                {!data?.results ? (
+                    <p>Nessun risultato ancora</p>
+                ) : isLoading ? (
+                    <div>is loading...</div>
+                ) : isError ? (
+                    <pre>error</pre>
+                ) : (
+                    <CardsSection title={""}>
+                        {data.results.map((prop) => (
+                            <Card key={prop.id} property={prop} />
+                        ))}
+                    </CardsSection>
+                )}
+            </div>
         </>
     );
 }
@@ -140,8 +142,8 @@ const typeOptions = [
 ];
 
 const customStyles = {
-    control: () => {}, //style della select
-    option: () => {}, //style delle options
+    control: () => { }, //style della select
+    option: () => { }, //style delle options
 };
 
 const selectFields = [
