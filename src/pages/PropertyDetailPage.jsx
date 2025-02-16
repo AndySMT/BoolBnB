@@ -16,6 +16,7 @@ import PaginaContact from "../components/ContactHost";
 import MyMapComponent from "../components/MapComponent";
 import StarsComponent from "../components/StarsComponent";
 import Heart from "../components/Heart";
+import ChatBot from '../components/ChatBot';
 import PopUp from "./PopUp";
 import "leaflet/dist/leaflet.css";
 import {
@@ -109,6 +110,7 @@ function PropertyDetail() {
                     errors={errors}
                 />
             </div>
+            <ChatBot propertyId={property.id} />
         </>
     );
 }
