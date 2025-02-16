@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import Select from "react-select";
 import { useGetPropertiesQuery } from "../hooks/useDataQuery";
 import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
+import { useRefsContext } from "../Context/RefsContext";
 
 // options delle select iniziali
 const initialOptions = {
@@ -15,16 +16,23 @@ const initialOptions = {
 };
 
 function SearchPropertyPage() {
-
     const [inputValue, setInputValue] = useState(""); // controllo dinamico dell'input della citta
     const [params, setParams] = useState({}); // per salvare l'oggetto params per la query in get
     const [isEnabled, setIsEnabled] = useState(false); // booleano che abilita o no il fetch (controllare useGetPropertiesQuery)
     const [optSelected, setOptSelected] = useState(initialOptions); // oggetto che salva le options
-    
-    const { data, isLoading, isError, refetch } = useGetPropertiesQuery(
+
+    const { data, isLoading, isError, isSuccess, refetch } = useGetPropertiesQuery(
         params,
         isEnabled
     );
+
+    useEffect(() => {
+        window.scrollTo({
+            behavior: "smooth",
+            left: 0,
+            top: 600,
+        });
+    }, [isSuccess]);
 
     // * ACTIONS
     const onInputSubmit = (e) => {
@@ -78,30 +86,29 @@ function SearchPropertyPage() {
                     <button
                         disabled={!isEnabled || !inputValue.length}
                         type="submit"
-                        className={`${(!isEnabled || !inputValue.length) &&
+                        className={`${
+                            (!isEnabled || !inputValue.length) &&
                             "!cursor-not-allowed opacity-50"
-                            } px-4 py-2 my-4 md:mx-0 rounded-lg cursor-pointer mx-15 border border-black active:border-white active:bg-black active:text-white`}
+                        } px-4 py-2 my-4 md:mx-0 rounded-lg cursor-pointer mx-15 border border-black active:border-white active:bg-black active:text-white`}
                     >
                         Applica filtri
                     </button>
                 </form>
-            </div >
+            </div>
             {/* data */}
-            {
-                !data?.results ? (
-                    <p>Nessun risultato ancora</p>
-                ) : isLoading ? (
-                    <div>is loading...</div>
-                ) : isError ? (
-                    <pre>error</pre>
-                ) : (
-                    <CardsSection title={""} >
-                        {data.results.map((prop) => (
-                            <Card key={prop.id} property={prop} />
-                        ))}
-                    </CardsSection>
-                )
-            }
+            {!data?.results ? (
+                <p>Nessun risultato ancora</p>
+            ) : isLoading ? (
+                <div>is loading...</div>
+            ) : isError ? (
+                <pre>error</pre>
+            ) : (
+                <CardsSection title={""}>
+                    {data.results.map((prop) => (
+                        <Card key={prop.id} property={prop} />
+                    ))}
+                </CardsSection>
+            )}
         </>
     );
 }
@@ -133,8 +140,8 @@ const typeOptions = [
 ];
 
 const customStyles = {
-    control: () => { }, //style della select
-    option: () => { }, //style delle options
+    control: () => {}, //style della select
+    option: () => {}, //style delle options
 };
 
 const selectFields = [
