@@ -13,7 +13,7 @@ import { MdOutlineLocationCity } from "react-icons/md";
 import { imagesUrl } from "../globals/apiUrls";
 import PaginaContact from "../components/ContactHost";
 import MyMapComponent from "../components/MapComponent";
-import StarsComponent from "../components/StarsComponent"
+import StarsComponent from "../components/StarsComponent";
 import Heart from "../components/Heart";
 import PopUp from "./PopUp";
 import "leaflet/dist/leaflet.css";
@@ -29,7 +29,6 @@ const schema = yup.object().shape({
     reviewText: yup.string().trim().required("La recensione è obbligatoria"),
 });
 function PropertyDetail() {
-
     const { id } = useParams();
     const { mutate } = useAddReviewQuery(id);
     const navigate = useNavigate();
@@ -51,7 +50,8 @@ function PropertyDetail() {
     };
     //   Funzione per salvare il Post
     const savePost = () => {
-        const favouritesIds = JSON.parse(localStorage.getItem("favourites")) || [];
+        const favouritesIds =
+            JSON.parse(localStorage.getItem("favourites")) || [];
         if (!favouritesIds.includes(property.id)) {
             favouritesIds.push(property.id);
             localStorage.setItem("favourites", JSON.stringify(favouritesIds));
@@ -63,15 +63,14 @@ function PropertyDetail() {
     const {
         isLoading: isLoadingP,
         isError: isErrorP,
-        data: property,
+        data: propertyRes,
     } = useGetPropertyQuery(id);
     // query per le recensioni della proprieta
     const {
         isLoading: isLoadingR,
         isError: isErrorR,
-        data: reviews,
+        data: reviewsRes,
     } = useGetReviewsQuery(id);
-
 
     //* RETURNS
     // attesa risposta
@@ -79,6 +78,8 @@ function PropertyDetail() {
     // chiamata fallita
     if (isErrorP || isErrorR) navigate("*");
     // risposta ricevuta
+    const property = propertyRes.results[0]
+    const reviews = reviewsRes.results[0]
     return (
         <>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-8 border-b border-stone-400">
@@ -158,8 +159,11 @@ function SectionImages({ property, savePost }) {
                             key={index}
                             src={`${imagesUrl}/${property.id}${img}`}
                             alt={`Thumbnail ${index + 1}`}
-                            className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${activeIndex === index ? "outline-2 outline-blue-500" : ""
-                                }`}
+                            className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${
+                                activeIndex === index
+                                    ? "outline-2 outline-blue-500"
+                                    : ""
+                            }`}
                             onClick={() => handleThumbnailClick(index)}
                         />
                     ))}
@@ -187,15 +191,11 @@ function SectionDetails({ property, savePost, reviews }) {
                         {/* HEART */}
                         <div className=" flex items-center p-1  rounded-xl boxShad ">
                             <Heart propertyId={property.id} />
-
                         </div>
 
                         <div className="flex items-center boxShad p-3  rounded-xl">
-
-
                             {/* icona condividi */}
                             <span className="text-xs underline underline-offset-2">
-
                                 <CiShare2 />
                             </span>
                         </div>
@@ -205,8 +205,7 @@ function SectionDetails({ property, savePost, reviews }) {
                             className="flex items-center cursor-pointer boxShad p-1 rounded-xl"
                         >
                             <PiBookmarks className="text-2xl text-gray-700" />
-                            <span className="text-xs underline underline-offset-2">
-                            </span>
+                            <span className="text-xs underline underline-offset-2"></span>
                         </button>
                     </div>
                 </div>
@@ -246,7 +245,11 @@ function SectionDetails({ property, savePost, reviews }) {
                             <p className="text-center text-xl">
                                 Amato <br /> dagli ospiti
                             </p>
-                            <img src="/images/left.png" alt="" className="pl-1" />
+                            <img
+                                src="/images/left.png"
+                                alt=""
+                                className="pl-1"
+                            />
                         </div>
                         <p className="text-center">
                             {reviews.length}{" "}
@@ -283,7 +286,9 @@ function SectionPosition({ property }) {
                                 <span>Indirizzo:</span>{" "}
                             </div>
                             <div>
-                                <span className="font-normal">{property.address}</span>
+                                <span className="font-normal">
+                                    {property.address}
+                                </span>
                             </div>
                         </div>
                         <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
@@ -291,26 +296,28 @@ function SectionPosition({ property }) {
                                 <FaMapMarkerAlt />
                                 <span>Zip code:{property.zipcode}</span>
                             </div>
-                            <span className="font-normal">{property.address_number}</span>
+                            <span className="font-normal">
+                                {property.address_number}
+                            </span>
                         </div>
                         <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
                             <div className="flex items-center gap-1">
                                 <GiFamilyHouse />
                                 <span>Tipo di proprietà:</span>{" "}
                             </div>
-                            <span className="font-normal">{property.property_type}</span>
+                            <span className="font-normal">
+                                {property.property_type}
+                            </span>
                         </div>
                     </div>
                     <div className="my-6 px-4 py-2 border rounded-lg whitespace-wrap">
-                        {property.city === "Roma" ? (
-                            "Elegante quartiere di Roma, molto strategico per la sua posizione, dove troverete negozi di ogni genere, supermercati, bar, tabaccherie, caffetterie e servizi di ristorazione da asporto e non."
-                        ) : property.city === "Milano" ? (
-                            "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
-                        ) : property.city === "Firenze" ? (
-                            "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
-                        ) : (
-                            `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`
-                        )}
+                        {property.city === "Roma"
+                            ? "Elegante quartiere di Roma, molto strategico per la sua posizione, dove troverete negozi di ogni genere, supermercati, bar, tabaccherie, caffetterie e servizi di ristorazione da asporto e non."
+                            : property.city === "Milano"
+                            ? "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
+                            : property.city === "Firenze"
+                            ? "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
+                            : `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`}
                     </div>
                 </div>
 
@@ -337,21 +344,26 @@ function SectionHost() {
                         </h1>
                         <div className="flex items-center gap-2 text-lg">
                             <MdOutlineLocationCity />
-                            <span className="font-semibold">Nome dell'host:</span>
+                            <span className="font-semibold">
+                                Nome dell'host:
+                            </span>
                             <span>Nome</span>
                         </div>
                         <div className="flex items-center gap-2 text-lg">
                             <FaMapMarkerAlt />
-                            <span className="font-semibold">Cognome dell'host:</span>
+                            <span className="font-semibold">
+                                Cognome dell'host:
+                            </span>
                             <span>Cognome</span>
                         </div>
                         <div className="my-6">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id,
-                            error in ipsum voluptate placeat ea sequi, sint eos vel natus nemo
-                            minus optio eius enim dolorum dolorem. Officia beatae laboriosam
-                            ratione eveniet perferendis suscipit delectus aliquid? Eos ut
-                            dolorum cumque esse, nesciunt, repellendus iusto vel, rerum
-                            aliquid quos atque voluptates.
+                            Lorem ipsum dolor sit amet consectetur, adipisicing
+                            elit. Id, error in ipsum voluptate placeat ea sequi,
+                            sint eos vel natus nemo minus optio eius enim
+                            dolorum dolorem. Officia beatae laboriosam ratione
+                            eveniet perferendis suscipit delectus aliquid? Eos
+                            ut dolorum cumque esse, nesciunt, repellendus iusto
+                            vel, rerum aliquid quos atque voluptates.
                         </div>
                     </div>
                     {/* Mobile toggle button */}
@@ -364,7 +376,10 @@ function SectionHost() {
                             : "Mostra form contatto"}
                     </button>
                     {/* Contact Form */}
-                    <PaginaContact showContactForm={showContactForm} propertyId={id} />
+                    <PaginaContact
+                        showContactForm={showContactForm}
+                        propertyId={id}
+                    />
                 </section>
             </section>
         </>
@@ -393,9 +408,15 @@ function SectionRecensioni({ reviews }) {
                                 key={review.id}
                                 className="review-card boxShad max-w-96 m-2 p-2"
                             >
-                                <p className="font-medium text-xl">{review.title}</p>
-                                <p className="text-md text-gray-700">{review.description}</p>
-                                <p className="text-sm text-gray-500">{review.create_at}</p>
+                                <p className="font-medium text-xl">
+                                    {review.title}
+                                </p>
+                                <p className="text-md text-gray-700">
+                                    {review.description}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                    {review.create_at}
+                                </p>
                             </div>
                         ))
                     ) : (
@@ -422,7 +443,7 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className=" flex border w-fit rounded-lg p-2 gap-1">
-                        Voto :  <StarsComponent />
+                        Voto : <StarsComponent />
                     </div>
                     <input
                         type="text"
@@ -446,11 +467,8 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
                 </form>
                 <PopUp
                     isOpen={showConfirmation}
-
                     onClose={() => setShowConfirmation(false)}
-
                 >
-
                     <h2 className="text-green-600 text-lg font-bold">
                         ✅ Recensione pubblicata con successo!
                     </h2>
