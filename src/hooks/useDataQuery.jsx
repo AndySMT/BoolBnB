@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+    useInfiniteQuery,
+    useMutation,
+    useQuery,
+    useQueryClient,
+} from "@tanstack/react-query";
 import {
     addProperty,
     addReview,
@@ -14,7 +19,20 @@ export const useGetPropertiesQuery = (params, enabled) => {
             const res = await getProperties(params);
             return res.data;
         },
-        enabled
+        enabled,
+    });
+};
+
+export const useInfiniteGetPropsQuery = (params, enabled, currPage) => {
+    return useInfiniteQuery({
+        queryKey: ["propertiesInf", params],
+        queryFn: async ({ pageParam }) => {
+            const res = await getProperties({ ...params, page: pageParam });
+            return res.data;
+        },
+        enabled,
+        initialPageParam: 1,
+        getNextPageParam: (_, allPages) => currPage,
     });
 };
 

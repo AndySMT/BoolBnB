@@ -1,10 +1,14 @@
-import React, { useEffect, useState, memo } from "react";
+import React, { useEffect, useState, memo, Fragment } from "react";
 import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
-import { useGetPropertiesQuery } from "../hooks/useDataQuery";
+import {
+    useGetPropertiesQuery,
+    useInfiniteGetPropsQuery,
+} from "../hooks/useDataQuery";
 import { useRefsContext } from "../Context/RefsContext";
 import SkeleCard from "../components/SkeleCard";
 import { useNavigate } from "react-router-dom";
+import LoadMoreButton from "../components/LoadMoreButton";
 
 function HomePage() {
     // Stato per i parametri di filtro
@@ -20,35 +24,79 @@ function HomePage() {
     );
 }
 
+// todo: modificare risposta dal server per ricavare numero totale di risultati
 const CardsSectionContainer = ({ params }) => {
-    const { isLoading, isError, data, refetch } = useGetPropertiesQuery(params);
+    const [currPage, setCurrPage] = useState(1);
+    const {
+        isLoading,
+        isFetchingNextPage,
+        hasNextPage,
+        isFetched,
+        isError,
+        data,
+        fetchNextPage,
+        refetch,
+    } = useInfiniteGetPropsQuery(params, true, currPage);
 
     const navigate = useNavigate();
 
-    const skeleCardsArr = Array.from({ length: 8 });
 
     // Ricarica i dati ogni volta che i parametri cambiano
     useEffect(() => {
         refetch();
     }, [params]);
 
+    useEffect(() => {
+        // vai giu dopo il fetch e se sei dal 2 fetch in poi
+        if (currPage > 1 && isFetched) {
+            window.scroll({
+                left: 0,
+                top: document.documentElement.scrollTop + 600, // ? offset da calcolare invece con l'altezza della card (useRefsContext)
+                behavior: "smooth",
+            });
+        }
+    }, [currPage]);
+
     // Gestione dello stato di caricamento e errore
     if (isError) {
         navigate("*");
     }
-
     return (
-        <CardsSection title={""}>
-            {isLoading ? (
-                skeleCardsArr.map((_, index) => <SkeleCard key={index} />)
-            ) : (
+        <>
+            <CardsSection title={""}>
                 <>
-                    {data.map((prop, index) => (
-                        <Card key={prop.id} property={prop} index={index} />
+                    {/* paginazione */}
+                    {data?.pages.map((group, i) => (
+                        <Fragment key={i}>
+                            {group?.results?.map((prop, index) => (
+                                <Card
+                                    key={prop.id}
+                                    property={prop}
+                                    index={index}
+                                />
+                            ))}
+                        </Fragment>
                     ))}
+                    {/* Skeleton durante il fetch */}
+                    {(isFetchingNextPage || isLoading) && (
+                        <>
+                            {Array.from({ length: 4 }).map((_, index) => (
+                                <SkeleCard key={index} />
+                            ))}
+                        </>
+                    )}
                 </>
-            )}
-        </CardsSection>
+            </CardsSection>
+            <div className="flex justify-center">
+                <LoadMoreButton
+                    // al click fetcha la prossima pagina e setta la prossima pagina
+                    onClick={() => {
+                        fetchNextPage();
+                        setCurrPage((curr) => curr + 1);
+                    }}
+                />
+            </div>
+        </>
     );
 };
 

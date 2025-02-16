@@ -88,7 +88,7 @@ function SearchPropertyPage() {
             </div >
             {/* data */}
             {
-                !data ? (
+                !data?.results ? (
                     <p>Nessun risultato ancora</p>
                 ) : isLoading ? (
                     <div>is loading...</div>
@@ -96,7 +96,7 @@ function SearchPropertyPage() {
                     <pre>error</pre>
                 ) : (
                     <CardsSection title={""} >
-                        {data.map((prop) => (
+                        {data.results.map((prop) => (
                             <Card key={prop.id} property={prop} />
                         ))}
                     </CardsSection>
