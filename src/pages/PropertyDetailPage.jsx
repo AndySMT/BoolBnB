@@ -80,7 +80,8 @@ function PropertyDetail() {
     if (isErrorP || isErrorR) navigate("*");
     // risposta ricevuta
     const property = propertyRes.results[0]
-    const reviews = reviewsRes.results[0]
+    const reviews = reviewsRes.results;
+    console.log(reviews)
     return (
         <>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-8 border-b border-stone-400">
