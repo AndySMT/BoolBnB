@@ -8,30 +8,15 @@ function Heart({ propertyId }) {
     const [rating, setRating] = useState(false);
 
     // * QUERIES
-    const { mutate, isError, isSuccess, data } = useAddLikeQuery(propertyId);
-
-    useEffect(() => {
-        console.log(data)
-    }, [isSuccess]);
+    const { mutate } = useAddLikeQuery(propertyId);
 
     // * ACTIONS
     const gestioneLike = (e) => {
         e.preventDefault();
         e.stopPropagation();
         mutate(propertyId);
-        // const params = {
-        //     property_id: propertyId,
-        // };
-        // axios
-        //     .post(`${baseUrl}${likesEndpoint}`, params)
-        //     .then((response) => {
-        //         console.log("la mia risposta è", response.data);
-        //         setRating(true);
-        //     })
-        //     .catch((error) => {
-        //         console.error("Error", error);
-        //     });
     };
+
     return (
         <div>
             <button onClick={gestioneLike}>

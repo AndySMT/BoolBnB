@@ -29,7 +29,6 @@ export const useInfiniteGetPropsQuery = (params) => {
     return useInfiniteQuery({
         queryKey: ["propertiesInf", params],
         queryFn: async ({ pageParam }) => {
-            console.log("ciao");
             const res = await getProperties({ ...params, page: pageParam });
             return res.data;
         },
@@ -84,6 +83,7 @@ export const useAddReviewQuery = (id) => {
         //* optimistic update
         // onMutate mostra gia la "risposta" non sincronizzata e salva in una var i vecchi dati di reviews
         onMutate: async (newReview) => {
+            console.log("optimistic update");
             await queryClient.cancelQueries({
                 queryKey: ["reviews", id],
                 exact: true,
@@ -105,10 +105,12 @@ export const useAddReviewQuery = (id) => {
         },
         // onError riprende i vecchi dati di reviews e li resetta nella cache con queryKey reviews in caso di errore
         onError: (_error, _reviews, context) => {
+            console.log(_error);
             queryClient.setQueryData(["reviews", id], context.previousReviews);
         },
         // effettivo sync dei dati tra client e server con fetch in background
-        onSettled: () => {
+        onSettled: (data) => {
+            console.log(data);
             queryClient.invalidateQueries({
                 queryKey: ["reviews", id],
                 exact: true,
@@ -138,10 +140,13 @@ export const useAddLikeQuery = (property_id) => {
             const res = await addLike(property_id);
             return res.data;
         },
-        onSuccess: queryClient.invalidateQueries({
-            queryKey: ["likes", property_id],
-            exact: true,
-        }),
+        onSuccess: (data) => {
+            console.log(data);
+            queryClient.invalidateQueries({
+                queryKey: ["likes", property_id],
+                exact: true,
+            });
+        },
     });
 };
 

@@ -52,7 +52,7 @@ function AddPropertyForm({ setIsFormOpen }) {
       setTimeout(() => {
         setShowConfirmation(false);
         setIsFormOpen(false);
-      }, 3000);
+      }, 750);
     }
   }, [isSuccess, isError, setIsFormOpen]);
 

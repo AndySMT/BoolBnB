@@ -475,7 +475,7 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
         setShowConfirmation(true);
         setTimeout(() => {
             setShowConfirmation(false);
-        }, 1000);
+        }, 750);
     };
 
     return (
