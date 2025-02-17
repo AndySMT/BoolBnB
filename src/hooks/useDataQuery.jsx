@@ -5,8 +5,10 @@ import {
     useQueryClient,
 } from "@tanstack/react-query";
 import {
+    addLike,
     addProperty,
     addReview,
+    getLikesByPropsId,
     getProperties,
     getProperty,
     getReviews,
@@ -27,6 +29,7 @@ export const useInfiniteGetPropsQuery = (params) => {
     return useInfiniteQuery({
         queryKey: ["propertiesInf", params],
         queryFn: async ({ pageParam }) => {
+            console.log("ciao");
             const res = await getProperties({ ...params, page: pageParam });
             return res.data;
         },
@@ -81,7 +84,10 @@ export const useAddReviewQuery = (id) => {
         //* optimistic update
         // onMutate mostra gia la "risposta" non sincronizzata e salva in una var i vecchi dati di reviews
         onMutate: async (newReview) => {
-            await queryClient.cancelQueries(["reviews", id]);
+            await queryClient.cancelQueries({
+                queryKey: ["reviews", id],
+                exact: true,
+            });
             const previousReviews = queryClient.getQueryData(["reviews", id]);
             queryClient.setQueryData(["reviews", id], (oldQueryData) => {
                 return {
@@ -103,7 +109,10 @@ export const useAddReviewQuery = (id) => {
         },
         // effettivo sync dei dati tra client e server con fetch in background
         onSettled: () => {
-            queryClient.invalidateQueries(["reviews", id]);
+            queryClient.invalidateQueries({
+                queryKey: ["reviews", id],
+                exact: true,
+            });
         },
         // onSuccess: () => {
         //     queryClient.invalidateQueries(["reviews", id]);
@@ -125,11 +134,14 @@ export const useGetLikesByPropsIdQuery = (property_id) => {
 export const useAddLikeQuery = (property_id) => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (property_id) => {
+        mutationFn: async () => {
             const res = await addLike(property_id);
             return res.data;
         },
-        onSuccess: queryClient.invalidateQueries(["likes", property_id]),
+        onSuccess: queryClient.invalidateQueries({
+            queryKey: ["likes", property_id],
+            exact: true,
+        }),
     });
 };
 
@@ -144,12 +156,11 @@ function findMaxId(array) {
     return maxId;
 }
 
-
 // * CACHE: OLD reviews/10
 
 // * aggiorno reviews/10 perche ce un nuovo posto
 // * => nuova chiamata in post => uso la funzione di mutazione!
-// * SE la richiesta è success => allora esista un NEW reviews/10 fuori cache => e poi dico a react query di buttare OLD reviews/10 
+// * SE la richiesta è success => allora esista un NEW reviews/10 fuori cache => e poi dico a react query di buttare OLD reviews/10
 // * e di rimpiazzarlo con NEW reviews/10 => come? usando invalidateQueries passandogli l'etichetta ( reviews/10 )
 
 // ! CACHE: properties properties/1 pr/2 reviews/1 reviews/7

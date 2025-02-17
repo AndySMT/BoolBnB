@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { PiBookmarks } from "react-icons/pi";
-import { FaShareAlt } from "react-icons/fa"
+import { FaShareAlt } from "react-icons/fa";
 import { CiShare2 } from "react-icons/ci";
 import { MdBed, MdBathroom } from "react-icons/md";
 import { TbRulerMeasure } from "react-icons/tb";
@@ -16,11 +16,12 @@ import PaginaContact from "../components/ContactHost";
 import MyMapComponent from "../components/MapComponent";
 import StarsComponent from "../components/StarsComponent";
 import Heart from "../components/Heart";
-import ChatBot from '../components/ChatBot';
+import ChatBot from "../components/ChatBot";
 import PopUp from "./PopUp";
 import "leaflet/dist/leaflet.css";
 import {
     useAddReviewQuery,
+    useGetLikesByPropsIdQuery,
     useGetPropertyQuery,
     useGetReviewsQuery,
 } from "../hooks/useDataQuery";
@@ -42,6 +43,7 @@ function PropertyDetail() {
     } = useForm({
         resolver: yupResolver(schema),
     });
+    // * ACTIONS
     const onSubmit = (data) => {
         mutate({
             property_id: id,
@@ -73,16 +75,23 @@ function PropertyDetail() {
         isError: isErrorR,
         data: reviewsRes,
     } = useGetReviewsQuery(id);
+    // ? query per i likes della proprieta (ancora non viene usato)
+    const {
+        isLoading: isLoadingL,
+        isError: isErrorL,
+        data: likesRes,
+    } = useGetLikesByPropsIdQuery(id);
 
     //* RETURNS
     // attesa risposta
-    if (isLoadingP || isLoadingR) return <SkeleDetailSection />;
+    if (isLoadingP || isLoadingR || isLoadingL) return <SkeleDetailSection />;
     // chiamata fallita
-    if (isErrorP || isErrorR) navigate("*");
+    if (isErrorP || isErrorR || isErrorR) navigate("*");
     // risposta ricevuta
-    const property = propertyRes.results[0]
+    const property = propertyRes.results[0];
     const reviews = reviewsRes.results;
-    console.log(reviews)
+    const likesQty = likesRes.total_res; // ? ancora non viene usato
+
     return (
         <>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-8 border-b border-stone-400">
@@ -163,8 +172,11 @@ function SectionImages({ property, savePost }) {
                             key={index}
                             src={`${imagesUrl}/${property.id}${img}`}
                             alt={`Thumbnail ${index + 1}`}
-                            className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${activeIndex === index ? "outline-2 outline-blue-500" : ""
-                                }`}
+                            className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${
+                                activeIndex === index
+                                    ? "outline-2 outline-blue-500"
+                                    : ""
+                            }`}
                             onClick={() => handleThumbnailClick(index)}
                         />
                     ))}
@@ -176,9 +188,9 @@ function SectionImages({ property, savePost }) {
 // SECTION DETAILS
 function SectionDetails({ property, savePost, reviews }) {
     const reviewsRef = useRef(null);
-    const [clickedHeart, setClickedHeart] = useState(null)
-    const [clickedShare, setClickedShare] = useState(null)
-    const [clickedSave, setClickedSave] = useState(null)
+    const [clickedHeart, setClickedHeart] = useState(null);
+    const [clickedShare, setClickedShare] = useState(null);
+    const [clickedSave, setClickedSave] = useState(null);
     const toggleHeart = (Heart) => {
         setClickedHeart(clickedHeart === Heart ? null : Heart);
     };
@@ -202,33 +214,46 @@ function SectionDetails({ property, savePost, reviews }) {
                     </h1>
                     <div className="flex gap-2 items-center text-2xl ">
                         {/* HEART */}
-                        <div className={`flex items-center rounded-xl boxShad  py-1 px-1.5 sm:block  
-                         ${clickedHeart === "heart" ? "bg-red-400" : "bg-white"}`}
-                            onClick={() => toggleHeart("heart")}>
+                        <div
+                            className={`flex items-center rounded-xl boxShad  py-1 px-1.5 sm:block  
+                         ${
+                             clickedHeart === "heart"
+                                 ? "bg-red-400"
+                                 : "bg-white"
+                         }`}
+                            onClick={() => toggleHeart("heart")}
+                        >
                             <Heart propertyId={property.id} />
                         </div>
                         {/* icona condividi */}
-                        <div className={`flex items-center rounded-xl boxShad  py-2 px-1.5 sm:block  
-                         ${clickedShare === "share" ? "bg-blue-400" : "bg-white"}`}
-                            onClick={() => toggleShare("share")}>
+                        <div
+                            className={`flex items-center rounded-xl boxShad  py-2 px-1.5 sm:block  
+                         ${
+                             clickedShare === "share"
+                                 ? "bg-blue-400"
+                                 : "bg-white"
+                         }`}
+                            onClick={() => toggleShare("share")}
+                        >
                             <span className="text-xs underline underline-offset-2">
                                 <CiShare2 className="text-2xl hover:text-blue-500 cursor-pointer" />
                             </span>
                         </div>
                         {/* icona Save */}
-                        <div className={`flex items-center rounded-xl boxShad   sm:block cursor-pointer  
-                         ${clickedSave === "save" ? "bg-green-300" : "bg-white"}`}
-                            onClick={() => toggleSave("save")}>
-                            <button
-                                onClick={savePost}
-                                className="py-2 px-1.5"
-                            >
+                        <div
+                            className={`flex items-center rounded-xl boxShad   sm:block cursor-pointer  
+                         ${
+                             clickedSave === "save"
+                                 ? "bg-green-300"
+                                 : "bg-white"
+                         }`}
+                            onClick={() => toggleSave("save")}
+                        >
+                            <button onClick={savePost} className="py-2 px-1.5">
                                 <PiBookmarks className="text-2xl text-gray-700 hover:text-green-500 cursor-pointer" />
-                                <span className="text-xs underline underline-offset-2">
-                                </span>
+                                <span className="text-xs underline underline-offset-2"></span>
                             </button>
                         </div>
-
                     </div>
                 </div>
                 {/* Dettagli della proprietà */}
@@ -274,10 +299,9 @@ function SectionDetails({ property, savePost, reviews }) {
                             />
                         </div>
                         <p className="text-center">
-                            {reviews && reviews.length > 0 ? reviews.length : 0} recensioni
+                            {reviews && reviews.length > 0 ? reviews.length : 0}{" "}
+                            recensioni
                         </p>
-
-
                     </div>
                 </div>
             </section>
@@ -334,15 +358,13 @@ function SectionPosition({ property }) {
                         </div>
                     </div>
                     <div className="my-6 px-4 py-2 border rounded-lg whitespace-wrap">
-                        {property.city === "Roma" ? (
-                            "Elegante quartiere di Roma, molto strategico per la sua posizione, dove troverete negozi di ogni genere, supermercati, bar, tabaccherie, caffetterie e servizi di ristorazione da asporto e non."
-                        ) : property.city === "Milano" ? (
-                            "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
-                        ) : property.city === "Firenze" ? (
-                            "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
-                        ) : (
-                            `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`
-                        )}
+                        {property.city === "Roma"
+                            ? "Elegante quartiere di Roma, molto strategico per la sua posizione, dove troverete negozi di ogni genere, supermercati, bar, tabaccherie, caffetterie e servizi di ristorazione da asporto e non."
+                            : property.city === "Milano"
+                            ? "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
+                            : property.city === "Firenze"
+                            ? "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
+                            : `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`}
                     </div>
                 </div>
 
@@ -381,9 +403,7 @@ function SectionHost({ property }) {
                             </span>
                             <span>{property?.last_name}</span>
                         </div>
-                        <div className="my-6">
-                            {property?.host_description}
-                        </div>
+                        <div className="my-6">{property?.host_description}</div>
                     </div>
                     {/* Mobile toggle button */}
                     <button
@@ -456,18 +476,21 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
         setTimeout(() => {
             setShowConfirmation(false);
         }, 1000);
-    }
+    };
 
     return (
         <>
             <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4" id="reviews">
+                <h1
+                    className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4"
+                    id="reviews"
+                >
                     Lascia la tua Recensione
                 </h1>
 
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
                     <div className="flex border w-fit rounded-lg p-2 gap-1">
-                        Voto :  <StarsComponent />
+                        Voto : <StarsComponent />
                     </div>
                     <input
                         type="text"

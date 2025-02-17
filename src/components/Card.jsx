@@ -8,8 +8,20 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { imagesUrl } from "../globals/apiUrls";
 import { motion, useInView } from "framer-motion";
-import Heart from "./Heart"
+import Heart from "./Heart";
 import { useRef } from "react";
+import { useGetLikesByPropsIdQuery } from "../hooks/useDataQuery";
+
+const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: true,
+    autoplay: false,
+    className: "slides-container",
+};
 
 function Card({ property, index }) {
     let {
@@ -24,25 +36,18 @@ function Card({ property, index }) {
         n_bathrooms,
         img_endpoints,
     } = property;
-    img_endpoints = img_endpoints.reverse();
-    const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        arrows: true,
-        autoplay: false,
-        className: "slides-container",
-    };
 
     // const ref = useRef(null);
     // const isInView = useInView(ref, { once: true });
-
     const cardVariants = {
         hidden: { opacity: 0 },
         visible: { opacity: 1 },
     };
+
+    // * QUERIES
+    const { data: likesRes, isSuccess, isError, isLoading } = useGetLikesByPropsIdQuery(property.id);
+
+    isError && console.log(data);
 
     return (
         <motion.div
@@ -82,7 +87,6 @@ function Card({ property, index }) {
                     <div className="absolute top-3 right-3 p-2 transition-opacity z-10 ">
                         <Heart propertyId={property.id} />
                     </div>
-
                 </div>
                 {/* location and rating */}
                 <div className="flex flex-col py-1 text-xl lg:text-base whitespace-nowrap">
@@ -95,7 +99,7 @@ function Card({ property, index }) {
                         </span>
                         <span className="flex items-center gap-1">
                             <AiFillStar className="translate-y-[1.5px]" />
-                            {total_likes}
+                            {isLoading ? "..." : isSuccess ? likesRes.total_res : ""}
                         </span>
                     </div>
                     <span className="text-gray-500 text-lg lg:text-sm px-1">
