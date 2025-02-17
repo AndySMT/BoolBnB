@@ -36,6 +36,7 @@ function PropertyDetail() {
     const { mutate } = useAddReviewQuery(id);
     const reviewsRef = useRef(null);
     const navigate = useNavigate();
+    const [rating, setRating] = useState(0);
     const {
         register,
         handleSubmit,
@@ -46,10 +47,12 @@ function PropertyDetail() {
     });
     // * ACTIONS
     const onSubmit = (data) => {
+        console.log(data)
         mutate({
             property_id: id,
             title: data.reviewTitle,
             description: data.reviewText,
+            rating: data.rating,
         });
         reset();
     };
@@ -123,6 +126,8 @@ function PropertyDetail() {
                     onSubmit={onSubmit}
                     register={register}
                     errors={errors}
+                    setRating={setRating}
+                // (rate) => setValue("rating", rate)
                 />
             </div>
             <ChatBot propertyId={property.id} />
@@ -447,14 +452,14 @@ function SectionRecensioni({ reviews, reviewsRef }) {
                             className="flex space-x-2 border-[3px] border-stone-400 rounded-xl select-none"
                         >
                             <label
-                                class="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"
+                                className="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"
                             >
                                 <input
                                     type="radio"
                                     name="radio"
                                     value="html"
                                     className="peer hidden"
-                                    checked=""
+                                // checked=""
                                 />
                                 <span
                                     className="tracking-widest peer-checked:bg-gradient-to-r peer-checked:from-[blueviolet] peer-checked:to-[violet] peer-checked:text-white text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out"
@@ -476,7 +481,7 @@ function SectionRecensioni({ reviews, reviewsRef }) {
                             <label
                                 className="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"
                             >
-                                <input type="radio" name="radio" value="vue" class="peer hidden" />
+                                <input type="radio" name="radio" value="vue" className="peer hidden" />
                                 <span
                                     className="tracking-widest peer-checked:bg-gradient-to-r peer-checked:from-[#d4c685] peer-checked:to-[#a7d3a6] peer-checked:text-white text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out
                                    "
@@ -518,62 +523,67 @@ function SectionRecensioni({ reviews, reviewsRef }) {
 // SECTION FORM RECENSIONI
 function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
     const [showConfirmation, setShowConfirmation] = useState(false);
+
+    const [rating, setRating] = useState(0);
+
     const handleFormSubmit = (data) => {
-        onSubmit(data);
-        setShowConfirmation(true);
-        setTimeout(() => {
-            setShowConfirmation(false);
-        }, 750);
+        console.log("Dati inviati al backend:", { ...data, rating });
+        onSubmit({ ...data, rating });
     };
 
+
     return (
-        <>
-            <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6">
-                <h1
-                    className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4"
-                    id="reviews"
-                >
-                    Lascia la tua Recensione
-                </h1>
+        <section
+            className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6">
+            <h1
+                className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4"
+                id="reviews"
+            >
+                Lascia la tua Recensione
+            </h1>
 
-                <form onSubmit={handleSubmit(handleFormSubmit)}>
-                    <div className="flex border w-fit rounded-lg p-2 gap-1">
-                        Voto : <StarsComponent />
-                    </div>
-                    <input
-                        type="text"
-                        placeholder="Inserisci il titolo della recensione"
-                        className="mt-4 w-full p-2 border rounded-lg"
-                        {...register("reviewTitle")}
-                    />
-                    <p className="text-red-500">
-                        {errors.reviewTitle?.message}
-                    </p>
-                    <textarea
-                        placeholder="Scrivi una recensione"
-                        className="mt-4 w-full p-2 border rounded-lg"
-                        {...register("reviewText")}
-                    />
-                    <p className="text-red-500">{errors.reviewText?.message}</p>
-                    <button
-                        type="submit"
-                        className="mt-2 px-3 sm:px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-lg sm:text-xl cursor-pointer"
-                    >
-                        Invia recensione
-                    </button>
-                </form>
+            <h1>Lascia la tua Recensione</h1>
 
-                <PopUp
-                    isOpen={showConfirmation}
-                    onClose={() => setShowConfirmation(false)}
+            <form onSubmit={handleSubmit(handleFormSubmit)}>
+                <div className="flex border w-fit rounded-lg p-2 gap-1">
+                    Voto: <StarsComponent setRating={setRating} rating={rating} />
+                </div>
+                <input
+                    type="hidden"
+                    value={rating}
+                    {...register("rating")}
+                />
+                <input
+                    type="text"
+                    placeholder="Inserisci il titolo della recensione"
+                    className="mt-4 w-full p-2 border rounded-lg"
+                    {...register("reviewTitle")}
+                />
+                <textarea
+                    placeholder="Scrivi una recensione"
+                    className="mt-4 w-full p-2 border rounded-lg"
+                    {...register("reviewText")}
+                />
+                <button
+                    type="submit"
+                    className="mt-2 px-3 sm:px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-lg sm:text-xl cursor-pointer"
                 >
-                    <h2 className="text-green-600 text-lg font-bold">
-                        ✅ Recensione pubblicata con successo!
-                    </h2>
-                </PopUp>
-            </section>
-        </>
+                    Invia recensione
+                </button>
+            </form>
+
+            <PopUp
+                isOpen={showConfirmation}
+                onClose={() => setShowConfirmation(false)}
+            >
+                <h2 className="text-green-600 text-lg font-bold">
+                    ✅ Recensione pubblicata con successo!
+                </h2>
+            </PopUp>
+
+        </section>
     );
 }
+
 
 export default PropertyDetail;

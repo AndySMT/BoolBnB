@@ -84,7 +84,7 @@ export const useAddReviewQuery = (id) => {
         //* optimistic update
         // onMutate mostra gia la "risposta" non sincronizzata e salva in una var i vecchi dati di reviews
         onMutate: async (newReview) => {
-            console.log("optimistic update");
+            console.log(newReview);
             await queryClient.cancelQueries({
                 queryKey: ["reviews", id],
                 exact: true,
