@@ -1,10 +1,16 @@
-function LoadMoreButton({ onClick }) {
+import { LuArrowBigDownDash } from "react-icons/lu";
+
+function LoadMoreButton({ onClick, noMore }) {
     return (
         <button
+            disabled={noMore}
             onClick={onClick}
-            className="px-4 py-3 border border-[#2d812b] bg-[#a7d3a6] rounded-4xl scale-95 hover:bg-[#2d812b] hover:scale-100 hover:text-white cursor-pointer"
+            className={`px-4 py-2 border border-[#2d812b] bg-[#b6cf978c] rounded-4xl scale-95 cursor-not-allowed ${
+                !noMore &&
+                "hover:bg-[#90aa72] hover:scale-100 hover:text-white cursor-pointer"
+            }`}
         >
-            Load More
+            <LuArrowBigDownDash />
         </button>
     );
 }

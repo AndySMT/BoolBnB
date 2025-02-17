@@ -112,8 +112,6 @@ function JumboImages() {
         { x: -70, y: -30, rotate: 10 },
     ];
 
-    const hoverAnims = [{}];
-
     const width = document.documentElement.offsetWidth;
     let baseScale;
     if (width < 1300) {
@@ -126,11 +124,11 @@ function JumboImages() {
         <div className="hidden lg:grid grid-cols-2 grid-rows-2 h-full">
             {imageAnimations.map((animation, index) => (
                 <motion.div
+                    className={`mx-auto max-h-64  bg-red-300 rounded-lg`}
                     key={index}
                     style={{
                         scale: parseFloat((baseScale + index * 15) / 100),
                     }}
-                    className={`mx-auto max-h-64`}
                     initial={{ opacity: 0, rotate: 0 }}
                     animate={{
                         opacity: 1,
@@ -148,9 +146,10 @@ function JumboImages() {
                     }}
                 >
                     <img
-                        src="/cardtest2.png"
-                        alt={`villaschiera-${index}`}
-                        className="h-full object-contain rounded-lg"
+                        src={`/images/jumbo${index + 1}.webp`}
+                        alt={`jumbo-${index + 1}`}
+                        className="w-full h-full object-cover rounded-lg"
+                        loading="lazy"
                     />
                 </motion.div>
             ))}

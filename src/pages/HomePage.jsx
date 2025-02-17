@@ -24,13 +24,11 @@ function HomePage() {
     );
 }
 
-// todo: modificare risposta dal server per ricavare numero totale di risultati
 const CardsSectionContainer = ({ params }) => {
     const [currPage, setCurrPage] = useState(1);
     const {
         isLoading,
         isFetchingNextPage,
-        hasNextPage,
         isFetched,
         isError,
         data,
@@ -39,7 +37,6 @@ const CardsSectionContainer = ({ params }) => {
     } = useInfiniteGetPropsQuery(params);
 
     const navigate = useNavigate();
-
 
     // Ricarica i dati ogni volta che i parametri cambiano
     useEffect(() => {
@@ -89,6 +86,7 @@ const CardsSectionContainer = ({ params }) => {
             </CardsSection>
             <div className="flex justify-center">
                 <LoadMoreButton
+                    noMore={currPage * 4 >= data?.pages[0]?.total_quantity}
                     // al click fetcha la prossima pagina e setta la prossima pagina
                     onClick={() => {
                         fetchNextPage();
@@ -104,7 +102,7 @@ function FilterSection({ setParams }) {
     const { headerRef, jumboRef } = useRefsContext();
 
     // Stato per il filtro attivo
-    const [activeFilter, setActiveFilter] = useState(null);
+    const [activeFilter, setActiveFilter] = useState(0);
 
     // Lista dei tipi di proprietà per il filtro
     const filters = [
@@ -118,9 +116,9 @@ function FilterSection({ setParams }) {
     ];
 
     // Funzione per applicare un filtro
-    const handleFilterClick = (type) => {
+    const handleFilterClick = (type, index) => {
         setParams({ property_type: type === "tutti" ? "" : type });
-        setActiveFilter(type);
+        setActiveFilter(index);
         window.scrollTo({
             top: jumboRef.current.offsetHeight + headerRef.current.offsetHeight,
             behavior: "smooth",
@@ -132,16 +130,16 @@ function FilterSection({ setParams }) {
             <div className="overflow-x-auto">
                 <div className="flex justify-center gap-10 min-w-max px-2 [&>div]:w-[40px]">
                     {/* Mappa dei filtri e applicazione del filtro selezionato */}
-                    {filters.map((filter) => (
+                    {filters.map((filter, index) => (
                         <div
                             key={Object.keys(filter)[0]}
-                            className={`group flex flex-col items-center gap-2 hover:cursor-pointer ${
-                                activeFilter === Object.keys(filter)[0]
-                                    ? "opacity-100"
-                                    : "opacity-50"
+                            className={`group flex flex-col items-center gap-2 cursor-pointer ${
+                                activeFilter === index
+                                    ? "opacity-100 font-semibold"
+                                    : "opacity-40"
                             }`}
                             onClick={() =>
-                                handleFilterClick(Object.keys(filter)[0])
+                                handleFilterClick(Object.keys(filter)[0], index)
                             }
                         >
                             <img
