@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import axios from "axios";
 
 const MyMapComponent = ({ property }) => {
     const [coordinates, setCoordinates] = useState([41.9028, 12.4964]);
@@ -13,14 +14,14 @@ const MyMapComponent = ({ property }) => {
     });
 
     useEffect(() => {
-        // Funzione per ottenere le coordinate tramite l'API di Geocoding
+        // funzione per ottenere le coordinate con API di Geocoding
         const getCoordinates = async (city) => {
             try {
-                if(!city) throw Error()
-                const response = await fetch(
+                if (!city) throw Error();
+                const response = await axios(
                     `https://nominatim.openstreetmap.org/search?city=${city}&format=json&limit=1`
                 );
-                const data = await response.json();
+                const data = await response.data;
                 if (data && data.length > 0) {
                     setCoordinates([
                         parseFloat(data[0].lat),
@@ -35,15 +36,23 @@ const MyMapComponent = ({ property }) => {
         };
 
         getCoordinates(property?.city);
-    }, []);
+    }, [property?.city]);
 
+    // se le coordinate non sono ancora caricate, mostra un messaggio di caricamento
     if (!coordinates) {
         return <div>Loading map...</div>;
     }
 
+    // aggiorna la mappa ogni volta che le coordinate cambiano
+    const MapCenter = () => {
+        const map = useMap();
+        map.setView(coordinates); 
+        return null;
+    };
+
     return (
         <MapContainer
-            center={coordinates || [41.8857, 12.4663]}
+            center={coordinates}
             zoom={13}
             scrollWheelZoom={false} // Disabilita lo zoom con lo scroll
             className="leaflet-container w-full h-full min-h-[200px] overscroll-contain"
@@ -60,10 +69,8 @@ const MyMapComponent = ({ property }) => {
             }}
         >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <Marker
-                position={coordinates || [41.8857, 12.4663]}
-                icon={customIcon}
-            >
+            <MapCenter /> {/* Forza il ricalcolo del centro */}
+            <Marker position={coordinates} icon={customIcon}>
                 <Popup>
                     <span className="text-emerald-500 text-base font-semibold">
                         La tua casa si trova qui!
