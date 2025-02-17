@@ -87,7 +87,7 @@ function PropertyDetail() {
     // attesa risposta
     if (isLoadingP || isLoadingR || isLoadingL) return <SkeleDetailSection />;
     // chiamata fallita
-    if (isErrorP || isErrorR || isErrorR) navigate("*");
+    if (isErrorP || isErrorR || isErrorR) navigate("/notfound");
     // risposta ricevuta
     const property = propertyRes.results[0];
     const reviews = reviewsRes.results;

@@ -56,7 +56,7 @@ const CardsSectionContainer = ({ params }) => {
 
     // Gestione dello stato di caricamento e errore
     if (isError) {
-        navigate("*");
+        navigate("/lost");
     }
     return (
         <>
