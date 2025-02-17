@@ -507,6 +507,9 @@ function SectionRecensioni({ reviews, reviewsRef }) {
                                 <p className="text-sm text-gray-500">
                                     {review.create_at}
                                 </p>
+                                <p className="text-sm text-gray-500">
+                                    <span> Voto : {review.rating} </span>
+                                </p>
                             </div>
                         ))
                     ) : (
