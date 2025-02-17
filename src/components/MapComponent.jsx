@@ -4,11 +4,10 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 const MyMapComponent = ({ property }) => {
-    const [coordinates, setCoordinates] = useState(null);
+    const [coordinates, setCoordinates] = useState([41.9028, 12.4964]);
 
     const customIcon = new L.Icon({
-        iconUrl: "https://img.icons8.com/ios/452/home.png",
-        iconSize: [25, 25],
+        iconUrl: "https://img.icons8.com/dusk/64/order-delivered.png",
         iconAnchor: [20, 40],
         popupAnchor: [0, -40],
     });
@@ -16,12 +15,8 @@ const MyMapComponent = ({ property }) => {
     useEffect(() => {
         // Funzione per ottenere le coordinate tramite l'API di Geocoding
         const getCoordinates = async (city) => {
-            if (!city) {
-                console.warn("Città non disponibile");
-                return;
-            }
-
             try {
+                if(!city) throw Error()
                 const response = await fetch(
                     `https://nominatim.openstreetmap.org/search?city=${city}&format=json&limit=1`
                 );
@@ -33,18 +28,14 @@ const MyMapComponent = ({ property }) => {
                     ]);
                 } else {
                     console.warn("Nessuna coordinata trovata, fallback a Roma");
-                    setCoordinates([41.8857, 12.4663]); // Fallback a Roma
                 }
             } catch (error) {
-                console.error("Errore nel recupero delle coordinate:", error);
-                setCoordinates([41.8857, 12.4663]); // Fallback a Roma
+                console.log("Errore nel recupero delle coordinate:", error);
             }
         };
 
-        if (property?.city) {
-            getCoordinates(property.city);
-        }
-    }, [property]);
+        getCoordinates(property?.city);
+    }, []);
 
     if (!coordinates) {
         return <div>Loading map...</div>;
@@ -52,14 +43,32 @@ const MyMapComponent = ({ property }) => {
 
     return (
         <MapContainer
-            key={coordinates.join(",")}
-            center={coordinates}
+            center={coordinates || [41.8857, 12.4663]}
             zoom={13}
-            className="leaflet-container w-full h-full min-h-[200px]"
+            scrollWheelZoom={false} // Disabilita lo zoom con lo scroll
+            className="leaflet-container w-full h-full min-h-[200px] overscroll-contain"
+            whenCreated={(map) => {
+                // Abilita lo scroll zoom solo quando il mouse entra nella mappa
+                map.on("mouseenter", () => {
+                    map.scrollWheelZoom.enable();
+                });
+
+                // Disabilita lo scroll zoom quando il mouse esce dalla mappa
+                map.on("mouseleave", () => {
+                    map.scrollWheelZoom.disable();
+                });
+            }}
         >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <Marker position={coordinates} icon={customIcon}>
-                <Popup>La tua casa si trova qui!</Popup>
+            <Marker
+                position={coordinates || [41.8857, 12.4663]}
+                icon={customIcon}
+            >
+                <Popup>
+                    <span className="text-emerald-500 text-base font-semibold">
+                        La tua casa si trova qui!
+                    </span>
+                </Popup>
             </Marker>
         </MapContainer>
     );

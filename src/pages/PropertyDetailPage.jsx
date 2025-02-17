@@ -28,12 +28,13 @@ import {
 import { useRefsContext } from "../Context/RefsContext";
 import SkeleDetailSection from "../components/SkeleDetailSection";
 const schema = yup.object().shape({
-    userName: yup.string().trim().required("Il nome è obbligatorio"),
+    reviewTitle: yup.string().trim().required("Il titolo è obbligatorio"),
     reviewText: yup.string().trim().required("La recensione è obbligatoria"),
 });
 function PropertyDetail() {
     const { id } = useParams();
     const { mutate } = useAddReviewQuery(id);
+    const reviewsRef = useRef(null);
     const navigate = useNavigate();
     const {
         register,
@@ -47,7 +48,7 @@ function PropertyDetail() {
     const onSubmit = (data) => {
         mutate({
             property_id: id,
-            title: data.userName,
+            title: data.reviewTitle,
             description: data.reviewText,
         });
         reset();
@@ -102,6 +103,7 @@ function PropertyDetail() {
                     property={property}
                     savePost={savePost}
                     reviews={reviews}
+                    reviewsRef={reviewsRef}
                 />
             </div>
             <div className="flex flex-col">
@@ -110,7 +112,11 @@ function PropertyDetail() {
                 {/* sezione host */}
                 <SectionHost property={property} />
                 {/* sezione recensioni*/}
-                <SectionRecensioni reviews={reviews} id={id} />
+                <SectionRecensioni
+                    reviews={reviews}
+                    reviewsRef={reviewsRef}
+                    id={id}
+                />
                 {/* sezione form recensione */}
                 <SectionFormRecensioni
                     handleSubmit={handleSubmit}
@@ -186,8 +192,7 @@ function SectionImages({ property, savePost }) {
     );
 }
 // SECTION DETAILS
-function SectionDetails({ property, savePost, reviews }) {
-    const reviewsRef = useRef(null);
+function SectionDetails({ property, savePost, reviews, reviewsRef }) {
     const [clickedHeart, setClickedHeart] = useState(null);
     const [clickedShare, setClickedShare] = useState(null);
     const [clickedSave, setClickedSave] = useState(null);
@@ -369,7 +374,7 @@ function SectionPosition({ property }) {
                 </div>
 
                 {/* Mappa */}
-                <div className="lg:w-1/2 lg:py-8 lg:px-4">
+                <div className="lg:w-1/2 lg:py-8 lg:px-4 ">
                     <MyMapComponent property={property} />
                 </div>
             </section>
@@ -425,8 +430,7 @@ function SectionHost({ property }) {
     );
 }
 // SECTION RECENSIONE
-function SectionRecensioni({ reviews }) {
-    const reviewsRef = useRef(null);
+function SectionRecensioni({ reviews, reviewsRef }) {
     const { headerRef } = useRefsContext();
     return (
         <>
@@ -494,11 +498,13 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
                     </div>
                     <input
                         type="text"
-                        placeholder="Inserisci il tuo nome"
+                        placeholder="Inserisci il titolo della recensione"
                         className="mt-4 w-full p-2 border rounded-lg"
-                        {...register("userName")}
+                        {...register("reviewTitle")}
                     />
-                    <p className="text-red-500">{errors.userName?.message}</p>
+                    <p className="text-red-500">
+                        {errors.reviewTitle?.message}
+                    </p>
                     <textarea
                         placeholder="Scrivi una recensione"
                         className="mt-4 w-full p-2 border rounded-lg"

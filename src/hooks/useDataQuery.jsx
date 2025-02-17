@@ -55,7 +55,8 @@ export const useAddPropertyQuery = () => {
             const res = await addProperty(formData);
             return res.data;
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
+            console.log(data);
             queryClient.invalidateQueries(["properties"]);
         },
     });
