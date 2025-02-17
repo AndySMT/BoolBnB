@@ -106,25 +106,25 @@ function JumboImages() {
     const { duration, delays, easing } = animationConfig.images;
 
     const imageAnimations = [
-        { x: 50, y: 20, rotate: -3 },
-        { x: -80, y: 50, rotate: 14 },
-        { x: 40, y: -50, rotate: -10 },
-        { x: -70, y: -30, rotate: 10 },
+        { x: 40, y: 20, rotate: -3 },
+        { x: -70, y: 50, rotate: 14 },
+        { x: 30, y: -50, rotate: -10 },
+        { x: -60, y: -30, rotate: 10 },
     ];
 
     const width = document.documentElement.offsetWidth;
     let baseScale;
     if (width < 1300) {
-        baseScale = 85;
+        baseScale = 80;
     } else {
-        baseScale = 95;
+        baseScale = 90;
     }
 
     return (
         <div className="hidden lg:grid grid-cols-2 grid-rows-2 h-full">
             {imageAnimations.map((animation, index) => (
                 <motion.div
-                    className={`mx-auto max-h-64  bg-red-300 rounded-lg`}
+                    className={`mx-auto max-h-64 aspect-[4/5] rounded-lg border border-black`}
                     key={index}
                     style={{
                         scale: parseFloat((baseScale + index * 15) / 100),
@@ -148,7 +148,7 @@ function JumboImages() {
                     <img
                         src={`/images/jumbo${index + 1}.webp`}
                         alt={`jumbo-${index + 1}`}
-                        className="w-full h-full object-cover rounded-lg"
+                        className="w-full h-full object-cover rounded-lg shadow-2xl"
                         loading="lazy"
                     />
                 </motion.div>
