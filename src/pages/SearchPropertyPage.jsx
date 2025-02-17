@@ -4,6 +4,7 @@ import Select from "react-select";
 import { useGetPropertiesQuery } from "../hooks/useDataQuery";
 import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
+import { FaSearch } from "react-icons/fa";
 import { useRefsContext } from "../Context/RefsContext";
 
 // options delle select iniziali
@@ -58,10 +59,10 @@ function SearchPropertyPage() {
     // * RETURNS
     return (
         <>
-            <div className="grid grid-cols-1  px-6 md:px-24 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4  px-6 md:px-24 mt-6">
                 <form
                     onSubmit={onInputSubmit}
-                    className="flex justify-center gap-2 my-5 md:items-baseline"
+                    className="flex justify-center gap-4 my-5 md:items-baseline"
                 >
                     <input
                         type="text"
@@ -74,13 +75,14 @@ function SearchPropertyPage() {
                         type="submit"
                         className="px-4 py-2 rounded-lg cursor-pointer border border-black active:border-white active:bg-black active:text-white "
                     >
-                        Cerca
+                        <FaSearch className="md:hidden"/>
+                        <p className="hidden md:block">Cerca</p>
                     </button>
                 </form>
 
                 <form
                     onSubmit={onFilterSubmit}
-                    className="my-3 mx-auto p-6 bg-white rounded-3xl inset-shadow-[0px_0px_7px_3px_rgba(0,0,0,0.35)] lg:w-1/2 sm:w-3/4"
+                    className="mx-auto p-6 bg-white rounded-3xl inset-shadow-[0px_0px_7px_3px_rgba(0,0,0,0.35)] md:w-full w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:text-[10px] z-20 xl:grid-cols-6 items-end"
                 >
                     <Selects setOptSelected={setOptSelected} />
                     {/* submit */}
@@ -89,7 +91,7 @@ function SearchPropertyPage() {
                         type="submit"
                         className={`${(!isEnabled || !inputValue.length) &&
                             "!cursor-not-allowed opacity-50"
-                            } px-4 py-2 my-4 md:mx-0 rounded-lg cursor-pointer mx-15 border border-black active:border-white active:bg-black active:text-white`}
+                            } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
                     >
                         Applica filtri
                     </button>
@@ -116,19 +118,21 @@ function SearchPropertyPage() {
 }
 
 const options = [
-    { value: "1", label: "1+" },
-    { value: "2", label: "2+" },
-    { value: "3", label: "3+" },
-    { value: "4", label: "4+" },
+    { value: "1", label: "1" },
+    { value: "2", label: "2" },
+    { value: "3", label: "3" },
+    { value: "4", label: "4" },
     { value: "5", label: "5+" },
 ];
 
 const smqOptions = [
-    { value: "50", label: "50+" },
-    { value: "100", label: "100+" },
-    { value: "200", label: "200+" },
-    { value: "300", label: "300+" },
-    { value: "400", label: "400+" },
+    { value: "50", label: "100+" },
+    { value: "100", label: "200+" },
+    { value: "200", label: "300+" },
+    { value: "300", label: "400+" },
+    { value: "400", label: "500+" },
+    { value: "300", label: "600+" },
+    { value: "400", label: "700+" },
 ];
 
 const typeOptions = [
