@@ -36,6 +36,7 @@ function PropertyDetail() {
     const { mutate } = useAddReviewQuery(id);
     const reviewsRef = useRef(null);
     const navigate = useNavigate();
+    const [rating, setRating] = useState(0);
     const {
         register,
         handleSubmit,
@@ -50,6 +51,7 @@ function PropertyDetail() {
             property_id: id,
             title: data.reviewTitle,
             description: data.reviewText,
+            rating: data.rating,
         });
         reset();
     };
@@ -123,6 +125,8 @@ function PropertyDetail() {
                     onSubmit={onSubmit}
                     register={register}
                     errors={errors}
+                    setRating={setRating}
+                // (rate) => setValue("rating", rate)
                 />
             </div>
             <ChatBot propertyId={property.id} />
@@ -178,11 +182,10 @@ function SectionImages({ property, savePost }) {
                             key={index}
                             src={`${imagesUrl}/${property.id}${img}`}
                             alt={`Thumbnail ${index + 1}`}
-                            className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${
-                                activeIndex === index
-                                    ? "outline-2 outline-blue-500"
-                                    : ""
-                            }`}
+                            className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${activeIndex === index
+                                ? "outline-2 outline-blue-500"
+                                : ""
+                                }`}
                             onClick={() => handleThumbnailClick(index)}
                         />
                     ))}
@@ -221,11 +224,10 @@ function SectionDetails({ property, savePost, reviews, reviewsRef }) {
                         {/* HEART */}
                         <div
                             className={`flex items-center rounded-xl boxShad  py-1 px-1.5 sm:block  
-                         ${
-                             clickedHeart === "heart"
-                                 ? "bg-red-400"
-                                 : "bg-white"
-                         }`}
+                         ${clickedHeart === "heart"
+                                    ? "bg-red-400"
+                                    : "bg-white"
+                                }`}
                             onClick={() => toggleHeart("heart")}
                         >
                             <Heart propertyId={property.id} />
@@ -233,11 +235,10 @@ function SectionDetails({ property, savePost, reviews, reviewsRef }) {
                         {/* icona condividi */}
                         <div
                             className={`flex items-center rounded-xl boxShad  py-2 px-1.5 sm:block  
-                         ${
-                             clickedShare === "share"
-                                 ? "bg-blue-400"
-                                 : "bg-white"
-                         }`}
+                         ${clickedShare === "share"
+                                    ? "bg-blue-400"
+                                    : "bg-white"
+                                }`}
                             onClick={() => toggleShare("share")}
                         >
                             <span className="text-xs underline underline-offset-2">
@@ -247,11 +248,10 @@ function SectionDetails({ property, savePost, reviews, reviewsRef }) {
                         {/* icona Save */}
                         <div
                             className={`flex items-center rounded-xl boxShad   sm:block cursor-pointer  
-                         ${
-                             clickedSave === "save"
-                                 ? "bg-green-300"
-                                 : "bg-white"
-                         }`}
+                         ${clickedSave === "save"
+                                    ? "bg-green-300"
+                                    : "bg-white"
+                                }`}
                             onClick={() => toggleSave("save")}
                         >
                             <button onClick={savePost} className="py-2 px-1.5">
@@ -366,10 +366,10 @@ function SectionPosition({ property }) {
                         {property.city === "Roma"
                             ? "Elegante quartiere di Roma, molto strategico per la sua posizione, dove troverete negozi di ogni genere, supermercati, bar, tabaccherie, caffetterie e servizi di ristorazione da asporto e non."
                             : property.city === "Milano"
-                            ? "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
-                            : property.city === "Firenze"
-                            ? "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
-                            : `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`}
+                                ? "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
+                                : property.city === "Firenze"
+                                    ? "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
+                                    : `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`}
                     </div>
                 </div>
 
@@ -440,10 +440,57 @@ function SectionRecensioni({ reviews, reviewsRef }) {
                     scrollMarginTop: `${headerRef.current.offsetHeight + 20}px`,
                 }}
                 className="reviews-section px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400 "
-            >
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
-                    Recensioni
-                </h1>
+            >   <div className="flex justify-between items-center">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
+                        Recensioni
+                    </h1>
+                    <div className="flex  sm:text-l lg:text-2xl font-black tracking-wide mb-4">
+
+
+                        <div
+                            className="flex space-x-2 border-[3px] border-stone-400 rounded-xl select-none"
+                        >
+                            <label
+                                className="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"
+                            >
+                                <input
+                                    type="radio"
+                                    name="radio"
+                                    value="html"
+                                    className="peer hidden"
+                                // checked=""
+                                />
+                                <span
+                                    className="tracking-widest peer-checked:bg-gradient-to-r peer-checked:from-[blueviolet] peer-checked:to-[violet] peer-checked:text-white text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out"
+                                >  Filtro :</span
+                                >
+                            </label>
+
+                            <label
+                                className="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"
+                            >
+                                <input type="radio" name="radio" value="react" className="peer hidden" />
+                                <span
+                                    className="tracking-widest peer-checked:bg-gradient-to-r peer-checked:from-[#d4c685] peer-checked:to-[#a7d3a6] peer-checked:text-white text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out
+                                   "
+                                >Data</span
+                                >
+                            </label>
+
+                            <label
+                                className="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"
+                            >
+                                <input type="radio" name="radio" value="vue" className="peer hidden" />
+                                <span
+                                    className="tracking-widest peer-checked:bg-gradient-to-r peer-checked:from-[#d4c685] peer-checked:to-[#a7d3a6] peer-checked:text-white text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out
+                                   "
+                                >Stelle</span
+                                >
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {reviews?.length > 0 ? (
                         reviews?.map((review) => (
@@ -460,12 +507,16 @@ function SectionRecensioni({ reviews, reviewsRef }) {
                                 <p className="text-sm text-gray-500">
                                     {review.create_at}
                                 </p>
+                                <p className="text-sm text-gray-500">
+                                    <span> Voto : {review.rating} </span>
+                                </p>
                             </div>
                         ))
                     ) : (
                         <p>No reviews yet.</p>
                     )}
                 </div>
+
             </section>
         </>
     );
@@ -474,62 +525,66 @@ function SectionRecensioni({ reviews, reviewsRef }) {
 // SECTION FORM RECENSIONI
 function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
     const [showConfirmation, setShowConfirmation] = useState(false);
+
+    const [rating, setRating] = useState(0);
+
     const handleFormSubmit = (data) => {
-        onSubmit(data);
-        setShowConfirmation(true);
-        setTimeout(() => {
-            setShowConfirmation(false);
-        }, 750);
+        onSubmit({ ...data, rating });
     };
 
+
     return (
-        <>
-            <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6">
-                <h1
-                    className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4"
-                    id="reviews"
-                >
-                    Lascia la tua Recensione
-                </h1>
+        <section
+            className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6">
+            <h1
+                className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4"
+                id="reviews"
+            >
+                Lascia la tua Recensione
+            </h1>
 
-                <form onSubmit={handleSubmit(handleFormSubmit)}>
-                    <div className="flex border w-fit rounded-lg p-2 gap-1">
-                        Voto : <StarsComponent />
-                    </div>
-                    <input
-                        type="text"
-                        placeholder="Inserisci il titolo della recensione"
-                        className="mt-4 w-full p-2 border rounded-lg"
-                        {...register("reviewTitle")}
-                    />
-                    <p className="text-red-500">
-                        {errors.reviewTitle?.message}
-                    </p>
-                    <textarea
-                        placeholder="Scrivi una recensione"
-                        className="mt-4 w-full p-2 border rounded-lg"
-                        {...register("reviewText")}
-                    />
-                    <p className="text-red-500">{errors.reviewText?.message}</p>
-                    <button
-                        type="submit"
-                        className="mt-2 px-3 sm:px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-lg sm:text-xl cursor-pointer"
-                    >
-                        Invia recensione
-                    </button>
-                </form>
+            <h1>Lascia la tua Recensione</h1>
 
-                <PopUp
-                    isOpen={showConfirmation}
-                    onClose={() => setShowConfirmation(false)}
+            <form onSubmit={handleSubmit(handleFormSubmit)}>
+                <div className="flex border w-fit rounded-lg p-2 gap-1">
+                    Voto: <StarsComponent setRating={setRating} rating={rating} />
+                </div>
+                <input
+                    type="hidden"
+                    value={rating}
+                    {...register("rating")}
+                />
+                <input
+                    type="text"
+                    placeholder="Inserisci il titolo della recensione"
+                    className="mt-4 w-full p-2 border rounded-lg"
+                    {...register("reviewTitle")}
+                />
+                <textarea
+                    placeholder="Scrivi una recensione"
+                    className="mt-4 w-full p-2 border rounded-lg"
+                    {...register("reviewText")}
+                />
+                <button
+                    type="submit"
+                    className="mt-2 px-3 sm:px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-lg sm:text-xl cursor-pointer"
                 >
-                    <h2 className="text-green-600 text-lg font-bold">
-                        ✅ Recensione pubblicata con successo!
-                    </h2>
-                </PopUp>
-            </section>
-        </>
+                    Invia recensione
+                </button>
+            </form>
+
+            <PopUp
+                isOpen={showConfirmation}
+                onClose={() => setShowConfirmation(false)}
+            >
+                <h2 className="text-green-600 text-lg font-bold">
+                    ✅ Recensione pubblicata con successo!
+                </h2>
+            </PopUp>
+
+        </section>
     );
 }
+
 
 export default PropertyDetail;
