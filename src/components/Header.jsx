@@ -11,7 +11,7 @@ const Header = () => {
 
     // booleano controllato dallo scroll della window, useScroll prende come param l'offset
     const isVisible = useScroll(
-        jumboRef.current?.offsetHeight - headerRef.current?.offsetHeight / 1.5
+        jumboRef.current?.offsetHeight - (headerRef.current?.offsetHeight + 20)
     );
 
     // isVisible controlla la visibilita del bookLink
@@ -79,7 +79,12 @@ function HeaderLink({ to, text, children }) {
     );
 }
 
-function HeaderComp({ children, headerRef, isVisible: isNotTriggeredAnim, location }) {
+function HeaderComp({
+    children,
+    headerRef,
+    isVisible: isNotTriggeredAnim,
+    location,
+}) {
     const [isVisible, setIsVisible] = useState(true);
 
     // controllo della visibilita dell header in base alla location pathname
@@ -89,7 +94,7 @@ function HeaderComp({ children, headerRef, isVisible: isNotTriggeredAnim, locati
     return (
         <header
             ref={headerRef}
-            // 
+            //
             className={`${!isNotTriggeredAnim && "-translate-y-20"} ${
                 !isVisible && "hidden sm:flex"
             } 
