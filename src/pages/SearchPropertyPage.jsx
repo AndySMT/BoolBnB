@@ -82,7 +82,7 @@ function SearchPropertyPage() {
 
                 <form
                     onSubmit={onFilterSubmit}
-                    className="mx-auto p-6 bg-white rounded-3xl inset-shadow-[0px_0px_7px_3px_rgba(0,0,0,0.35)] md:w-full w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:text-[10px] z-30 xl:grid-cols-6 items-end"
+                    className="mx-auto p-6 bg-white rounded-3xl inset-shadow-[0px_0px_7px_3px_rgba(0,0,0,0.35)] md:w-full w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:text-[10px] z-20 xl:grid-cols-6 items-end"
                 >
                     <Selects setOptSelected={setOptSelected} />
                     {/* submit */}
