@@ -76,9 +76,8 @@ export const useAddReviewQuery = (id) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (newReview) => {
-            console.log(newReview);
+            console.log(newReview)
             const res = await addReview(newReview);
-            console.log(res.data);
             return res.data;
         },
         //* optimistic update
@@ -96,7 +95,7 @@ export const useAddReviewQuery = (id) => {
                     total_res: oldQueryData.total_res + 1,
                     results: [
                         ...oldQueryData.results,
-                        { id: findMaxId(oldQueryData) + 1, ...newReview },
+                        { id: findMaxId(oldQueryData.results) + 1, ...newReview },
                     ],
                 };
             });

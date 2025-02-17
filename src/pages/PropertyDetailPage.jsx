@@ -47,7 +47,6 @@ function PropertyDetail() {
     });
     // * ACTIONS
     const onSubmit = (data) => {
-        console.log(data)
         mutate({
             property_id: id,
             title: data.reviewTitle,
@@ -527,7 +526,6 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
     const [rating, setRating] = useState(0);
 
     const handleFormSubmit = (data) => {
-        console.log("Dati inviati al backend:", { ...data, rating });
         onSubmit({ ...data, rating });
     };
 
