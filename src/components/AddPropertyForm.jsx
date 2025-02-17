@@ -4,14 +4,17 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useAddPropertyQuery } from "../hooks/useDataQuery";
-import PopUp from "../pages/PopUp";
+// import PopUp from "../pages/PopUp";
+import { toast } from "react-toastify";
+import { FileUploader } from "react-drag-drop-files";
 
 function AddPropertyForm({ setIsFormOpen }) {
-  const [showConfirmation, setShowConfirmation] = useState(false);
+  // const [showConfirmation, setShowConfirmation] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({ resolver: yupResolver(schema) }); //schema si trova sotto
   const [selectedFiles, setSelectedFiles] = useState([]);
 
@@ -41,14 +44,16 @@ function AddPropertyForm({ setIsFormOpen }) {
 
   useEffect(() => {
     if (isSuccess) {
+      toast.success("Annuncio pubblicato con successo!");
       // isSuccess indica la proprieta salvata nel db correttamente
       setSelectedFiles(null);
-      setShowConfirmation(true);
+      /* setShowConfirmation(true); */
 
-      setTimeout(() => {
-        setShowConfirmation(false);
-        setIsFormOpen(false);
-      }, 750);
+      /* setTimeout(() => {
+        setShowConfirmation(false), setIsFormOpen(false);
+      }, 750); */
+    } else if (isError) {
+      toast.error("Errore nell'invio del form, riprova");
     }
   }, [isSuccess, isError, setIsFormOpen]);
 
@@ -200,11 +205,12 @@ function AddPropertyForm({ setIsFormOpen }) {
               <option value="" hidden>
                 Select bedrooms
               </option>
-              {[1, 2, 3, 4, 5].map((num) => (
+              {[1, 2, 3, 4].map((num) => (
                 <option key={num} value={num}>
                   {num}
                 </option>
               ))}
+              <option value="5">5+</option>
             </select>
             {errors.n_bedrooms && (
               <span className="text-red-500">{errors.n_bedrooms.message}</span>
@@ -227,7 +233,9 @@ function AddPropertyForm({ setIsFormOpen }) {
                   {num}
                 </option>
               ))}
+              <option value="4">4+</option>
             </select>
+
             {errors.n_bathrooms && (
               <span className="text-red-500">{errors.n_bathrooms.message}</span>
             )}
@@ -244,11 +252,12 @@ function AddPropertyForm({ setIsFormOpen }) {
               <option value="" hidden>
                 Select beds
               </option>
-              {[1, 2, 3, 4, 5].map((num) => (
+              {[1, 2, 3, 4].map((num) => (
                 <option key={num} value={num}>
                   {num}
                 </option>
               ))}
+              <option value="5">5+</option>
             </select>
             {errors.n_beds && (
               <span className="text-red-500">{errors.n_beds.message}</span>
@@ -280,7 +289,25 @@ function AddPropertyForm({ setIsFormOpen }) {
 
         <div className="col-span-2">
           <label className="text-gray-700">Upload Image</label>
-          <input
+          <FileUploader
+            onFilesChange={(files) => {
+              setSelectedFiles(files);
+              setValue("files", files, { shouldValidate: true });
+            }}
+            acceptedFileTypes={["image/png", "image/jpeg"]}
+            hoverTitle={
+              <div className="flex items-center justify-center w-full h-full">
+                <span className="text-blue-600 font-semibold text-center">
+                  Rilascia per caricare le immagini
+                </span>
+              </div>
+            }
+            multiple
+            name="files"
+            classes="w-full p-30 border-4 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 hover:bg-gray-100 transition-all hover:border-blue-500"
+          />
+
+          {/* <input
             multiple={true}
             type="file"
             name="files"
@@ -288,9 +315,9 @@ function AddPropertyForm({ setIsFormOpen }) {
             className="w-full p-2 border rounded border-gray-300"
             onChange={handleFileChange}
             accept="image/png, image/jpeg"
-          />
-          {errors.file && (
-            <span className="text-red-500">{errors.file.message}</span>
+          /> */}
+          {errors.files && (
+            <span className="text-red-500">{errors.files.message}</span>
           )}
           <button
             type="submit"
@@ -300,14 +327,14 @@ function AddPropertyForm({ setIsFormOpen }) {
           </button>
         </div>
       </form>
-      <PopUp
+      {/* <PopUp
         isOpen={showConfirmation}
         onClose={() => setShowConfirmation(false)}
       >
         <h2 className="text-green-600 text-lg font-bold">
           ✅ Annuncio pubblicato con successo!
         </h2>
-      </PopUp>
+      </PopUp> */}
     </>
   );
 }
@@ -386,8 +413,9 @@ const schema = yup.object().shape({
     //   return value && value[0] && value[0].size <= 2 * 1024 * 1024; // Max 2MB
     // })
     .test("fileType", "Formato non supportato", (value) => {
-      return (
-        value && value[0] && ["image/jpeg", "image/png"].includes(value[0].type)
+      if (!value) return false;
+      return Array.from(value).every((file) =>
+        ["image/jpeg", "image/png"].includes(file.type)
       );
     }),
 });
