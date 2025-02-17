@@ -23,16 +23,15 @@ export const useGetPropertiesQuery = (params, enabled) => {
     });
 };
 
-export const useInfiniteGetPropsQuery = (params, enabled, currPage) => {
+export const useInfiniteGetPropsQuery = (params) => {
     return useInfiniteQuery({
         queryKey: ["propertiesInf", params],
         queryFn: async ({ pageParam }) => {
             const res = await getProperties({ ...params, page: pageParam });
             return res.data;
         },
-        enabled,
         initialPageParam: 1,
-        getNextPageParam: (_, allPages) => currPage,
+        getNextPageParam: (_l, _all, lastPageParam) => lastPageParam + 1,
     });
 };
 
@@ -80,7 +79,7 @@ export const useAddReviewQuery = (id) => {
             return res.data;
         },
         //* optimistic update
-        // // onMutate mostra gia la "risposta" non sincronizzata e salva in una var i vecchi dati di reviews
+        // onMutate mostra gia la "risposta" non sincronizzata e salva in una var i vecchi dati di reviews
         onMutate: async (newReview) => {
             await queryClient.cancelQueries(["reviews", id]);
             const previousReviews = queryClient.getQueryData(["reviews", id]);
@@ -109,6 +108,28 @@ export const useAddReviewQuery = (id) => {
         // onSuccess: () => {
         //     queryClient.invalidateQueries(["reviews", id]);
         // },
+    });
+};
+
+// likes
+export const useGetLikesByPropsIdQuery = (property_id) => {
+    return useQuery({
+        queryKey: ["likes", property_id],
+        queryFn: async () => {
+            const res = await getLikesByPropsId(property_id);
+            return res.data;
+        },
+    });
+};
+
+export const useAddLikeQuery = (property_id) => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (property_id) => {
+            const res = await addLike(property_id);
+            return res.data;
+        },
+        onSuccess: queryClient.invalidateQueries(["likes", property_id]),
     });
 };
 

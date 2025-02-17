@@ -36,7 +36,7 @@ const CardsSectionContainer = ({ params }) => {
         data,
         fetchNextPage,
         refetch,
-    } = useInfiniteGetPropsQuery(params, true, currPage);
+    } = useInfiniteGetPropsQuery(params);
 
     const navigate = useNavigate();
 

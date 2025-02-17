@@ -1,5 +1,5 @@
 import axios from "axios";
-import { baseUrl, propsEndpoint, revsEndpoint } from "./apiUrls";
+import { baseUrl, likesEndpoint, propsEndpoint, revsEndpoint } from "./apiUrls";
 
 export const getProperties = async (params) => {
     return await axios.get(baseUrl + propsEndpoint, { params });
@@ -18,6 +18,7 @@ export const getReviews = async (propertyId) => {
 };
 
 export const addReview = async (newReview) => {
+    console.log("ciao")
     const { property_id, title, description } = newReview;
     if (!title || !description) return undefined;
     return await axios.post(baseUrl + revsEndpoint, {
@@ -25,5 +26,17 @@ export const addReview = async (newReview) => {
         property_id,
         title,
         description,
+    });
+};
+
+export const getLikesByPropsId = async (property_id) => {
+    if (!property_id) return undefined;
+    return await axios.get(baseUrl + likesEndpoint + "/" + property_id);
+};
+
+export const addLike = async (property_id) => {
+    if (!property_id) return undefined;
+    return await axios.post(baseUrl + likesEndpoint, {
+        property_id,
     });
 };
