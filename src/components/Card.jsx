@@ -27,10 +27,9 @@ function Card({ property, index }) {
     let {
         id,
         title,
-        host,
+        first_name,
         address,
         square_meters,
-        total_likes,
         city,
         n_bedrooms,
         n_bathrooms,
@@ -45,7 +44,12 @@ function Card({ property, index }) {
     };
 
     // * QUERIES
-    const { data: likesRes, isSuccess, isError, isLoading } = useGetLikesByPropsIdQuery(property.id);
+    const {
+        data: likesRes,
+        isSuccess,
+        isError,
+        isLoading,
+    } = useGetLikesByPropsIdQuery(property.id);
 
     isError && console.log(data);
 
@@ -99,18 +103,24 @@ function Card({ property, index }) {
                         </span>
                         <span className="flex items-center gap-1">
                             <AiFillStar className="translate-y-[1.5px]" />
-                            {isLoading ? "..." : isSuccess ? likesRes.total_res : ""}
+                            {isLoading
+                                ? "..."
+                                : isSuccess
+                                ? likesRes.total_res
+                                : ""}
                         </span>
                     </div>
                     <span className="text-gray-500 text-lg lg:text-sm px-1">
-                        Host: {host}
+                        Host: {first_name}
                     </span>
 
                     {/* details */}
                     <div className="grid grid-cols-2 grid-rows-2 [&>*:nth-child(even)]:justify-end mt-1 text-lg text-gray-500 lg:text-sm">
                         <div className="-translate-x-0.5 overflow-hidden overflow-ellipsis">
                             <MdLocationOn className="text-xl -translate-y-0.5 inline-block mr-0.5" />
-                            <span>{`${address}, ${city}`}</span>
+                            <span
+                                title={`${city}, ${address}`}
+                            >{`${city}, ${address}`}</span>
                         </div>
                         <div className="flex items-center gap-1">
                             <MdBed className="text-lg" />

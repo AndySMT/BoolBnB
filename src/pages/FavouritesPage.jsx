@@ -30,7 +30,7 @@ function FavouritesPage() {
             <h1 className="text-xl sm:text-3xl lg:text-4xl font-black tracking-wide p-8 px-8 sm:px-12 lg:px-24">
                 Le tue proprietà preferite
             </h1>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 px-8 sm:px-12 lg:px-24">
+            <div className="grid grid-cols-1 2xl:grid-cols-2 gap-10 px-8 sm:px-12 lg:px-24">
                 {favouritesIds.length > 0 ? (
                     favouritesIds.map((id) => (
                         <Favourites

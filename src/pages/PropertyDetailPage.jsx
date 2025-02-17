@@ -346,10 +346,10 @@ function SectionPosition({ property }) {
                         <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
                             <div className="flex items-center gap-1">
                                 <FaMapMarkerAlt />
-                                <span>Zip code:{property.zipcode}</span>
+                                <span>Zip code:</span>
                             </div>
                             <span className="font-normal">
-                                {property.address_number}
+                                {property.zipcode}
                             </span>
                         </div>
                         <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
@@ -390,7 +390,7 @@ function SectionHost({ property }) {
             <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400">
                 <section className="flex flex-col sm:flex-row justify-between gap-4">
                     {/* Informazioni sull'Host */}
-                    <div className="md:w-1/2 space-y-2 border  px-4 py-2 rounded-lg whitespace-wrap">
+                    <div className="md:w-1/2 space-y-2 border  px-4 py-2 rounded-lg whitespace-wrap self-start">
                         <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
                             Informazioni sull'Host
                         </h1>
