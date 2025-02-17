@@ -1,56 +1,42 @@
 import axios from "axios";
-import { baseUrl, propsEndpoint, revsEndpoint } from "./apiUrls";
+import { baseUrl, likesEndpoint, propsEndpoint, revsEndpoint } from "./apiUrls";
 
-export const getProperties = async () => {
-    return await axios.get(baseUrl + propsEndpoint);
+export const getProperties = async (params) => {
+    return await axios.get(baseUrl + propsEndpoint, { params });
 };
 
 export const getProperty = async (id) => {
     return await axios.get(baseUrl + propsEndpoint + "/" + id);
 };
 
-export const addProperty = async (newProperty) => {
-    const {
-        title,
-        description,
-        n_bedrooms,
-        n_bathrooms,
-        n_beds,
-        square_meters,
-        address,
-        address_number,
-        zipcode,
-        city,
-        property_type,
-    } = newProperty;
-    // ... spazio per fare validazione
-    return await axios.post(baseUrl + propsEndpoint, {
-        user_id: null,
-        title,
-        description,
-        n_bedrooms,
-        n_bathrooms,
-        n_beds,
-        square_meters,
-        address,
-        address_number,
-        zipcode,
-        city,
-        property_type,
-    });
+export const addProperty = async (data) => {
+    return await axios.post(baseUrl + propsEndpoint, data);
 };
 
 export const getReviews = async (propertyId) => {
     return await axios.get(`${baseUrl}${revsEndpoint}/${propertyId}`);
 };
 
-export const addReview = async (property_id, newReview) => {
-    const { title, description } = newReview;
+export const addReview = async (newReview) => {
+    console.log("ciao")
+    const { property_id, title, description } = newReview;
     if (!title || !description) return undefined;
     return await axios.post(baseUrl + revsEndpoint, {
         user_id: null,
         property_id,
         title,
         description,
+    });
+};
+
+export const getLikesByPropsId = async (property_id) => {
+    if (!property_id) return undefined;
+    return await axios.get(baseUrl + likesEndpoint + "/" + property_id);
+};
+
+export const addLike = async (property_id) => {
+    if (!property_id) return undefined;
+    return await axios.post(baseUrl + likesEndpoint, {
+        property_id,
     });
 };
