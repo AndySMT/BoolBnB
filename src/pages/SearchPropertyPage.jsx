@@ -4,9 +4,9 @@ import Select from "react-select";
 import { useGetPropertiesQuery } from "../hooks/useDataQuery";
 import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
-import { FaSearch } from "react-icons/fa";
-import { useRefsContext } from "../Context/RefsContext";
+import { FaFilter, FaSearch } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
+import { useRefsContext } from "../Context/RefsContext";
 
 // options delle select iniziali
 const initialOptions = {
@@ -18,6 +18,7 @@ const initialOptions = {
 };
 
 function SearchPropertyPage() {
+    const { headerRef } = useRefsContext();
     const location = useLocation();
     const city = location?.state?.city;
     const property_type = location?.state?.type;
@@ -26,19 +27,12 @@ function SearchPropertyPage() {
     const [params, setParams] = useState({ city, property_type }); // per salvare l'oggetto params per la query in get
     const [isEnabled, setIsEnabled] = useState(true); // booleano che abilita o no il fetch (controllare useGetPropertiesQuery)
     const [optSelected, setOptSelected] = useState(initialOptions); // oggetto che salva le options
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-    const { data, isLoading, isError, isSuccess, refetch } =
-        useGetPropertiesQuery(params, isEnabled);
-
-    useEffect(() => {
-        if (isSuccess) {
-            window.scrollTo({
-                behavior: "smooth",
-                left: 0,
-                top: 600,
-            });
-        }
-    }, [isSuccess]);
+    const { data, isLoading, isError, refetch } = useGetPropertiesQuery(
+        params,
+        isEnabled
+    );
 
     // * ACTIONS
     const onInputSubmit = (e) => {
@@ -49,6 +43,7 @@ function SearchPropertyPage() {
             setIsEnabled(true); // dal submit in poi della prima ricerca, abilito il fetch
             refetch(); // rifai il fetch delle properties
         }
+        setIsFilterOpen(false);
     };
 
     const onFilterSubmit = (e) => {
@@ -60,14 +55,18 @@ function SearchPropertyPage() {
         } else {
             console.log("Cerca prima la città!");
         }
+        setIsFilterOpen(false);
     };
     // * RETURNS
     return (
         <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4  px-6 md:px-24 mt-6">
+            <div
+                style={{ top: `${headerRef?.current?.offsetHeight - 2}px` }}
+                className="flex items-center justify-center gap-8 border-b bg-[#fcfcfc]   px-6 md:px-24 fixed top-[-1px] left-0 w-screen z-30"
+            >
                 <form
                     onSubmit={onInputSubmit}
-                    className="flex justify-center gap-4 my-5 md:items-baseline"
+                    className="flex justify-center gap-1 my-5 md:items-baseline"
                 >
                     <input
                         type="text"
@@ -84,26 +83,36 @@ function SearchPropertyPage() {
                         <p className="hidden md:block">Cerca</p>
                     </button>
                 </form>
-
-                <form
-                    onSubmit={onFilterSubmit}
-                    className="mx-auto p-6 bg-white rounded-3xl inset-shadow-[0px_0px_7px_3px_rgba(0,0,0,0.35)] md:w-full w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:text-[10px] z-20 xl:grid-cols-6 items-end"
+                <button
+                    onClick={() => setIsFilterOpen((curr) => !curr)}
+                    className="text-xl p-3 rounded-md border lg:hidden"
                 >
-                    <Selects setOptSelected={setOptSelected} />
-                    {/* submit */}
-                    <button
-                        disabled={!isEnabled || !inputValue.length}
-                        type="submit"
-                        className={`${
-                            (!isEnabled || !inputValue.length) &&
-                            "!cursor-not-allowed opacity-50"
-                        } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
+                    <FaFilter />
+                </button>
+                <div
+                    className={`${
+                        !isFilterOpen && "hidden lg:block"
+                    } bg-white absolute w-full lg:h-screen z-30 top-[102%] lg:w-1/6 right-0`}
+                >
+                    <form
+                        onSubmit={onFilterSubmit}
+                        className=" md:w-full p-6 grid grid-cols-2 md:grid-cols-3 gap-4 md:text-[10px] z-20 xl:grid-cols-1 items-end"
                     >
-                        Applica filtri
-                    </button>
-                </form>
+                        <Selects setOptSelected={setOptSelected} />
+                        <button
+                            disabled={!isEnabled || !inputValue.length}
+                            type="submit"
+                            className={`${
+                                (!isEnabled || !inputValue.length) &&
+                                "!cursor-not-allowed opacity-50"
+                            } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
+                        >
+                            Applica filtri
+                        </button>
+                    </form>
+                </div>
             </div>
-            <div className="px-6 md:px-6 mt-6">
+            <div className="px-6 md:px-6 lg:px-12 mt-6 lg:w-5/6">
                 {/* data */}
                 {!data?.results ? (
                     <p>Nessun risultato ancora</p>
@@ -112,7 +121,7 @@ function SearchPropertyPage() {
                 ) : isError ? (
                     <pre>error</pre>
                 ) : (
-                    <CardsSection title={""}>
+                    <CardsSection classes={"lg:!px-0"} title={""}>
                         {data.results.map((prop) => (
                             <Card key={prop.id} property={prop} />
                         ))}
@@ -132,13 +141,14 @@ const options = [
 ];
 
 const smqOptions = [
-    { value: "50", label: "100+" },
-    { value: "100", label: "200+" },
-    { value: "200", label: "300+" },
-    { value: "300", label: "400+" },
-    { value: "400", label: "500+" },
-    { value: "300", label: "600+" },
-    { value: "400", label: "700+" },
+    { value: "50", label: "50" },
+    { value: "100", label: "100" },
+    { value: "200", label: "200" },
+    { value: "300", label: "300" },
+    { value: "400", label: "400" },
+    { value: "500", label: "500" },
+    { value: "600", label: "600" },
+    { value: "700", label: "700+" },
 ];
 
 const typeOptions = [

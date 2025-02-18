@@ -28,6 +28,8 @@ const Header = () => {
         hidden sm:block bg-[#d4c685] py-2 rounded-md border-2 border-stone-500 hover:bg-[#cabc7d] cursor-pointer
         min-w-72 lg:px-16 text-lg font-semibold text-stone-900`;
 
+    console.log(location.pathname);
+
     return (
         <>
             <HeaderComp
@@ -44,9 +46,11 @@ const Header = () => {
                     />
                 </Link>
                 {/* Book Now */}
-                <Link to={"search"} className={bookLinkClass}>
-                    Cerca l'alloggio che fa per te
-                </Link>
+                {location.pathname !== "/search" && (
+                    <Link to={"search"} className={bookLinkClass}>
+                        Cerca l'alloggio che fa per te
+                    </Link>
+                )}
                 {/* Nav */}
                 <nav className="flex gap-8">
                     <HeaderLink
