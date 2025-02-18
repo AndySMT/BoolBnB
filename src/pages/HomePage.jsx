@@ -82,16 +82,18 @@ const CardsSectionContainer = ({ params }) => {
                     )}
                 </>
             </CardsSection>
-            <div className="flex justify-center">
-                <LoadMoreButton
-                    noMore={currPage * 4 >= data?.pages[0]?.total_quantity}
-                    // al click fetcha la prossima pagina e setta la prossima pagina
-                    onClick={() => {
-                        fetchNextPage();
-                        setCurrPage((curr) => curr + 1);
-                    }}
-                />
-            </div>
+            {data?.pages[data?.pages.length - 1]?.total_res >= 4 && (
+                <div className="flex justify-center">
+                    <LoadMoreButton
+                        noMore={false}
+                        // al click fetcha la prossima pagina e setta la prossima pagina
+                        onClick={() => {
+                            fetchNextPage();
+                            setCurrPage((curr) => curr + 1);
+                        }}
+                    />
+                </div>
+            )}
         </>
     );
 };

@@ -10,13 +10,7 @@ const customStyles = {
             color: "black",
         },
     }),
-    menu: (provided) => ({
-        ...provided,
-        position: "absolute",
-        zIndex: 9999,
-    }),
-    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-    control: (_provided) => ({
+    control: (provided) => ({
         display: "flex",
         textAlign: "start",
         paddingInline: "4px",
@@ -56,7 +50,7 @@ function FastPropertySearch({
     inputClassName,
     selectClassName,
     btnClassName,
-    children
+    children,
 }) {
     const [optSelected, setOptSelected] = useState({});
 
@@ -80,8 +74,6 @@ function FastPropertySearch({
                 placeholder="Città"
             />
             <Select
-                menuPosition="absolute"
-                menuPortalTarget={document.body}
                 styles={customStyles}
                 options={typeOptions}
                 placeholder="Tipo di casa"
