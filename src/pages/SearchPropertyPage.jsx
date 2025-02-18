@@ -22,10 +22,7 @@ function SearchPropertyPage() {
     const city = location?.state?.city;
     const property_type = location?.state?.type;
 
-    console.log(city);
-    console.log(property_type);
-
-    const [inputValue, setInputValue] = useState(""); // controllo dinamico dell'input della citta
+    const [inputValue, setInputValue] = useState(city ? city : ""); // controllo dinamico dell'input della citta
     const [params, setParams] = useState({ city, property_type }); // per salvare l'oggetto params per la query in get
     const [isEnabled, setIsEnabled] = useState(true); // booleano che abilita o no il fetch (controllare useGetPropertiesQuery)
     const [optSelected, setOptSelected] = useState(initialOptions); // oggetto che salva le options

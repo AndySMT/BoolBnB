@@ -52,6 +52,12 @@ function Jumbotron() {
 }
 
 const customStyles = {
+    menu: (provided) => ({
+        ...provided,
+        position: "absolute",
+        zIndex: 9999,
+    }),
+    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
     control: (_provided) => ({
         display: "flex",
         textAlign: "start",
@@ -128,7 +134,7 @@ function JumboSlogan({ headerRef, jumboRef }) {
                 </h1>
                 <h2
                     ref={h2Ref}
-                    className="font-black tracking-wide text-xl text-stone-700 md:text-2xl overflow-hidden transition-all duration-700 h-[100px] sm:h-auto"
+                    className="font-black tracking-wide text-xl text-stone-700 md:text-2xl "
                 >
                     Dal rifugio accogliente alla villa di lusso, Trova lo Spazio
                     Perfetto per la Tua Prossima Avventura!
@@ -146,14 +152,6 @@ function JumboSlogan({ headerRef, jumboRef }) {
                 <div className="flex gap-4 text-lg font-semibold tracking-wider lg:tracking-normal">
                     <form
                         onSubmit={onSubmit}
-                        onFocus={() => {
-                            h2Ref.current.classList.add("!h-0");
-                            h2Ref.current.classList.add("sm:!h-auto");
-                        }}
-                        onBlur={() => {
-                            h2Ref.current.classList.remove("!h-0");
-                            h2Ref.current.classList.remove("sm:!h-auto");
-                        }}
                         className="grid grid-cols-2 gap-4 w-full whitespace-nowrap"
                     >
                         <input
@@ -162,6 +160,8 @@ function JumboSlogan({ headerRef, jumboRef }) {
                             placeholder="Città"
                         />
                         <Select
+                            menuPosition="absolute"
+                            menuPortalTarget={document.body}
                             classNames={{
                                 control: (state) =>
                                     state.isFocused
