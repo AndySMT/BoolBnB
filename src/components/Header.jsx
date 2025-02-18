@@ -50,10 +50,12 @@ const Header = () => {
                 {/* Book Now */}
                 {location.pathname !== "/search" && (
                     <FastPropertySearch
-                        formClassName={`hidden sm:flex gap-1 h-fit whitespace-nowrap items-end  ${bookLinkClass}`}
-                        selectClassName={"sm:!w-[150px] xl:!w-auto"}
-                        inputClassName={"sm:!w-[150px] xl:!w-auto"}
-                        btnClassName={"sm:!text-base xl:!text-2xl !px-2"}
+                        formClassName={`hidden sm:grid grid-cols-12 sm:!w-[300px] md:!w-[375px] xl:!w-[500px] gap-1 whitespace-nowrap  ${bookLinkClass}`}
+                        selectClassName={"col-span-5"}
+                        inputClassName={"col-span-5"}
+                        btnClassName={
+                            "col-span-2 sm:!text-base xl:!text-2xl !px-2"
+                        }
                     >
                         <IoMdSearch />
                     </FastPropertySearch>
@@ -62,7 +64,7 @@ const Header = () => {
                     // </Link>
                 )}
                 {/* Nav */}
-                <nav className="flex gap-8">
+                <nav className="flex sm:gap-2 lg:gap-8">
                     <HeaderLink
                         to={"/addproperty"}
                         text={"Affitta con BoolB&B"}
@@ -114,7 +116,7 @@ function HeaderComp({
             } 
             lg:px-[4vw] items-center sm:!-translate-0 flex 
             bg-linear-90/oklch from-15% from-[#d4c685] to-[#a7d3a6] sm:drop-shadow-lg text-center py-2 px-5 
-            justify-between fixed sm:sticky w-screen top-[-1px] z-40 text-stone-800 text-sm transition-all duration-200 ease-in`}
+            justify-between gap-4 fixed sm:sticky w-screen top-[-1px] z-40 text-stone-800 text-sm transition-all duration-200 ease-in`}
         >
             {children}
         </header>

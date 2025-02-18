@@ -70,25 +70,28 @@ function JumboSlogan({ headerRef, jumboRef }) {
 
     return (
         <motion.div
-            className="flex flex-col gap-8 sm:gap-18 items-center md:mx-20 lg:mx-0 lg:items-start "
+            className="flex flex-col gap-8 sm:gap-12 md:gap-8 items-center md:mx-20 lg:mx-0 lg:items-start "
             initial={initial}
             animate={{ opacity: 1, x: 0, y: 0 }}
             transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
         >
             <div className="flex flex-col gap-4">
-                <h1 className="text-5xl md:text-7xl lg:text-6xl tracking-wide font-black">
-                    <span>Tutti i tuoi viaggi, un unico portale</span>
+                <h1 className="text-5xl sm:text-7xl md:text-6xl lg:text-5xl xl:text-6xl tracking-wide font-black">
+                    <span className="md:whitespace-nowrap">
+                        Tutti i tuoi viaggi,
+                    </span>{" "}
+                    <span> un unico portale</span>
                 </h1>
                 <h2
                     ref={h2Ref}
-                    className="font-black tracking-wide text-xl text-stone-700 md:text-2xl "
+                    className="font-black tracking-wide text-xl text-stone-700 sm:text-2xl md:text-xl xl:text-2xl "
                 >
                     Dal rifugio accogliente alla villa di lusso, Trova lo Spazio
                     Perfetto per la Tua Prossima Avventura!
                 </h2>
             </div>
-            <div className="flex flex-col rounded-lg p-4  gap-4 shadow-lg border text-start w-full">
-                <div className="text-sm lg:text-base">
+            <div className="flex flex-col rounded-lg p-4 gap-4 shadow-lg border text-start w-full ">
+                <div className="text-sm lg:text-base whitespace-nowrap">
                     <span className="underline underline-offset-2">
                         Sai già dove andare?{" "}
                         <span className="font-black">
@@ -106,11 +109,11 @@ function JumboSlogan({ headerRef, jumboRef }) {
                 </div>
             </div>
             <motion.button
-                initial={{ opacity: 0.04 }}
-                animate={{ opacity: 0.7 }}
+                initial={{ opacity: 0.03 }}
+                animate={{ opacity: 0.85 }}
                 transition={{
-                    duration: 3,
-                    delay: 5,
+                    duration: 2,
+                    delay: 2,
                     repeat: Infinity,
                     repeatType: "mirror",
                     ease: "easeInOut",
