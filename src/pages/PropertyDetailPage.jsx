@@ -1,5 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { format } from 'date-fns';
+import { it } from 'date-fns/locale';
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -434,6 +436,15 @@ function SectionRecensioni({ reviews, reviewsRef }) {
     const { headerRef } = useRefsContext();
     const [isSubmenuVisible, setIsSubmenuVisible] = useState(false);
     const [filterText, setFilterText] = useState("Filtro");
+    const formatDate = (dateString) => {
+        const parsedDate = Date.parse(dateString); //interpretare la stringa
+        if (isNaN(parsedDate)) {
+            // Se la data non è valida, ritorna un messaggio di errore o una data di fallback
+            return "Data non valida";
+        }
+        return format(new Date(parsedDate), 'dd MMMM yyyy', { locale: it });
+    };
+
 
     const handleFilterSelection = (selection, e) => {
         e.preventDefault();
@@ -505,16 +516,18 @@ function SectionRecensioni({ reviews, reviewsRef }) {
                             <p className="text-md text-gray-700">{review.description}</p>
 
                             <p className="text-sm text-gray-500 flex items-center">
-                                {review.rating}
+                                <span className="text-xs">  {review.rating} su 5</span>
                                 <span className="flex ml-1">
                                     {[...Array(review.rating)].map((_, index) => (
                                         <FaStar key={index} className="text-yellow-500" />
                                     ))}
                                 </span>
                             </p>
-                            <div className="flex justify-between">
-                                <p></p>
-                                <p className="text-[0.6rem] text-gray-400">{review.create_at}</p>
+                            <div className="flex justify-between ">
+                                <p ></p>
+                                <p className="text-[0.6rem] text-gray-400">
+                                    {formatDate(review.create_at)}
+                                </p>
                             </div>
                         </div>
                     ))
