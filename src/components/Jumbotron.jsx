@@ -2,8 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useRefsContext } from "../Context/RefsContext";
 import { useEffect, useRef, useState } from "react";
-import Select from "react-select";
-import { IoMdSearch } from "react-icons/io";
+import FastPropertySearch from "./FastPropertySearch";
 
 const animationConfig = {
     section: {
@@ -51,53 +50,10 @@ function Jumbotron() {
     );
 }
 
-const customStyles = {
-    menu: (provided) => ({
-        ...provided,
-        position: "absolute",
-        zIndex: 9999,
-    }),
-    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-    control: (_provided) => ({
-        display: "flex",
-        textAlign: "start",
-        paddingInline: "4px",
-        paddingBlock: "4px",
-        border: "none",
-        borderBottom: "1px solid black",
-        borderRadius: "0",
-    }), //style della select
-    option: (provided, state) => ({
-        ...provided,
-        paddingInline: "4px",
-        backgroundColor: `${state.isSelected ? "#7da872" : ""}`,
-        ":hover": {
-            backgroundColor: `${!state.isSelected ? "#badab3" : ""}`,
-        },
-    }), //style delle options
-    placeholder: (provided) => ({
-        ...provided,
-        color: "#7d7555",
-    }),
-};
-
-const typeOptions = [
-    { value: "tutti", label: "Tutto" },
-    { value: "villa", label: "Villa" },
-    { value: "appartamento", label: "Appartamento" },
-    { value: "chalet", label: "Chalet" },
-    { value: "baita", label: "Baita" },
-    { value: "attico", label: "Attico" },
-    { value: "casa_indipendente", label: "Casa indipendente" },
-    { value: "villetta a schiera", label: "Villa a schiera" },
-];
-
 function JumboSlogan({ headerRef, jumboRef }) {
     const h2Ref = useRef(null);
-    const [optSelected, setOptSelected] = useState({});
     const width = document.documentElement.clientWidth;
     const initial = { opacity: 0, x: width < 1024 ? 0 : -100, y: -40 };
-    const navigate = useNavigate();
 
     // * ACTIONS
     const handleExploreClick = () => {
@@ -110,20 +66,11 @@ function JumboSlogan({ headerRef, jumboRef }) {
         });
     };
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        const [input] = e.target.elements;
-        navigate("/search", {
-            state: {
-                city: input.value,
-                type: optSelected.value !== "tutti" ? optSelected.value : "",
-            },
-        });
-    };
+    const formClassName = "grid grid-cols-2 gap-4 w-full whitespace-nowrap";
 
     return (
         <motion.div
-            className="flex flex-col gap-8 items-center md:mx-20 lg:mx-0 lg:items-start "
+            className="flex flex-col gap-8 sm:gap-18 items-center md:mx-20 lg:mx-0 lg:items-start "
             initial={initial}
             animate={{ opacity: 1, x: 0, y: 0 }}
             transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
@@ -150,45 +97,12 @@ function JumboSlogan({ headerRef, jumboRef }) {
                     </span>
                 </div>
                 <div className="flex gap-4 text-lg font-semibold tracking-wider lg:tracking-normal">
-                    <form
-                        onSubmit={onSubmit}
-                        className="grid grid-cols-2 gap-4 w-full whitespace-nowrap"
+                    <FastPropertySearch
+                        formClassName={formClassName}
+                        btnClassName={"!col-span-full"}
                     >
-                        <input
-                            type="text"
-                            className="border-b border-black  px-4 py-2 focus:outline-none "
-                            placeholder="Città"
-                        />
-                        <Select
-                            menuPosition="absolute"
-                            menuPortalTarget={document.body}
-                            classNames={{
-                                control: (state) =>
-                                    state.isFocused
-                                        ? "text-red-400"
-                                        : "text-blue-400",
-                            }}
-                            styles={customStyles}
-                            options={typeOptions}
-                            placeholder="Tipo di casa"
-                            // defaultValue={typeOptions[0]}
-                            isSearchable={false}
-                            type="text"
-                            onChange={(opt) => setOptSelected(opt)}
-                        />
-                        <button
-                            type="submit"
-                            className=" px-4 py-2 col-span-full bg-[#7da872] text-white rounded-lg hover:bg-[#688f5f] flex justify-center items-center gap-4 text-2xl"
-                        >
-                            Cerca
-                        </button>
-                    </form>
-                    {/* <Link
-                        to={"search"}
-                        className="text-center bg-[#d4c685] py-4 rounded-md w-2/3 border-2 border-stone-500 hover:bg-[#cabc7d] cursor-pointer"
-                    >
-                        Book Now!
-                    </Link> */}
+                        Cerca
+                    </FastPropertySearch>
                 </div>
             </div>
             <motion.button

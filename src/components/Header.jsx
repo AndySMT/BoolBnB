@@ -4,14 +4,18 @@ import { NavLink, Link, useLocation } from "react-router-dom";
 import useScroll from "../hooks/useScroll";
 import { useRefsContext } from "../Context/RefsContext";
 import { PiBookmarks } from "react-icons/pi";
+import FastPropertySearch from "./FastPropertySearch";
+import { IoMdSearch } from "react-icons/io";
 
 const Header = () => {
     const { jumboRef, headerRef } = useRefsContext();
     const location = useLocation();
 
+    const offset = document.documentElement.offsetWidth < 1024 ? 0 : 10;
     // booleano controllato dallo scroll della window, useScroll prende come param l'offset
     const isVisible = useScroll(
-        jumboRef.current?.offsetHeight - (headerRef.current?.offsetHeight + 20)
+        jumboRef.current?.offsetHeight -
+            (headerRef.current?.offsetHeight + offset)
     );
 
     // isVisible controlla la visibilita del bookLink
@@ -23,12 +27,10 @@ const Header = () => {
         }  
         ${
             location.pathname === "/" &&
-            "invisible sm:opacity-0 sm:translate-x-[50px] sm:translate-y-[20px] lg:translate-x-[-250px] lg:translate-y-[20px] transition-all duration-500"
-        }  
-        hidden sm:block bg-[#d4c685] py-2 rounded-md border-2 border-stone-500 hover:bg-[#cabc7d] cursor-pointer
-        min-w-72 lg:px-16 text-lg font-semibold text-stone-900`;
-
-    console.log(location.pathname);
+            "invisible sm:opacity-0 sm:translate-x-[50px] lg:translate-x-[-150px] lg:translate-y-[15px] transition-all duration-500"
+        }  `;
+    // hidden sm:block bg-[#d4c685] py-2 rounded-md border-2 border-stone-500 hover:bg-[#cabc7d] cursor-pointer
+    // min-w-72 lg:px-16 text-lg font-semibold text-stone-900`;
 
     return (
         <>
@@ -47,9 +49,17 @@ const Header = () => {
                 </Link>
                 {/* Book Now */}
                 {location.pathname !== "/search" && (
-                    <Link to={"search"} className={bookLinkClass}>
-                        Cerca l'alloggio che fa per te
-                    </Link>
+                    <FastPropertySearch
+                        formClassName={`hidden sm:flex gap-1 h-fit whitespace-nowrap items-end  ${bookLinkClass}`}
+                        selectClassName={"sm:!w-[150px] xl:!w-auto"}
+                        inputClassName={"sm:!w-[150px] xl:!w-auto"}
+                        btnClassName={"sm:!text-base xl:!text-2xl !px-2"}
+                    >
+                        <IoMdSearch />
+                    </FastPropertySearch>
+                    // <Link to={"search"} className={bookLinkClass}>
+                    //     Cerca l'alloggio che fa per te
+                    // </Link>
                 )}
                 {/* Nav */}
                 <nav className="flex gap-8">

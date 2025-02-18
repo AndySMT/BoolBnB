@@ -7,6 +7,7 @@ import Card from "../components/Card";
 import { FaFilter, FaSearch } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { useRefsContext } from "../Context/RefsContext";
+import SkeleCard from "../components/SkeleCard";
 
 // options delle select iniziali
 const initialOptions = {
@@ -57,12 +58,20 @@ function SearchPropertyPage() {
         }
         setIsFilterOpen(false);
     };
+
+    const headerHeight =
+        document.documentElement.offsetWidth < 640
+            ? 0
+            : headerRef?.current?.offsetHeight - 2;
+
+    const style = { top: `${headerHeight}px` };
+
     // * RETURNS
     return (
         <>
             <div
-                style={{ top: `${headerRef?.current?.offsetHeight - 2}px` }}
-                className="flex items-center justify-center gap-8 border-b bg-[#fcfcfc]   px-6 md:px-24 fixed top-[-1px] left-0 w-screen z-30"
+                style={style}
+                className="flex items-center justify-center gap-8 border-b bg-[#fcfcfc] px-6 md:px-24 fixed top-[-1px] left-0 w-screen z-30"
             >
                 <form
                     onSubmit={onInputSubmit}
@@ -114,12 +123,16 @@ function SearchPropertyPage() {
             </div>
             <div className="px-6 md:px-6 lg:px-12 mt-6 lg:w-5/6">
                 {/* data */}
-                {!data?.results ? (
-                    <p>Nessun risultato ancora</p>
-                ) : isLoading ? (
-                    <div>is loading...</div>
-                ) : isError ? (
-                    <pre>error</pre>
+                {isLoading ? (
+                    <CardsSection classes={"lg:!px-0"} title={""}>
+                        {[...Array(8)].map((_, i) => (
+                            <SkeleCard key={i} />
+                        ))}
+                    </CardsSection>
+                ) : isError || !data.results?.length ? (
+                    <h2 className="mt-24">
+                        La tua ricerca non ha prodotto nessun risultato
+                    </h2>
                 ) : (
                     <CardsSection classes={"lg:!px-0"} title={""}>
                         {data.results.map((prop) => (
