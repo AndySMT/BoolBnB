@@ -429,108 +429,100 @@ function SectionHost({ property }) {
     );
 }
 // SECTION RECENSIONE
+
 function SectionRecensioni({ reviews, reviewsRef }) {
     const { headerRef } = useRefsContext();
+    const [isSubmenuVisible, setIsSubmenuVisible] = useState(false);
+    const [filterText, setFilterText] = useState("Filtro");
+
+    const handleFilterSelection = (selection, e) => {
+        e.preventDefault();
+        setFilterText(`Filtro: ${selection}`);
+        setIsSubmenuVisible(false);
+    };
+
     return (
-        <>
-            <section
-                ref={reviewsRef}
-                style={{
-                    scrollMarginTop: `${headerRef.current.offsetHeight + 20}px`,
-                }}
-                className="reviews-section px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400 "
-            >   <div className="flex justify-between items-center">
-                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
-                        Recensioni
-                    </h1>
-                    <div className="flex  sm:text-l lg:text-2xl font-black tracking-wide mb-4">
-
-
-                        <div
-                            className="flex space-x-2 border-[3px] border-stone-400 rounded-xl select-none"
+        <section
+            ref={reviewsRef}
+            style={{
+                scrollMarginTop: `${headerRef.current.offsetHeight + 20}px`,
+            }}
+            className="reviews-section px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400"
+        >
+            <div className="flex justify-between items-center">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
+                    Recensioni
+                </h1>
+                <div className="relative">
+                    <button
+                        onClick={() => setIsSubmenuVisible(!isSubmenuVisible)}
+                        className="flex items-center gap-3 py-3 px-9 rounded-xl bg-white border"
+                    >
+                        <span>{filterText}</span>
+                        <svg
+                            viewBox="0 0 360 360"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-3.5 h-3.5 fill-black"
                         >
-                            <label
-                                className="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"
-                            >
-                                <input
-                                    type="radio"
-                                    name="radio"
-                                    value="html"
-                                    className="peer hidden"
-                                // checked=""
-                                />
-                                <span
-                                    className="tracking-widest peer-checked:bg-gradient-to-r peer-checked:from-[blueviolet] peer-checked:to-[violet] peer-checked:text-white text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out"
-                                >  Filtro :</span
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"
+                                ></path>
+                            </g>
+                        </svg>
+                    </button>
+                    {isSubmenuVisible && (
+                        <div className="absolute top-full left-0 w-full bg-white border border-gray-300 shadow-lg z-10">
+                            <div>
+                                <button
+                                    className="block py-3 px-6 text-center w-full"
+                                    onClick={(e) => handleFilterSelection("Data", e)}
                                 >
-                            </label>
-
-                            <label
-                                className="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"
-                            >
-                                <input type="radio" name="radio" value="react" className="peer hidden" />
-                                <span
-                                    className="tracking-widest peer-checked:bg-gradient-to-r peer-checked:from-[#d4c685] peer-checked:to-[#a7d3a6] peer-checked:text-white text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out
-                                   "
-                                >Data</span
-                                >
-                            </label>
-
-                            <label
-                                className="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"
-                            >
-                                <input type="radio" name="radio" value="vue" className="peer hidden" />
-                                <span
-                                    className="tracking-widest peer-checked:bg-gradient-to-r peer-checked:from-[#d4c685] peer-checked:to-[#a7d3a6] peer-checked:text-white text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out
-                                   "
-                                >Stelle</span
-                                >
-                            </label>
-                        </div>
-
-                    </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 whitespace-wrap">
-                    {reviews?.length > 0 ? (
-                        reviews?.map((review) => (
-                            <div
-                                key={review.id}
-                                className="review-card boxShad max-w-96 m-2 p-2  "
-                            >
-                                <p className="font-medium text-xl">
-                                    {review.title}
-                                </p>
-                                <p className="text-md text-gray-700">
-                                    {review.description}
-                                </p>
-
-                                <p className="text-sm text-gray-500 flex items-center">
-                                    {review.rating}
-                                    <span className="flex ml-1">
-                                        {[...Array(review.rating)].map((_, index) => (
-                                            <FaStar key={index} className="text-yellow-500" />
-                                        ))}
-                                    </span>
-                                </p>
-                                <div className="flex justify-between 
-                               ">
-                                    <p>
-                                    </p>
-                                    <p className="text-[0.6rem] text-gray-400">
-                                        {review.create_at}
-                                    </p>
-
-                                </div>
-
+                                    Data
+                                </button>
                             </div>
-                        ))
-                    ) : (
-                        <p>No reviews yet.</p>
+                            <div>
+                                <button
+                                    className="block py-3 px-6 text-center w-full"
+                                    onClick={(e) => handleFilterSelection("Stelle", e)}
+                                >
+                                    Stelle
+                                </button>
+                            </div>
+                        </div>
                     )}
                 </div>
+            </div>
 
-            </section>
-        </>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 whitespace-wrap">
+                {reviews?.length > 0 ? (
+                    reviews?.map((review) => (
+                        <div
+                            key={review.id}
+                            className="review-card boxShad max-w-96 m-2 p-2"
+                        >
+                            <p className="font-medium text-xl">{review.title}</p>
+                            <p className="text-md text-gray-700">{review.description}</p>
+
+                            <p className="text-sm text-gray-500 flex items-center">
+                                {review.rating}
+                                <span className="flex ml-1">
+                                    {[...Array(review.rating)].map((_, index) => (
+                                        <FaStar key={index} className="text-yellow-500" />
+                                    ))}
+                                </span>
+                            </p>
+                            <div className="flex justify-between">
+                                <p></p>
+                                <p className="text-[0.6rem] text-gray-400">{review.create_at}</p>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p>No reviews yet.</p>
+                )}
+            </div>
+        </section>
     );
 }
 
