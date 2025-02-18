@@ -79,9 +79,12 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
 
   return (
     <>
+      <h1 className="text-2xl font-bold text-gray-700 flex justify-center mt-5 p-3">
+        Inserisci qui dettagli del tuo annuncio, lo pubblicheremo per te
+      </h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="grid grid-cols-2 gap-4"
+        className="grid grid-cols-2 gap-3 px-8 sm:px-24 lg:px-130 mt-5"
       >
         {/* Sinistra */}
         <div className="flex flex-col gap-3">
@@ -218,7 +221,7 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
             <label className="text-gray-700">Number of Bedrooms</label>
             <select
               {...register("n_bedrooms")}
-              className={`w-full p-2 border rounded ${
+              className={`w-full h-[41.6px] p-2 border rounded ${
                 errors.n_bedrooms ? "border-red-500" : "border-gray-300"
               }`}
             >
@@ -238,10 +241,12 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
           </div>
 
           <div>
-            <label className="text-gray-700">Number of Bathrooms</label>
+            <label className="text-gray-700 whitespace-nowrap">
+              Number of Bathrooms
+            </label>
             <select
               {...register("n_bathrooms")}
-              className={`w-full p-2 border rounded ${
+              className={`w-full p-2 h-[41.6px]  border rounded ${
                 errors.n_bathrooms ? "border-red-500" : "border-gray-300"
               }`}
             >
@@ -265,7 +270,7 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
             <label className="text-gray-700">Number of Beds</label>
             <select
               {...register("n_beds")}
-              className={`w-full p-2 border rounded ${
+              className={`w-full p-2 h-[41.6px]  border rounded ${
                 errors.n_beds ? "border-red-500" : "border-gray-300"
               }`}
             >
@@ -287,7 +292,7 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
             <label className="text-gray-700">Property Type</label>
             <select
               {...register("property_type")}
-              className={`w-full p-2 border rounded ${
+              className={`w-full h-[41.6px]  p-2 border rounded ${
                 errors.property_type ? "border-red-500" : "border-gray-300"
               }`}
             >
