@@ -1,14 +1,16 @@
 import React, { useRef, useState } from "react";
+import Select from "react-select";
 import { useParams, useNavigate } from "react-router-dom";
+import { format } from 'date-fns';
+import { it } from 'date-fns/locale';
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { PiBookmarks } from "react-icons/pi";
-import { FaShareAlt } from "react-icons/fa";
 import { CiShare2 } from "react-icons/ci";
 import { MdBed, MdBathroom } from "react-icons/md";
 import { TbRulerMeasure } from "react-icons/tb";
-import { FaMapMarkerAlt, FaBed } from "react-icons/fa";
+import { FaMapMarkerAlt, FaBed, FaStar } from "react-icons/fa";
 import { GiFamilyHouse } from "react-icons/gi";
 import { MdOutlineLocationCity } from "react-icons/md";
 import { imagesUrl } from "../globals/apiUrls";
@@ -432,96 +434,101 @@ function SectionHost({ property }) {
 // SECTION RECENSIONE
 function SectionRecensioni({ reviews, reviewsRef }) {
     const { headerRef } = useRefsContext();
+    const [filterText, setFilterText] = useState("Filtro");
+    const [sortedReviews, setSortedReviews] = useState(reviews);
+
+    const formatDate = (dateString) => {
+        const parsedDate = Date.parse(dateString); // Interpretare la stringa
+        if (isNaN(parsedDate)) {
+            return "Data non valida";
+        }
+        return format(new Date(parsedDate), 'dd MMMM yyyy', { locale: it });
+    };
+
+    const handleFilterChange = (selectedOption) => {
+        setFilterText(`Filtro: ${selectedOption.label}`);
+
+        let sorted;
+        if (selectedOption.value === "date") {
+            // Ordinare per data
+            sorted = [...reviews].sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
+        } else if (selectedOption.value === "rating") {
+            // Ordinare per rating
+            sorted = [...reviews].sort((a, b) => b.rating - a.rating);
+        }
+
+        setSortedReviews(sorted);
+    };
+    const detail = <span className="text-xs">{"(Dal più Recente)"}</span>
+    const placeholder = <div className="flex items-center gap-1"> <span>Filtra</span><img className="h-5" src="/filter.png" /> </div>
+    const filterOptions = [
+        { value: "date", label: <> Data {detail}</> },
+        { value: "rating", label: "Stelle" }
+    ];
+
     return (
-        <>
-            <section
-                ref={reviewsRef}
-                style={{
-                    scrollMarginTop: `${headerRef.current.offsetHeight + 20}px`,
-                }}
-                className="reviews-section px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400 "
-            >   <div className="flex justify-between items-center">
-                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
-                        Recensioni
-                    </h1>
-                    <div className="flex  sm:text-l lg:text-2xl font-black tracking-wide mb-4">
-
-
-                        <div
-                            className="flex space-x-2 border-[3px] border-stone-400 rounded-xl select-none"
-                        >
-                            <label
-                                className="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"
-                            >
-                                <input
-                                    type="radio"
-                                    name="radio"
-                                    value="html"
-                                    className="peer hidden"
-                                // checked=""
-                                />
-                                <span
-                                    className="tracking-widest peer-checked:bg-gradient-to-r peer-checked:from-[blueviolet] peer-checked:to-[violet] peer-checked:text-white text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out"
-                                >  Filtro :</span
-                                >
-                            </label>
-
-                            <label
-                                className="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"
-                            >
-                                <input type="radio" name="radio" value="react" className="peer hidden" />
-                                <span
-                                    className="tracking-widest peer-checked:bg-gradient-to-r peer-checked:from-[#d4c685] peer-checked:to-[#a7d3a6] peer-checked:text-white text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out
-                                   "
-                                >Data</span
-                                >
-                            </label>
-
-                            <label
-                                className="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"
-                            >
-                                <input type="radio" name="radio" value="vue" className="peer hidden" />
-                                <span
-                                    className="tracking-widest peer-checked:bg-gradient-to-r peer-checked:from-[#d4c685] peer-checked:to-[#a7d3a6] peer-checked:text-white text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out
-                                   "
-                                >Stelle</span
-                                >
-                            </label>
-                        </div>
-
-                    </div>
+        <section
+            ref={reviewsRef}
+            style={{
+                scrollMarginTop: `${headerRef.current.offsetHeight + 20}px`,
+            }}
+            className="reviews-section px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400"
+        >
+            <div className="flex justify-between items-center">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
+                    Recensioni
+                </h1>
+                <div className="relative">
+                    <Select
+                        placeholder={placeholder}
+                        options={filterOptions}
+                        onChange={handleFilterChange}
+                        // defaultValue={filterOptions[0]}
+                        className="w-40"
+                    />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {reviews?.length > 0 ? (
-                        reviews?.map((review) => (
-                            <div
-                                key={review.id}
-                                className="review-card boxShad max-w-96 m-2 p-2"
-                            >
-                                <p className="font-medium text-xl">
-                                    {review.title}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 whitespace-wrap">
+                {sortedReviews?.length > 0 ? (
+                    sortedReviews?.map((review) => (
+                        <div
+                            key={review.id}
+                            className="review-card boxShad max-w-96 m-2 p-2 "
+                        >
+                            <p className="font-medium text-xl">{review.title}</p>
+                            <p className="text-md text-gray-700">{review.description}</p>
+
+
+
+                            <div className=" justify-between  flex items-center mt-2">
+
+                                <p className="text-sm text-gray-500 ">
+                                    {/* <span className="text-xs">{review.rating} su 5</span> */}
+                                    <span className="flex ml-1">
+                                        {[...Array(5)].map((_, index) => (
+                                            index < review.rating ? (
+                                                <FaStar key={index} className="text-yellow-500" />
+                                            ) : (
+                                                <FaStar key={index} className="text-stone-300" />
+                                            )
+                                        ))}
+                                    </span>
                                 </p>
-                                <p className="text-md text-gray-700">
-                                    {review.description}
-                                </p>
-                                <p className="text-sm text-gray-500">
-                                    {review.create_at}
-                                </p>
-                                <p className="text-sm text-gray-500">
-                                    <span> Voto : {review.rating} </span>
+
+                                <p className="text-[0.6rem] text-gray-400">
+                                    {formatDate(review.create_at)}
                                 </p>
                             </div>
-                        ))
-                    ) : (
-                        <p>No reviews yet.</p>
-                    )}
-                </div>
-
-            </section>
-        </>
+                        </div>
+                    ))
+                ) : (
+                    <p>No reviews yet.</p>
+                )}
+            </div>
+        </section >
     );
 }
-
 // SECTION FORM RECENSIONI
 function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
     const [showConfirmation, setShowConfirmation] = useState(false);
