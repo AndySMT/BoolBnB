@@ -7,6 +7,8 @@ import { useAddPropertyQuery } from "../hooks/useDataQuery";
 // import PopUp from "../pages/PopUp";
 import { toast } from "react-toastify";
 import { useDroppable, useDraggable, DndContext } from "@dnd-kit/core";
+import { BiImageAdd } from "react-icons/bi";
+import { CiImageOn } from "react-icons/ci";
 
 function AddPropertyForm(/* { setIsFormOpen } */) {
   const {
@@ -286,7 +288,7 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
             <select
               {...register("property_type")}
               className={`w-full p-2 border rounded ${
-                errors.type ? "border-red-500" : "border-gray-300"
+                errors.property_type ? "border-red-500" : "border-gray-300"
               }`}
             >
               <option value="" hidden>
@@ -299,8 +301,10 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               <option value="Appartamento">Appartamento</option>
               <option value="Chalet">Chalet</option>
             </select>
-            {errors.type && (
-              <span className="text-red-500">{errors.type.message}</span>
+            {errors.property_type && (
+              <span className="text-red-500">
+                {errors.property_type.message}
+              </span>
             )}
           </div>
         </div>
@@ -315,10 +319,14 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               onDragOver={(e) => e.preventDefault()} // 🔹 Evita comportamento default
               onDrop={handleDrop} // 🔹 Gestisce il drop dei file
             >
-              <p className="text-gray-500">
-                {selectedFiles.length > 0
-                  ? "File caricati! Aggiungine altri..."
-                  : "Trascina o clicca per caricare"}
+              <p className="text-gray-500 flex items-center justify-center text-3xl">
+                {selectedFiles.length > 0 ? (
+                  "File caricati! Aggiungine altri..."
+                ) : (
+                  <>
+                    <BiImageAdd /> Trascina o clicca per caricare
+                  </>
+                )}
               </p>
 
               {/* Input nascosto */}
@@ -336,8 +344,11 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
                   <h4 className="font-semibold">File selezionati:</h4>
                   <ul>
                     {selectedFiles.map((file, index) => (
-                      <li key={index} className="text-sm text-gray-700">
-                        📄 {file.name}
+                      <li
+                        key={index}
+                        className="text-sm text-gray-700 flex items-center justify-center gap-2"
+                      >
+                        <CiImageOn /> {file.name}
                       </li>
                     ))}
                   </ul>
@@ -350,8 +361,8 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               <h4 className="font-semibold">File selezionati:</h4>
               <ul>
                 {selectedFiles.map((file, index) => (
-                  <li key={index} className="text-sm">
-                    📄 {file.name}
+                  <li key={index} className="text-sm flex items-center gap-2">
+                    <CiImageOn /> {file.name}
                   </li>
                 ))}
               </ul>
@@ -435,7 +446,7 @@ const schema = yup.object().shape({
     .required("Beds required")
     .min(1, "At least 1 bed required"),
 
-  property_type: yup.string().required("Tipo di proprietà è obbligatorio"),
+  property_type: yup.string().required("Tipo di proprietà obbligatorio"),
   email: yup.string().email("Invalid email").required("Email is required"),
   /* files: yup
     .array()
