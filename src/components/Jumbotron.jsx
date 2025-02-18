@@ -2,6 +2,8 @@ import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useRefsContext } from "../Context/RefsContext";
 import { useEffect, useState } from "react";
+import Select from "react-select";
+import { IoMdSearch } from "react-icons/io";
 
 const animationConfig = {
     section: {
@@ -24,7 +26,7 @@ function Jumbotron() {
     const style =
         document.documentElement.offsetWidth < 640
             ? {
-                  height: `calc(100vh - ${filterHeight + 50}px)`,
+                  height: `calc(100vh - ${filterHeight + 15}px)`,
               }
             : {};
 
@@ -49,10 +51,48 @@ function Jumbotron() {
     );
 }
 
+const customStyles = {
+    control: (_provided) => ({
+        display: "flex",
+        textAlign: "start",
+        paddingInline: "4px",
+        paddingBlock: "4px",
+        border: "none",
+        borderBottom: "1px solid black",
+        borderRadius: "0",
+    }), //style della select
+    option: (provided, state) => ({
+        ...provided,
+        paddingInline: "4px",
+        backgroundColor: `${state.isSelected ? "#7da872" : ""}`,
+        ":hover": {
+            backgroundColor: `${!state.isSelected ? "#badab3" : ""}`,
+        },
+    }), //style delle options
+    placeholder: (provided) => ({
+        ...provided,
+        color: "#7d7555",
+    }),
+};
+
+const typeOptions = [
+    { value: "tutti", label: "Tutto" },
+    { value: "villa", label: "Villa" },
+    { value: "appartamento", label: "Appartamento" },
+    { value: "chalet", label: "Chalet" },
+    { value: "baita", label: "Baita" },
+    { value: "attico", label: "Attico" },
+    { value: "casa_indipendente", label: "Casa indipendente" },
+    { value: "villetta a schiera", label: "Villa a schiera" },
+];
+
 function JumboSlogan({ headerRef, jumboRef }) {
     const handleExploreClick = () => {
         window.scrollTo({
-            top: jumboRef.current.offsetHeight + headerRef.current.offsetHeight + 25,
+            top:
+                jumboRef.current.offsetHeight +
+                headerRef.current.offsetHeight +
+                25,
             behavior: "smooth",
         });
     };
@@ -63,58 +103,78 @@ function JumboSlogan({ headerRef, jumboRef }) {
 
     return (
         <motion.div
-            className="flex flex-col gap-8 items-center md:mx-20 lg:mx-0 lg:items-start"
+            className="flex flex-col gap-8 items-center md:mx-20 lg:mx-0 lg:items-start "
             initial={initial}
             animate={{ opacity: 1, x: 0, y: 0 }}
             transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
         >
-            <div
-                // style={{ fontFamily: ` "Delius", serif` }}
-                className="flex flex-col gap-4"
-            >
+            <div className="flex flex-col gap-4">
                 <h1 className="text-5xl md:text-7xl lg:text-6xl tracking-wide font-black">
-                    Your Dream Getaway Awaits
+                    <span>Tutti i tuoi viaggi, un unico portale</span>
                 </h1>
                 <p className="font-black tracking-wide text-xl text-stone-700 md:text-2xl">
-                    From cozy cottages to luxurious villas, discover the ideal
-                    space for your next adventure
+                    Dal rifugio accogliente alla villa di lusso, Trova lo Spazio
+                    Perfetto per la Tua Prossima Avventura!
                 </p>
             </div>
-            <div
-                // style={{ fontFamily: `"Noto Sans", serif` }}
-                className="flex flex-col rounded-lg p-4 text-sm gap-4 shadow-lg"
-            >
-                <div className="font-semibold lg:font-light lg:text-base">
-                    <span>
-                        <span className="underline underline-offset-2">
-                            Already Know
-                        </span>{" "}
-                        What You're Looking For? <br />
-                        Your <strong className="font-semibold">
-                            Dream
-                        </strong>{" "}
-                        Stay is Just{" "}
-                        <strong className="font-semibold">
-                            One Click Away
-                        </strong>
-                        !
+            <div className="flex flex-col rounded-lg p-4  gap-4 shadow-lg border text-start w-full">
+                <div className="text-sm lg:text-base flex gap-2">
+                    <span className="underline underline-offset-2">
+                        Sai già dove andare?
+                    </span>{" "}
+                    <span className="font-black">
+                        Con un Click è tutto più Semplice!
                     </span>
                 </div>
-                <div className="flex gap-4 whitespace-nowrap text-lg font-semibold tracking-wider lg:tracking-normal">
-                    <Link
+                <div className="flex gap-4 text-lg font-semibold tracking-wider lg:tracking-normal">
+                    <form className="grid grid-cols-2 gap-4 w-full">
+                        <input
+                            type="text"
+                            className="border-b border-black  px-4 py-2 focus:outline-none "
+                            placeholder="Città"
+                        />
+                        <Select
+                            classNames={{
+                                control: (state) =>
+                                    state.isFocused
+                                        ? "text-red-400"
+                                        : "text-blue-400",
+                            }}
+                            styles={customStyles}
+                            options={typeOptions}
+                            placeholder="Tipo di casa"
+                            // defaultValue={typeOptions[0]}
+                            isSearchable={false}
+                            type="text"
+                        />
+                        <button className=" px-4 py-2 col-span-full bg-[#7da872] text-white rounded-lg hover:bg-[#688f5f] flex justify-center items-center gap-4 text-2xl">
+                            Cerca
+                        </button>
+                    </form>
+                    {/* <Link
                         to={"search"}
                         className="text-center bg-[#d4c685] py-4 rounded-md w-2/3 border-2 border-stone-500 hover:bg-[#cabc7d] cursor-pointer"
                     >
                         Book Now!
-                    </Link>
-                    <button
-                        onClick={handleExploreClick}
-                        className="bg-[#fefae0] hover:bg-[#faedcd] px-4 py-2 rounded-md cursor-pointer"
-                    >
-                        Explore
-                    </button>
+                    </Link> */}
                 </div>
             </div>
+            <motion.button
+                initial={{ y: 0, opacity: 1, visibility: "hidden" }}
+                animate={{ y: 40, opacity: 0, visibility:"visible" }}
+                transition={{
+                    duration: 0.6,
+                    delay: 4,
+                    repeat: Infinity,
+                    repeatType: "mirror",
+                    repeatDelay: 2,
+                }}
+                // whileHover={{ opacity: 1, y: 0 }}
+                onClick={handleExploreClick}
+                className="absolute bg-[#fefae0] hover:bg-[#faedcd] px-2 aspect-square rounded-full cursor-pointer bottom-2 left-1/2 -translate-x-1/2 opacity-80 hover:opacity-100"
+            >
+                Esplora
+            </motion.button>
         </motion.div>
     );
 }
