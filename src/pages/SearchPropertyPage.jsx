@@ -6,6 +6,7 @@ import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
 import { FaSearch } from "react-icons/fa";
 import { useRefsContext } from "../Context/RefsContext";
+import { useLocation } from "react-router-dom";
 
 // options delle select iniziali
 const initialOptions = {
@@ -17,9 +18,16 @@ const initialOptions = {
 };
 
 function SearchPropertyPage() {
+    const location = useLocation();
+    const city = location?.state?.city;
+    const property_type = location?.state?.type;
+
+    console.log(city);
+    console.log(property_type);
+
     const [inputValue, setInputValue] = useState(""); // controllo dinamico dell'input della citta
-    const [params, setParams] = useState({}); // per salvare l'oggetto params per la query in get
-    const [isEnabled, setIsEnabled] = useState(false); // booleano che abilita o no il fetch (controllare useGetPropertiesQuery)
+    const [params, setParams] = useState({ city, property_type }); // per salvare l'oggetto params per la query in get
+    const [isEnabled, setIsEnabled] = useState(true); // booleano che abilita o no il fetch (controllare useGetPropertiesQuery)
     const [optSelected, setOptSelected] = useState(initialOptions); // oggetto che salva le options
 
     const { data, isLoading, isError, isSuccess, refetch } =

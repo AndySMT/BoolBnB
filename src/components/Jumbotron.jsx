@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useRefsContext } from "../Context/RefsContext";
 import { useEffect, useRef, useState } from "react";
@@ -88,8 +88,12 @@ const typeOptions = [
 
 function JumboSlogan({ headerRef, jumboRef }) {
     const h2Ref = useRef(null);
-    const exploreBtnRef = useRef(null);
+    const [optSelected, setOptSelected] = useState({});
+    const width = document.documentElement.clientWidth;
+    const initial = { opacity: 0, x: width < 1024 ? 0 : -100, y: -40 };
+    const navigate = useNavigate();
 
+    // * ACTIONS
     const handleExploreClick = () => {
         window.scrollTo({
             top:
@@ -100,9 +104,16 @@ function JumboSlogan({ headerRef, jumboRef }) {
         });
     };
 
-    const width = document.documentElement.clientWidth;
-
-    const initial = { opacity: 0, x: width < 1024 ? 0 : -100, y: -40 };
+    const onSubmit = (e) => {
+        e.preventDefault();
+        const [input] = e.target.elements;
+        navigate("/search", {
+            state: {
+                city: input.value,
+                type: optSelected.value !== "tutti" ? optSelected.value : "",
+            },
+        });
+    };
 
     return (
         <motion.div
@@ -134,6 +145,7 @@ function JumboSlogan({ headerRef, jumboRef }) {
                 </div>
                 <div className="flex gap-4 text-lg font-semibold tracking-wider lg:tracking-normal">
                     <form
+                        onSubmit={onSubmit}
                         onFocus={() => {
                             h2Ref.current.classList.add("!h-0");
                             h2Ref.current.classList.add("sm:!h-auto");
@@ -162,8 +174,12 @@ function JumboSlogan({ headerRef, jumboRef }) {
                             // defaultValue={typeOptions[0]}
                             isSearchable={false}
                             type="text"
+                            onChange={(opt) => setOptSelected(opt)}
                         />
-                        <button className=" px-4 py-2 col-span-full bg-[#7da872] text-white rounded-lg hover:bg-[#688f5f] flex justify-center items-center gap-4 text-2xl">
+                        <button
+                            type="submit"
+                            className=" px-4 py-2 col-span-full bg-[#7da872] text-white rounded-lg hover:bg-[#688f5f] flex justify-center items-center gap-4 text-2xl"
+                        >
                             Cerca
                         </button>
                     </form>
@@ -176,7 +192,6 @@ function JumboSlogan({ headerRef, jumboRef }) {
                 </div>
             </div>
             <motion.button
-                ref={exploreBtnRef}
                 initial={{ opacity: 0.04 }}
                 animate={{ opacity: 0.7 }}
                 transition={{
