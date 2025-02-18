@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useRefsContext } from "../Context/RefsContext";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Select from "react-select";
 import { IoMdSearch } from "react-icons/io";
 
@@ -87,6 +87,9 @@ const typeOptions = [
 ];
 
 function JumboSlogan({ headerRef, jumboRef }) {
+    const h2Ref = useRef(null);
+    const exploreBtnRef = useRef(null);
+
     const handleExploreClick = () => {
         window.scrollTo({
             top:
@@ -112,22 +115,35 @@ function JumboSlogan({ headerRef, jumboRef }) {
                 <h1 className="text-5xl md:text-7xl lg:text-6xl tracking-wide font-black">
                     <span>Tutti i tuoi viaggi, un unico portale</span>
                 </h1>
-                <p className="font-black tracking-wide text-xl text-stone-700 md:text-2xl">
+                <h2
+                    ref={h2Ref}
+                    className="font-black tracking-wide text-xl text-stone-700 md:text-2xl overflow-hidden transition-all duration-700 h-[100px] sm:h-auto"
+                >
                     Dal rifugio accogliente alla villa di lusso, Trova lo Spazio
                     Perfetto per la Tua Prossima Avventura!
-                </p>
+                </h2>
             </div>
             <div className="flex flex-col rounded-lg p-4  gap-4 shadow-lg border text-start w-full">
-                <div className="text-sm lg:text-base flex gap-2">
+                <div className="text-sm lg:text-base">
                     <span className="underline underline-offset-2">
-                        Sai già dove andare?
-                    </span>{" "}
-                    <span className="font-black">
-                        Con un Click è tutto più Semplice!
+                        Sai già dove andare?{" "}
+                        <span className="font-black">
+                            Con un Click è tutto più Semplice!
+                        </span>
                     </span>
                 </div>
                 <div className="flex gap-4 text-lg font-semibold tracking-wider lg:tracking-normal">
-                    <form className="grid grid-cols-2 gap-4 w-full">
+                    <form
+                        onFocus={() => {
+                            h2Ref.current.classList.add("!h-0");
+                            h2Ref.current.classList.add("sm:!h-auto");
+                        }}
+                        onBlur={() => {
+                            h2Ref.current.classList.remove("!h-0");
+                            h2Ref.current.classList.remove("sm:!h-auto");
+                        }}
+                        className="grid grid-cols-2 gap-4 w-full whitespace-nowrap"
+                    >
                         <input
                             type="text"
                             className="border-b border-black  px-4 py-2 focus:outline-none "
@@ -160,18 +176,19 @@ function JumboSlogan({ headerRef, jumboRef }) {
                 </div>
             </div>
             <motion.button
+                ref={exploreBtnRef}
                 initial={{ opacity: 0.04 }}
-                animate={{  opacity: .7 }}
+                animate={{ opacity: 0.7 }}
                 transition={{
                     duration: 3,
                     delay: 5,
                     repeat: Infinity,
                     repeatType: "mirror",
-                    ease: "easeInOut"
+                    ease: "easeInOut",
                 }}
-                whileHover={{ opacity:1, transition: { duration: 0.2 } }}
+                whileHover={{ opacity: 1, transition: { duration: 0.2 } }}
                 onClick={handleExploreClick}
-                className="absolute bg-[#fefae0] hover:bg-[#faedcd] px-1 aspect-square rounded-full cursor-pointer bottom-2 left-1/2 -translate-x-1/2 opacity-80 hover:opacity-100 text-sm"
+                className="absolute bg-[#fefae0] hover:bg-[#faedcd] px-1 aspect-square rounded-full cursor-pointer bottom-2 left-1/2 -translate-x-1/2 text-sm"
             >
                 Esplora
             </motion.button>
