@@ -160,18 +160,18 @@ function JumboSlogan({ headerRef, jumboRef }) {
                 </div>
             </div>
             <motion.button
-                initial={{ y: 0, opacity: 1, visibility: "hidden" }}
-                animate={{ y: 40, opacity: 0, visibility:"visible" }}
+                initial={{ opacity: 0.04 }}
+                animate={{  opacity: .7 }}
                 transition={{
-                    duration: 0.6,
-                    delay: 4,
+                    duration: 3,
+                    delay: 5,
                     repeat: Infinity,
                     repeatType: "mirror",
-                    repeatDelay: 2,
+                    ease: "easeInOut"
                 }}
-                // whileHover={{ opacity: 1, y: 0 }}
+                whileHover={{ opacity:1, transition: { duration: 0.2 } }}
                 onClick={handleExploreClick}
-                className="absolute bg-[#fefae0] hover:bg-[#faedcd] px-2 aspect-square rounded-full cursor-pointer bottom-2 left-1/2 -translate-x-1/2 opacity-80 hover:opacity-100"
+                className="absolute bg-[#fefae0] hover:bg-[#faedcd] px-1 aspect-square rounded-full cursor-pointer bottom-2 left-1/2 -translate-x-1/2 opacity-80 hover:opacity-100 text-sm"
             >
                 Esplora
             </motion.button>
