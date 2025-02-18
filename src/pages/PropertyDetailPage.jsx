@@ -4,11 +4,10 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { PiBookmarks } from "react-icons/pi";
-import { FaShareAlt } from "react-icons/fa";
 import { CiShare2 } from "react-icons/ci";
 import { MdBed, MdBathroom } from "react-icons/md";
 import { TbRulerMeasure } from "react-icons/tb";
-import { FaMapMarkerAlt, FaBed } from "react-icons/fa";
+import { FaMapMarkerAlt, FaBed, FaStar } from "react-icons/fa";
 import { GiFamilyHouse } from "react-icons/gi";
 import { MdOutlineLocationCity } from "react-icons/md";
 import { imagesUrl } from "../globals/apiUrls";
@@ -491,12 +490,12 @@ function SectionRecensioni({ reviews, reviewsRef }) {
 
                     </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 whitespace-wrap">
                     {reviews?.length > 0 ? (
                         reviews?.map((review) => (
                             <div
                                 key={review.id}
-                                className="review-card boxShad max-w-96 m-2 p-2"
+                                className="review-card boxShad max-w-96 m-2 p-2  "
                             >
                                 <p className="font-medium text-xl">
                                     {review.title}
@@ -504,12 +503,25 @@ function SectionRecensioni({ reviews, reviewsRef }) {
                                 <p className="text-md text-gray-700">
                                     {review.description}
                                 </p>
-                                <p className="text-sm text-gray-500">
-                                    {review.create_at}
+
+                                <p className="text-sm text-gray-500 flex items-center">
+                                    {review.rating}
+                                    <span className="flex ml-1">
+                                        {[...Array(review.rating)].map((_, index) => (
+                                            <FaStar key={index} className="text-yellow-500" />
+                                        ))}
+                                    </span>
                                 </p>
-                                <p className="text-sm text-gray-500">
-                                    <span> Voto : {review.rating} </span>
-                                </p>
+                                <div className="flex justify-between 
+                               ">
+                                    <p>
+                                    </p>
+                                    <p className="text-[0.6rem] text-gray-400">
+                                        {review.create_at}
+                                    </p>
+
+                                </div>
+
                             </div>
                         ))
                     ) : (
