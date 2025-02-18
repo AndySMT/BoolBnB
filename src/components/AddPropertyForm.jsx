@@ -13,7 +13,6 @@ function AddPropertyForm({ setIsFormOpen }) {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = useForm({ resolver: yupResolver(schema) }); //schema si trova sotto
 
   // * STATE Files
@@ -434,20 +433,33 @@ const schema = yup.object().shape({
     .required("Beds required")
     .min(1, "At least 1 bed required"),
 
-  property_type: yup.string().required("Type is required"),
+  property_type: yup.string().required("Tipo di proprietà è obbligatorio"),
   email: yup.string().email("Invalid email").required("Email is required"),
-  /*  files: yup
-    .mixed()
-    .test("required", "Il file è obbligatorio", (value) => {
-      return value && value.length > 0; // Deve esserci almeno un file
-    })
-    // .test("fileSize", "Il file è troppo grande", (value) => {
-    //   return value && value[0] && value[0].size <= 2 * 1024 * 1024; // Max 2MB
-    // })
-    .test("fileType", "Formato non supportato", (value) => {
-      if (!value) return false;
-      return Array.from(value).every((file) =>
-        ["image/jpeg", "image/png"].includes(file.type)
-      );
-    }), */
+  /* files: yup
+    .array()
+    .of(
+      yup
+        .mixed()
+        .test(
+          "required",
+          "Il file è obbligatorio",
+          (value) => value && value.length > 0
+        ) // Verifica che ci sia almeno un file
+        .test("fileSize", "Il file è troppo grande", (value) => {
+          return (
+            value &&
+            Array.from(value).every((file) => file.size <= 2 * 1024 * 1024)
+          );
+        })
+        .test("fileType", "Formato non supportato", (value) => {
+          // Verifica che ogni file sia di tipo immagine jpeg o png
+          return (
+            value &&
+            Array.from(value).every((file) =>
+              ["image/jpeg", "image/png"].includes(file.type)
+            )
+          );
+        })
+    )
+    .required("Devi caricare almeno un file"), // Verifica che ci sia almeno un file */
 });
