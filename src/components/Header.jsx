@@ -28,6 +28,8 @@ const Header = () => {
         hidden sm:block bg-[#d4c685] py-2 rounded-md border-2 border-stone-500 hover:bg-[#cabc7d] cursor-pointer
         min-w-72 lg:px-16 text-lg font-semibold text-stone-900`;
 
+    console.log(location.pathname);
+
     return (
         <>
             <HeaderComp
@@ -44,9 +46,11 @@ const Header = () => {
                     />
                 </Link>
                 {/* Book Now */}
-                <Link to={"search"} className={bookLinkClass}>
-                    Cerca l'alloggio che fa per te
-                </Link>
+                {location.pathname !== "/search" && (
+                    <Link to={"search"} className={bookLinkClass}>
+                        Cerca l'alloggio che fa per te
+                    </Link>
+                )}
                 {/* Nav */}
                 <nav className="flex gap-8">
                     <HeaderLink
@@ -98,8 +102,8 @@ function HeaderComp({
             className={`${!isNotTriggeredAnim && "-translate-y-20"} ${
                 !isVisible && "hidden sm:flex"
             } 
-            lg:px-[4vw] items-center rounded-b-2xl sm:rounded-b-none sm:!-translate-0 flex 
-            bg-linear-90/oklch sm:drop-shadow-lg from-15% from-[#d4c685] to-[#a7d3a6] text-center p-5 
+            lg:px-[4vw] items-center sm:!-translate-0 flex 
+            bg-linear-90/oklch from-15% from-[#d4c685] to-[#a7d3a6] sm:drop-shadow-lg text-center py-2 px-5 
             justify-between fixed sm:sticky w-screen top-[-1px] z-40 text-stone-800 text-sm transition-all duration-200 ease-in`}
         >
             {children}
