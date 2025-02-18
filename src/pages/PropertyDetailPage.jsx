@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import Select from "react-select";
 import { useParams, useNavigate } from "react-router-dom";
 import { format } from 'date-fns';
@@ -435,43 +435,77 @@ function SectionHost({ property }) {
 function SectionRecensioni({ reviews, reviewsRef }) {
     const { headerRef } = useRefsContext();
     const [filterText, setFilterText] = useState("Filtro");
-    const [sortedReviews, setSortedReviews] = useState(reviews);
+    const [sortedReviews, setSortedReviews] = useState(reviews || []);
+    const [scrollMargin, setScrollMargin] = useState("0px");
+    const [activeFilter, setActiveFilter] = useState(null);
 
+    // Aggiorno scrollMargin quando headerRef è disponibile
+    useEffect(() => {
+        if (headerRef.current) {
+            setScrollMargin(`${headerRef.current.offsetHeight + 20}px`);
+        }
+    }, [headerRef]);
+
+    // Riapplico il filtro quando reviews o activeFilter cambiano
+    useEffect(() => {
+        if (activeFilter) {
+            let sorted;
+            if (activeFilter.value === "date") {
+                sorted = [...reviews].sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
+            } else if (activeFilter.value === "rating") {
+                sorted = [...reviews].sort((a, b) => b.rating - a.rating);
+            }
+            setSortedReviews(sorted);
+        } else {
+            // Se non c'è un filtro attivo, usa l'ordine predefinito
+            setSortedReviews(reviews || []);
+        }
+    }, [reviews, activeFilter]); // Aggiungi activeFilter come dipendenza
+
+    // Funzione per formattare la data
     const formatDate = (dateString) => {
-        const parsedDate = Date.parse(dateString); // Interpretare la stringa
+        const parsedDate = Date.parse(dateString);
         if (isNaN(parsedDate)) {
             return "Data non valida";
         }
         return format(new Date(parsedDate), 'dd MMMM yyyy', { locale: it });
     };
 
+    // Gestisce il cambio del filtro
     const handleFilterChange = (selectedOption) => {
         setFilterText(`Filtro: ${selectedOption.label}`);
+        setActiveFilter(selectedOption); // Memorizza il filtro attivo
 
         let sorted;
         if (selectedOption.value === "date") {
-            // Ordinare per data
             sorted = [...reviews].sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
         } else if (selectedOption.value === "rating") {
-            // Ordinare per rating
             sorted = [...reviews].sort((a, b) => b.rating - a.rating);
         }
-
         setSortedReviews(sorted);
     };
-    const detail = <span className="text-xs">{"(Dal più Recente)"}</span>
-    const placeholder = <div className="flex items-center gap-1"> <span>Filtra</span><img className="h-5" src="/filter.png" /> </div>
-    const filterOptions = [
+
+    // Dettaglio per l'opzione "Data"
+    const detail = <span className="text-xs">{"(Dal più Recente)"}</span>;
+
+    // Placeholder personalizzato per il Select
+    const placeholder = (
+        <div className="flex items-center gap-1">
+            <span>Filtra</span>
+            <img className="h-5" src="/filter.png" alt="Filter Icon" />
+        </div>
+    );
+
+    // Opzioni del filtro (memoizzate per evitare ri-render non necessari)
+    const filterOptions = useMemo(() => [
         { value: "date", label: <> Data {detail}</> },
         { value: "rating", label: "Stelle" }
-    ];
+    ], [detail]);
 
     return (
         <section
             ref={reviewsRef}
-            style={{
-                scrollMarginTop: `${headerRef.current.offsetHeight + 20}px`,
-            }}
+            style={{ scrollMarginTop: scrollMargin }}
             className="reviews-section px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400"
         >
             <div className="flex justify-between items-center">
@@ -483,7 +517,6 @@ function SectionRecensioni({ reviews, reviewsRef }) {
                         placeholder={placeholder}
                         options={filterOptions}
                         onChange={handleFilterChange}
-                        // defaultValue={filterOptions[0]}
                         className="w-40"
                     />
                 </div>
@@ -491,20 +524,12 @@ function SectionRecensioni({ reviews, reviewsRef }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 whitespace-wrap">
                 {sortedReviews?.length > 0 ? (
-                    sortedReviews?.map((review) => (
-                        <div
-                            key={review.id}
-                            className="review-card boxShad max-w-96 m-2 p-2 "
-                        >
+                    sortedReviews.map((review) => (
+                        <div key={review.id} className="review-card boxShad max-w-96 m-2 p-2">
                             <p className="font-medium text-xl">{review.title}</p>
                             <p className="text-md text-gray-700">{review.description}</p>
-
-
-
-                            <div className=" justify-between  flex items-center mt-2">
-
-                                <p className="text-sm text-gray-500 ">
-                                    {/* <span className="text-xs">{review.rating} su 5</span> */}
+                            <div className="justify-between flex items-center mt-2">
+                                <p className="text-sm text-gray-500">
                                     <span className="flex ml-1">
                                         {[...Array(5)].map((_, index) => (
                                             index < review.rating ? (
@@ -515,7 +540,6 @@ function SectionRecensioni({ reviews, reviewsRef }) {
                                         ))}
                                     </span>
                                 </p>
-
                                 <p className="text-[0.6rem] text-gray-400">
                                     {formatDate(review.create_at)}
                                 </p>
@@ -526,9 +550,11 @@ function SectionRecensioni({ reviews, reviewsRef }) {
                     <p>No reviews yet.</p>
                 )}
             </div>
-        </section >
+        </section>
     );
 }
+
+
 // SECTION FORM RECENSIONI
 function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
     const [showConfirmation, setShowConfirmation] = useState(false);
