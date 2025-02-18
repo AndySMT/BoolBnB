@@ -9,6 +9,7 @@ import LostPage from "./pages/lostPage";
 import { RefsProvider } from "./Context/RefsContext";
 import { lazy, Suspense } from "react";
 import FavouritesPage from "./pages/FavouritesPage";
+import AddPropertyForm from "./components/AddPropertyForm";
 const LazyHomePage = lazy(() => import("./pages/HomePage"));
 
 const queryClient = new QueryClient();
@@ -29,7 +30,8 @@ function App() {
               }
             />
             <Route path="search" Component={SearchPropertyPage} />
-            <Route path="addproperty" Component={AddPropertyPage} />
+            <Route path="addproperty" Component={AddPropertyPage}></Route>
+            <Route path="add-your-property-form" Component={AddPropertyForm} />
             <Route path="detail/:id" Component={PropertyDetail} />
             <Route path="favourites" Component={FavouritesPage} />
             <Route path="lost" Component={LostPage} />

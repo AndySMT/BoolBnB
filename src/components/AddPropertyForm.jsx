@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, use } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -8,7 +8,7 @@ import { useAddPropertyQuery } from "../hooks/useDataQuery";
 import { toast } from "react-toastify";
 import { useDroppable, useDraggable, DndContext } from "@dnd-kit/core";
 
-function AddPropertyForm({ setIsFormOpen }) {
+function AddPropertyForm(/* { setIsFormOpen } */) {
   const {
     register,
     handleSubmit,
@@ -18,6 +18,7 @@ function AddPropertyForm({ setIsFormOpen }) {
   // * STATE Files
   const [selectedFiles, setSelectedFiles] = useState([]);
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   // * Funzione per aggiungere i file selezionati
   const handleFiles = (files) => {
@@ -66,12 +67,13 @@ function AddPropertyForm({ setIsFormOpen }) {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Annuncio pubblicato con successo!");
+      navigate("/");
       // isSuccess indica la proprieta salvata nel db correttamente
       setSelectedFiles([]);
     } else if (isError) {
       toast.error("Errore nell'invio del form, riprova");
     }
-  }, [isSuccess, isError, setIsFormOpen]);
+  }, [isSuccess, isError /* setIsFormOpen */]);
 
   return (
     <>
