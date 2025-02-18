@@ -1,14 +1,12 @@
-import React, { useEffect, useState, memo, Fragment } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
-import {
-    useGetPropertiesQuery,
-    useInfiniteGetPropsQuery,
-} from "../hooks/useDataQuery";
+import { useInfiniteGetPropsQuery } from "../hooks/useDataQuery";
 import { useRefsContext } from "../Context/RefsContext";
 import SkeleCard from "../components/SkeleCard";
 import { useNavigate } from "react-router-dom";
 import LoadMoreButton from "../components/LoadMoreButton";
+import { motion } from "framer-motion";
 
 function HomePage() {
     // Stato per i parametri di filtro
@@ -99,7 +97,7 @@ const CardsSectionContainer = ({ params }) => {
 };
 
 function FilterSection({ setParams }) {
-    const { headerRef, jumboRef } = useRefsContext();
+    const { headerRef, jumboRef, filterRef } = useRefsContext();
 
     // Stato per il filtro attivo
     const [activeFilter, setActiveFilter] = useState(0);
@@ -125,8 +123,25 @@ function FilterSection({ setParams }) {
         });
     };
 
+    const style =
+        document.documentElement.offsetWidth < 640
+            ? {
+                  top: "-1px",
+              }
+            : { top: `${headerRef.current.offsetHeight - 1}px` };
+
+    // classes
+    const navClasses = `border-b p-3 bg-white w-screen border-gray-300 fixed md:sticky z-20 rounded-b-2xl`;
+
     return (
-        <div className="border-b p-3 bg-white w-screen border-gray-300 fixed md:sticky top-[-1px] sm:top-20 z-20 rounded-b-2xl">
+        <motion.nav
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0, 1] }}
+            transition={{ duration: 1.5, ease: "easeIn" }}
+            ref={filterRef}
+            style={style}
+            className={navClasses}
+        >
             <div className="overflow-x-auto">
                 <div className="flex justify-center gap-10 min-w-max px-2 [&>div]:w-[40px]">
                     {/* Mappa dei filtri e applicazione del filtro selezionato */}
@@ -156,7 +171,7 @@ function FilterSection({ setParams }) {
                     ))}
                 </div>
             </div>
-        </div>
+        </motion.nav>
     );
 }
 
