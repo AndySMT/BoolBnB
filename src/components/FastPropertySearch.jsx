@@ -1,4 +1,7 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 
@@ -53,43 +56,66 @@ function FastPropertySearch({
     children,
 }) {
     const [optSelected, setOptSelected] = useState({});
-
     const navigate = useNavigate();
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm({
+        resolver: yupResolver(schema),
+    });
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        const [input] = e.target.elements;
+    console.log(errors);
+
+    // * ACTIONS
+    const onSubmit = (data) => {
+        console.log(data);
         navigate("/search", {
             state: {
-                city: input.value,
+                city: data.city,
                 type: optSelected.value !== "tutti" ? optSelected.value : "",
             },
         });
     };
     return (
-        <form className={formClassName} onSubmit={onSubmit}>
-            <input
-                type="text"
-                className={`border-b border-black px-4 py-2 focus:outline-none ${inputClassName}`}
-                placeholder="Città"
-            />
-            <Select
-                styles={customStyles}
-                options={typeOptions}
-                placeholder="Tipo di casa"
-                isSearchable={false}
-                type="text"
-                onChange={(opt) => setOptSelected(opt)}
-                className={` ${selectClassName}`}
-            />
+        <form
+            className={`${formClassName} relative`}
+            onSubmit={handleSubmit(onSubmit)}
+        >
+            <div
+                className={`flex border-b border-black relative ${inputClassName}`}
+            >
+                <input
+                    className=" px-4 py-2 focus:outline-none"
+                    type="text"
+                    placeholder="Città"
+                    {...register("city")}
+                />
+            </div>
+            <div className={`${selectClassName} relative`}>
+                <Select
+                    styles={customStyles}
+                    options={typeOptions}
+                    placeholder="Tipo di casa"
+                    isSearchable={false}
+                    type="text"
+                    onChange={(opt) => setOptSelected(opt)}
+                />
+            </div>
             <button
                 type="submit"
-                className={`px-4 py-2 w-full bg-[#7da872] text-white rounded-lg hover:bg-[#688f5f] flex justify-center items-center gap-4 text-2xl ${btnClassName}`}
+                className={`px-4 py-2 w-full bg-[#7da872] text-white rounded-lg hover:bg-[#688f5f] flex justify-center items-center gap-4 text-2xl cursor-pointer ${btnClassName}`}
             >
                 {children}
             </button>
         </form>
     );
 }
+
+const schema = yup.object().shape({
+    city: yup.string().trim().required(),
+    // // reviewText: yup.string().trim().required("La recensione è obbligatoria"),
+});
 
 export default FastPropertySearch;

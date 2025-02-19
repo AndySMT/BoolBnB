@@ -58,7 +58,7 @@ const CardsSectionContainer = ({ params }) => {
     }
     return (
         <>
-            <CardsSection title={""}>
+            <CardsSection title={"I Preferiti Degli Ospiti"}>
                 <>
                     {/* paginazione */}
                     {data?.pages.map((group, i) => (

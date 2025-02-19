@@ -96,9 +96,9 @@ function JumboSlogan({ headerRef, jumboRef }) {
                 <div className="text-sm lg:text-base whitespace-nowrap">
                     <span className="underline underline-offset-2">
                         Sai già dove andare?{" "}
-                        <span className="font-black">
-                            Con un Click è tutto più Semplice!
-                        </span>
+                    </span>
+                    <span className="font-black">
+                        Con un Click è tutto più Semplice!
                     </span>
                 </div>
                 <div className="flex gap-4 text-lg font-semibold tracking-wider lg:tracking-normal">
