@@ -59,10 +59,7 @@ function SearchPropertyPage() {
         setIsFilterOpen(false);
     };
 
-    const headerHeight =
-        document.documentElement.offsetWidth < 640
-            ? 0
-            : headerRef?.current?.offsetHeight - 2;
+    const headerHeight = headerRef?.current?.offsetHeight - 2;
 
     const style = { top: `${headerHeight}px` };
 
@@ -71,7 +68,7 @@ function SearchPropertyPage() {
         <>
             <div
                 style={style}
-                className="flex top-14 items-center justify-center gap-8 border-b bg-[#fcfcfc] px-6 md:px-24 fixed left-0 w-screen z-30"
+                className="flex items-center justify-center gap-8 border-b bg-[#fcfcfc] px-6 md:px-24 sticky top-14 left-0 w-screen z-30"
             >
                 <form
                     onSubmit={onInputSubmit}
@@ -121,7 +118,7 @@ function SearchPropertyPage() {
                     </form>
                 </div>
             </div>
-            <div className="px-6 md:px-6 lg:px-12 mt-6 lg:w-5/6">
+            <div className="p-6 pt-14 lg:px-12 lg:w-5/6">
                 {/* data */}
                 {isLoading ? (
                     <CardsSection classes={"lg:!px-0"} title={""}>
@@ -130,11 +127,11 @@ function SearchPropertyPage() {
                         ))}
                     </CardsSection>
                 ) : isError || !data.results?.length ? (
-                    <h2 className="mt-24">
+                    <h2>
                         La tua ricerca non ha prodotto nessun risultato
                     </h2>
                 ) : (
-                    <CardsSection classes={"lg:!px-0"} title={""}>
+                    <CardsSection classes={"lg:!px-0 !pt-0"} title={""}>
                         {data.results.map((prop) => (
                             <Card key={prop.id} property={prop} />
                         ))}

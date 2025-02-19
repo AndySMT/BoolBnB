@@ -1,11 +1,10 @@
 import React from "react";
 import { useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
 import AddPropertyForm from "../components/AddPropertyForm";
 import { FaCheck } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import MyMapComponent from "../components/MapComponent";
+import { useRefsContext } from "../Context/RefsContext";
 
 function AddPropertyPage() {
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -29,14 +28,18 @@ function AddPropertyPage() {
 }
 
 function HeroSection({ setIsFormOpen }) {
+    const { headerRef } = useRefsContext();
     const [range, setRange] = useState(16);
     const [showTooltip, setShowTooltip] = useState(false);
 
     const handleRangeChange = (event) => {
         setRange(event.target.value);
     };
+    const style = {
+        marginTop: `${headerRef?.current?.offsetHeight}px`,
+    };
     return (
-        <section className="p-8 sm:p-12 lg:px-24">
+        <section style={style} className="p-8 sm:p-12 lg:px-24">
             <div className="gap-10 grid grid-cols-1 md:grid-cols-2 justify-center items-center rounded-lg">
                 {/* Testo */}
                 <div className="flex flex-col justify-center items-center gap-5">

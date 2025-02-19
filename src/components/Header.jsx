@@ -6,6 +6,7 @@ import { useRefsContext } from "../Context/RefsContext";
 import { PiBookmarks } from "react-icons/pi";
 import FastPropertySearch from "./FastPropertySearch";
 import { IoMdSearch } from "react-icons/io";
+import HamburgerMenu from "./HamburgerMenu";
 
 const Header = () => {
     const { jumboRef, headerRef } = useRefsContext();
@@ -65,7 +66,7 @@ const Header = () => {
                     // </Link>
                 )}
                 {/* Nav */}
-                <nav className="flex sm:gap-2 lg:gap-8">
+                <nav className="hidden sm:flex sm:gap-2 lg:gap-8">
                     <HeaderLink
                         to={"/addproperty"}
                         text={"Affitta con BoolB&B"}
@@ -76,6 +77,18 @@ const Header = () => {
                         <PiBookmarks className="text-xl" />
                     </HeaderLink>
                 </nav>
+                {/* nav mobile */}
+                <HamburgerMenu>
+                    <HeaderLink
+                        to={"/addproperty"}
+                        text={"Affitta con BoolB&B"}
+                    >
+                        <IoIosStarOutline className="text-xl" />
+                    </HeaderLink>
+                    <HeaderLink to={"/favourites"} text={"I tuoi preferiti"}>
+                        <PiBookmarks className="text-xl" />
+                    </HeaderLink>
+                </HamburgerMenu>
             </HeaderComp>
         </>
     );
@@ -106,15 +119,19 @@ function HeaderComp({
 
     // controllo della visibilita dell header in base alla location pathname
     useEffect(() => {
-        location.pathname === "/" ? setIsVisible(true) : setIsVisible(false);
+        location.pathname.includes("/detail")
+            ? setIsVisible(false)
+            : setIsVisible(true);
     }, [location.pathname]);
     return (
         <header
             ref={headerRef}
             //
-            className={`${!isNotTriggeredAnim && "-translate-y-20"} ${
-                !isVisible && "hidden sm:flex"
-            } 
+            className={`${
+                !isNotTriggeredAnim &&
+                location.pathname === "/" &&
+                "-translate-y-40 duration-300"
+            } ${!isVisible && "hidden sm:flex"} 
             lg:px-[4vw] items-center sm:!-translate-0 flex 
             bg-linear-90/oklch from-15% from-[#d4c685] to-[#a7d3a6] sm:drop-shadow-lg text-center py-2 px-5 
             justify-between gap-4 fixed sm:sticky w-screen top-[-1px] z-40 text-stone-800 text-sm transition-all duration-200 ease-in`}

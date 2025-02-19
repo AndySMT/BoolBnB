@@ -8,6 +8,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { imagesUrl } from "../globals/apiUrls";
 import { Link } from "react-router-dom";
+import { useRefsContext } from "../Context/RefsContext";
 
 const settings = {
     dots: true,
@@ -21,13 +22,22 @@ const settings = {
 };
 
 function FavouritesPage() {
+    const { headerRef } = useRefsContext();
+
     const [favouritesIds, setFavouritesIds] = useState(
         JSON.parse(localStorage.getItem("favourites")) || []
     );
 
+    const style = {
+        marginTop: `${headerRef.current.offsetHeight}px`,
+    };
+
     return (
         <>
-            <h1 className="text-xl sm:text-3xl lg:text-4xl font-black tracking-wide p-8 px-8 sm:px-12 lg:px-24">
+            <h1
+                style={style}
+                className="text-xl sm:text-3xl lg:text-4xl font-black tracking-wide p-8 px-8 sm:px-12 lg:px-24"
+            >
                 Le tue proprietà preferite
             </h1>
             <div className="grid grid-cols-1 2xl:grid-cols-2 gap-10 px-8 sm:px-12 lg:px-24">
