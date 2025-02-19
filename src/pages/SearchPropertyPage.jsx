@@ -72,7 +72,7 @@ function SearchPropertyPage() {
             >
                 <form
                     onSubmit={onInputSubmit}
-                    className="flex justify-center gap-1 my-5 md:items-baseline"
+                    className="flex justify-center gap-1 my-4 md:items-baseline"
                 >
                     <input
                         type="text"
@@ -102,7 +102,7 @@ function SearchPropertyPage() {
                 >
                     <form
                         onSubmit={onFilterSubmit}
-                        className=" md:w-full p-6 grid grid-cols-2 md:grid-cols-3 gap-4 md:text-[10px] z-20 xl:grid-cols-1 items-end"
+                        className=" md:w-full px-6 py-2 grid grid-cols-2 md:grid-cols-3 gap-4 md:text-[10px] z-20 xl:grid-cols-1 items-end"
                     >
                         <Selects setOptSelected={setOptSelected} />
                         <button
@@ -127,9 +127,7 @@ function SearchPropertyPage() {
                         ))}
                     </CardsSection>
                 ) : isError || !data.results?.length ? (
-                    <h2>
-                        La tua ricerca non ha prodotto nessun risultato
-                    </h2>
+                    <h2>La tua ricerca non ha prodotto nessun risultato</h2>
                 ) : (
                     <CardsSection classes={"lg:!px-0 !pt-0"} title={""}>
                         {data.results.map((prop) => (
