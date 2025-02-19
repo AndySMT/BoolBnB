@@ -15,6 +15,7 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({ resolver: yupResolver(schema) }); //schema si trova sotto
 
   // * STATE Files
@@ -67,6 +68,7 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
   };
 
   useEffect(() => {
+    setValue("files", selectedFiles);
     if (isSuccess) {
       toast.success("Annuncio pubblicato con successo!");
       navigate("/");
@@ -75,7 +77,7 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
     } else if (isError) {
       toast.error("Errore nell'invio del form, riprova");
     }
-  }, [isSuccess, isError /* setIsFormOpen */]);
+  }, [isSuccess, isError, /* setIsFormOpen */ selectedFiles, setValue]);
 
   return (
     <>
@@ -337,6 +339,7 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               {/* Input nascosto */}
               <input
                 ref={fileInputRef}
+                {...register("files")}
                 type="file"
                 multiple
                 className="hidden"
@@ -453,7 +456,7 @@ const schema = yup.object().shape({
 
   property_type: yup.string().required("Tipo di proprietà obbligatorio"),
   email: yup.string().email("Invalid email").required("Email is required"),
-  /* files: yup
+  files: yup
     .array()
     .of(
       yup
@@ -479,5 +482,5 @@ const schema = yup.object().shape({
           );
         })
     )
-    .required("Devi caricare almeno un file"), // Verifica che ci sia almeno un file */
+    .required("Devi caricare almeno un file"), // Verifica che ci sia almeno un file
 });
