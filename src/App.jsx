@@ -9,6 +9,7 @@ import LostPage from "./pages/lostPage";
 import { RefsProvider } from "./Context/RefsContext";
 import { lazy, Suspense } from "react";
 import FavouritesPage from "./pages/FavouritesPage";
+import SkeleCardsSection from "./components/SkeleCardsSection";
 const LazyHomePage = lazy(() => import("./pages/HomePage"));
 
 const queryClient = new QueryClient();
@@ -23,7 +24,7 @@ function App() {
             <Route
               index
               element={
-                <Suspense fallback={<>Suspense Loading...</>}>
+                <Suspense fallback={<SkeleCardsSection/>}>
                   <LazyHomePage />
                 </Suspense>
               }
