@@ -62,41 +62,58 @@ export const useAddPropertyQuery = () => {
     });
 };
 
-export const useGetReviewsQuery = (propertyId) => {
-    return useQuery({
-        queryKey: ["reviews", propertyId],
-        queryFn: async () => {
-            const res = await getReviews(propertyId);
-            return res.data;
-        },
-    });
-};
+// export const useGetReviewsQuery = (propertyId) => {
+//     return useQuery({
+//         queryKey: ["reviews", propertyId],
+//         queryFn: async () => {
+//             const res = await getReviews(propertyId);
+//             return res.data;
+//         },
+//     });
+// };
+export const useInfiniteGetRevsQuery = (property_id) => {
 
+    return useInfiniteQuery(
+        {
+            queryKey: ["reviews", property_id],
+            queryFn: async ({ pageParam }) => {
+                const res = await getReviews(property_id, { page: pageParam })
+                return res.data
+            },
+            initialPageParam: 1,
+            getNextPageParam: (_l, _all, lastPageParam) => lastPageParam + 1
+        }
+
+    )
+
+}
 export const useAddReviewQuery = (id) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (newReview) => {
-            console.log(newReview)
+            // console.log(newReview)
             const res = await addReview(newReview);
             return res.data;
         },
         //* optimistic update
         // onMutate mostra gia la "risposta" non sincronizzata e salva in una var i vecchi dati di reviews
         onMutate: async (newReview) => {
-            console.log(newReview);
+            // console.log(newReview);
             await queryClient.cancelQueries({
                 queryKey: ["reviews", id],
                 exact: true,
             });
             const previousReviews = queryClient.getQueryData(["reviews", id]);
             queryClient.setQueryData(["reviews", id], (oldQueryData) => {
+                console.log(oldQueryData)
                 return {
                     ...oldQueryData,
-                    total_res: oldQueryData.total_res + 1,
-                    results: [
-                        ...oldQueryData.results,
-                        { id: findMaxId(oldQueryData.results) + 1, ...newReview },
-                    ],
+                    // total_res: oldQueryData.total_res + 1,
+                    // results: [
+                    //     ...oldQueryData.results,
+                    //     { id: findMaxId(oldQueryData.results) + 1, ...newReview },
+                    // ],
+                    pages: [...oldQueryData.pages, { ...oldQueryData.pages[0], results: oldQueryData.pages[0].results.unshift(newReview) }]
                 };
             });
             return {

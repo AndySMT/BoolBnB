@@ -1,5 +1,6 @@
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, { useRef, useState, useEffect, useMemo, Fragment } from "react";
 import Select from "react-select";
+import LoadMoreButton from "../components/LoadMoreButton"
 import { useParams, useNavigate } from "react-router-dom";
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
@@ -25,7 +26,9 @@ import {
     useAddReviewQuery,
     useGetLikesByPropsIdQuery,
     useGetPropertyQuery,
-    useGetReviewsQuery,
+    // useGetReviewsQuery,
+    useInfiniteGetPropsQuery,
+    useInfiniteGetRevsQuery,
 } from "../hooks/useDataQuery";
 import { useRefsContext } from "../Context/RefsContext";
 import SkeleDetailSection from "../components/SkeleDetailSection";
@@ -74,13 +77,18 @@ function PropertyDetail() {
         isError: isErrorP,
         data: propertyRes,
     } = useGetPropertyQuery(id);
-    // query per le recensioni della proprieta
+
     const {
         isLoading: isLoadingR,
         isError: isErrorR,
         data: reviewsRes,
-    } = useGetReviewsQuery(id);
+        refetch,
+        fetchNextPage,
+
+    } = useInfiniteGetRevsQuery(id, {});
+
     //  query per i likes della proprieta (ancora non viene usato)
+
     const {
         isLoading: isLoadingL,
         isError: isErrorL,
@@ -94,7 +102,8 @@ function PropertyDetail() {
     if (isErrorP || isErrorR || isErrorR) navigate("/notfound");
     // risposta ricevuta
     const property = propertyRes.results[0];
-    const reviews = reviewsRes.results;
+    // const reviews = reviewsRes.results;
+    console.log(reviewsRes)
     const likesQty = likesRes.total_res; // ? ancora non viene usato
 
     return (
@@ -106,7 +115,7 @@ function PropertyDetail() {
                 <SectionDetails
                     property={property}
                     savePost={savePost}
-                    reviews={reviews}
+                    reviewsCount={reviewsRes.pages[0].total_quantity}
                     reviewsRef={reviewsRef}
                 />
             </div>
@@ -117,9 +126,12 @@ function PropertyDetail() {
                 <SectionHost property={property} />
                 {/* sezione recensioni*/}
                 <SectionRecensioni
-                    reviews={reviews}
+                    reviewsRes={reviewsRes}
                     reviewsRef={reviewsRef}
+                    isErrorR={isErrorR}
+                    isLoadingR={isLoadingR}
                     id={id}
+                    fetchNextPage={fetchNextPage}
                 />
                 {/* sezione form recensione */}
                 <SectionFormRecensioni
@@ -149,13 +161,6 @@ function SectionImages({ property, savePost }) {
             {/* sezione immagini mobile */}
             <section className="block sm:hidden p-4">
                 <div className="flex overflow-auto rounded-lg snap-x snap-mandatory">
-                    {/* <div className="absolute top-6 right-5 text-black flex items-center gap-3">
-                        <span className="text-xs">icona share</span>
-                        <PiBookmarks
-                            onClick={savePost}
-                            className="text-4xl cursor-pointer"
-                        />
-                    </div> */}
                     {property.img_endpoints.map((img, index) => (
                         <img
                             key={index}
@@ -197,10 +202,11 @@ function SectionImages({ property, savePost }) {
     );
 }
 // SECTION DETAILS
-function SectionDetails({ property, savePost, reviews, reviewsRef }) {
+function SectionDetails({ property, savePost, reviewsCount, reviewsRef }) {
     const [clickedHeart, setClickedHeart] = useState(null);
     const [clickedShare, setClickedShare] = useState(null);
     const [clickedSave, setClickedSave] = useState(null);
+    console.log(reviewsCount)
     const toggleHeart = (Heart) => {
         setClickedHeart(clickedHeart === Heart ? null : Heart);
     };
@@ -306,7 +312,7 @@ function SectionDetails({ property, savePost, reviews, reviewsRef }) {
                             />
                         </div>
                         <p className="text-center">
-                            {reviews && reviews.length > 0 ? reviews.length : 0}{" "}
+                            {reviewsCount && reviewsCount > 0 ? reviewsCount : 0}
                             recensioni
                         </p>
                     </div>
@@ -432,13 +438,14 @@ function SectionHost({ property }) {
     );
 }
 // SECTION RECENSIONE
-function SectionRecensioni({ reviews, reviewsRef }) {
+function SectionRecensioni({ reviews, reviewsRef, reviewsRes, fetchNextPage }) {
     const { headerRef } = useRefsContext();
-    const [filterText, setFilterText] = useState("Filtro");
-    const [sortedReviews, setSortedReviews] = useState(reviews || []);
     const [scrollMargin, setScrollMargin] = useState("0px");
-    const [activeFilter, setActiveFilter] = useState(null);
-
+    const [reviewsCount, setReviewsCount] = useState(reviewsRes.pages[0].total_res || 0)
+    const onClick = () => {
+        fetchNextPage()
+        setReviewsCount(curr => curr + 4)
+    }
     // Aggiorno scrollMargin quando headerRef è disponibile
     useEffect(() => {
         if (headerRef.current) {
@@ -446,21 +453,8 @@ function SectionRecensioni({ reviews, reviewsRef }) {
         }
     }, [headerRef]);
 
-    // Riapplico il filtro quando reviews o activeFilter cambiano
-    useEffect(() => {
-        if (activeFilter) {
-            let sorted;
-            if (activeFilter.value === "date") {
-                sorted = [...reviews].sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
-            } else if (activeFilter.value === "rating") {
-                sorted = [...reviews].sort((a, b) => b.rating - a.rating);
-            }
-            setSortedReviews(sorted);
-        } else {
-            // Se non c'è un filtro attivo, usa l'ordine predefinito
-            setSortedReviews(reviews || []);
-        }
-    }, [reviews, activeFilter]); // Aggiungi activeFilter come dipendenza
+    // console.log(reviewsRes)
+
 
     // Funzione per formattare la data
     const formatDate = (dateString) => {
@@ -471,36 +465,8 @@ function SectionRecensioni({ reviews, reviewsRef }) {
         return format(new Date(parsedDate), 'dd MMMM yyyy', { locale: it });
     };
 
-    // Gestisce il cambio del filtro
-    const handleFilterChange = (selectedOption) => {
-        setFilterText(`Filtro: ${selectedOption.label}`);
-        setActiveFilter(selectedOption); // Memorizza il filtro attivo
-
-        let sorted;
-        if (selectedOption.value === "date") {
-            sorted = [...reviews].sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
-        } else if (selectedOption.value === "rating") {
-            sorted = [...reviews].sort((a, b) => b.rating - a.rating);
-        }
-        setSortedReviews(sorted);
-    };
-
-    // Dettaglio per l'opzione "Data"
     const detail = <span className="text-xs">{"(Dal più Recente)"}</span>;
 
-    // Placeholder personalizzato per il Select
-    const placeholder = (
-        <div className="flex items-center gap-1">
-            <span>Filtra</span>
-            <img className="h-5" src="/filter.png" alt="Filter Icon" />
-        </div>
-    );
-
-    // Opzioni del filtro (memoizzate per evitare ri-render non necessari)
-    const filterOptions = useMemo(() => [
-        { value: "date", label: <> Data {detail}</> },
-        { value: "rating", label: "Stelle" }
-    ], [detail]);
 
     return (
         <section
@@ -508,48 +474,52 @@ function SectionRecensioni({ reviews, reviewsRef }) {
             style={{ scrollMarginTop: scrollMargin }}
             className="reviews-section px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400"
         >
-            <div className="flex justify-between items-center">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
+            <div className="flex justify-between items-center mb-4">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide  ">
                     Recensioni
                 </h1>
-                <div className="relative">
-                    <Select
-                        placeholder={placeholder}
-                        options={filterOptions}
-                        onChange={handleFilterChange}
-                        className="w-40"
-                    />
-                </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 whitespace-wrap">
-                {sortedReviews?.length > 0 ? (
-                    sortedReviews.map((review) => (
-                        <div key={review.id} className="review-card boxShad max-w-96 m-2 p-2">
-                            <p className="font-medium text-xl">{review.title}</p>
-                            <p className="text-md text-gray-700">{review.description}</p>
-                            <div className="justify-between flex items-center mt-2">
-                                <p className="text-sm text-gray-500">
-                                    <span className="flex ml-1">
-                                        {[...Array(5)].map((_, index) => (
-                                            index < review.rating ? (
-                                                <FaStar key={index} className="text-yellow-500" />
-                                            ) : (
-                                                <FaStar key={index} className="text-stone-300" />
-                                            )
-                                        ))}
-                                    </span>
-                                </p>
-                                <p className="text-[0.6rem] text-gray-400">
-                                    {formatDate(review.create_at)}
-                                </p>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p>No reviews yet.</p>
-                )}
+                {
+                    reviewsRes?.pages.map((group, i) => (
+                        <Fragment key={i}>
+                            {
+                                group?.results?.map((rev) => (<div className="  mb-2" key={rev.id}>
+
+                                    <div key={rev.id} className="review-card boxShad max-w-96 m-2 p-2">
+                                        <p className="font-medium text-xl">{rev.title}</p>
+                                        <p className="text-md text-gray-700">{rev.description}</p>
+                                        <div className="justify-between flex items-center mt-2">
+                                            <p className="text-sm text-gray-500">
+                                                <span className="flex ml-1">
+                                                    {[...Array(5)].map((_, index) => (
+                                                        index < rev.rating ? (
+                                                            <FaStar key={index} className="text-yellow-500" />
+                                                        ) : (
+                                                            <FaStar key={index} className="text-stone-300" />
+                                                        )
+                                                    ))}
+                                                </span>
+                                            </p>
+                                            <p className="text-[0.6rem] text-gray-400">
+                                                {formatDate(rev.create_at)}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                ))
+                            }
+                        </Fragment>
+                    )
+                    )
+                }
+
             </div>
+            {reviewsCount < reviewsRes?.pages[0].total_quantity && <div>
+                <LoadMoreButton onClick={onClick} />
+            </div>}
         </section>
     );
 }
