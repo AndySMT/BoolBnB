@@ -70,13 +70,21 @@ function FastPropertySearch({
 
     // * ACTIONS
     const onSubmit = (data) => {
-        navigate("/search?city", {
-            state: {
-                city: data.city,
-                type: optSelected.value !== "tutti" ? optSelected.value : "",
-            },
-        });
-        reset()
+        let params = [];
+        data?.city && params.push(`city=${encodeURIComponent(data.city)}`);
+        optSelected?.value &&
+            optSelected.value !== "tutti" &&
+            params.push(
+                `property_type=${encodeURIComponent(optSelected.value)}`
+            );
+        if (params.length) {
+            params = `?${params.join("&")}`;
+        } else {
+            params = "";
+        }
+        console.log(params);
+        navigate(`/search${params}`);
+        reset();
     };
     return (
         <form
