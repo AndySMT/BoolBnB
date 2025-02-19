@@ -66,12 +66,11 @@ function FastPropertySearch({
         resolver: yupResolver(schema),
     });
 
-    console.log(errors);
+    // todo:slug => usare useSearchParams
 
     // * ACTIONS
     const onSubmit = (data) => {
-        console.log(data);
-        navigate("/search", {
+        navigate("/search?city", {
             state: {
                 city: data.city,
                 type: optSelected.value !== "tutti" ? optSelected.value : "",

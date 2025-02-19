@@ -33,7 +33,6 @@ function Jumbotron() {
             setFilterHeight(filterRef.current.offsetHeight);
         }
     }, [filterRef.current]);
-    console.log(window.innerHeight);
     return (
         <motion.section
             style={style}
@@ -52,7 +51,6 @@ function Jumbotron() {
 }
 
 function JumboSlogan({ headerRef, jumboRef }) {
-    const h2Ref = useRef(null);
     const width = window.innerWidth;
     const initial = { opacity: 0, x: width < 1024 ? 0 : -100, y: -40 };
 
@@ -84,7 +82,6 @@ function JumboSlogan({ headerRef, jumboRef }) {
                     <span> un unico portale</span>
                 </h1>
                 <h2
-                    ref={h2Ref}
                     className="font-black tracking-wide text-xl text-stone-700 sm:text-2xl md:text-xl xl:text-2xl "
                 >
                     Dal rifugio accogliente alla villa di lusso. Trova lo Spazio
