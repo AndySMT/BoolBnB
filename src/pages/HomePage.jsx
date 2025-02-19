@@ -11,19 +11,26 @@ import { motion } from "framer-motion";
 function HomePage() {
     // Stato per i parametri di filtro
     const [params, setParams] = useState({});
+    const [propsCount, setPropsCount] = useState(4);
 
     return (
         <>
             {/* Sezione di filtro */}
-            <FilterSection setParams={setParams} />
+            <FilterSection
+                setParams={setParams}
+                setPropsCount={setPropsCount}
+            />
             {/* Container per far rerenderizzare solo CardsSection */}
-            <CardsSectionContainer params={params} />
+            <CardsSectionContainer
+                params={params}
+                propsCount={propsCount}
+                setPropsCount={setPropsCount}
+            />
         </>
     );
 }
 
-const CardsSectionContainer = ({ params }) => {
-    const [currPage, setCurrPage] = useState(1);
+const CardsSectionContainer = ({ params, setPropsCount, propsCount }) => {
     const {
         isLoading,
         isFetchingNextPage,
@@ -33,6 +40,8 @@ const CardsSectionContainer = ({ params }) => {
         fetchNextPage,
         refetch,
     } = useInfiniteGetPropsQuery(params);
+    console.log(data);
+    console.log(propsCount);
 
     const navigate = useNavigate();
 
@@ -43,14 +52,14 @@ const CardsSectionContainer = ({ params }) => {
 
     useEffect(() => {
         // vai giu dopo il fetch e se sei dal 2 fetch in poi
-        if (currPage > 1 && isFetched) {
+        if (propsCount >= 4 && isFetched) {
             window.scroll({
                 left: 0,
                 top: document.documentElement.scrollTop + 600, // ? offset da calcolare invece con l'altezza della card (useRefsContext)
                 behavior: "smooth",
             });
         }
-    }, [currPage]);
+    }, [propsCount]);
 
     // Gestione dello stato di caricamento e errore
     if (isError) {
@@ -82,14 +91,14 @@ const CardsSectionContainer = ({ params }) => {
                     )}
                 </>
             </CardsSection>
-            {data?.pages[data?.pages.length - 1]?.total_res >= 4 && (
+            {propsCount < data?.pages[0]?.total_quantity && (
                 <div className="flex justify-center">
                     <LoadMoreButton
                         noMore={false}
                         // al click fetcha la prossima pagina e setta la prossima pagina
                         onClick={() => {
                             fetchNextPage();
-                            setCurrPage((curr) => curr + 1);
+                            setPropsCount((curr) => curr + 4);
                         }}
                     />
                 </div>
@@ -98,7 +107,7 @@ const CardsSectionContainer = ({ params }) => {
     );
 };
 
-function FilterSection({ setParams }) {
+function FilterSection({ setParams, setPropsCount }) {
     const { headerRef, jumboRef, filterRef } = useRefsContext();
 
     // Stato per il filtro attivo
@@ -119,6 +128,7 @@ function FilterSection({ setParams }) {
     const handleFilterClick = (type, index) => {
         setParams({ property_type: type === "tutti" ? "" : type });
         setActiveFilter(index);
+        setPropsCount(4);
         window.scrollTo({
             top: jumboRef.current.offsetHeight + headerRef.current.offsetHeight,
             behavior: "smooth",

@@ -161,11 +161,3 @@ function findMaxId(array) {
     return maxId;
 }
 
-// * CACHE: OLD reviews/10
-
-// * aggiorno reviews/10 perche ce un nuovo posto
-// * => nuova chiamata in post => uso la funzione di mutazione!
-// * SE la richiesta è success => allora esista un NEW reviews/10 fuori cache => e poi dico a react query di buttare OLD reviews/10
-// * e di rimpiazzarlo con NEW reviews/10 => come? usando invalidateQueries passandogli l'etichetta ( reviews/10 )
-
-// ! CACHE: properties properties/1 pr/2 reviews/1 reviews/7
