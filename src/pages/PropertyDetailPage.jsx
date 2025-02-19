@@ -80,7 +80,7 @@ function PropertyDetail() {
         isError: isErrorR,
         data: reviewsRes,
     } = useGetReviewsQuery(id);
-    // ? query per i likes della proprieta (ancora non viene usato)
+    //  query per i likes della proprieta (ancora non viene usato)
     const {
         isLoading: isLoadingL,
         isError: isErrorL,
@@ -553,7 +553,6 @@ function SectionRecensioni({ reviews, reviewsRef }) {
         </section>
     );
 }
-
 
 // SECTION FORM RECENSIONI
 function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
