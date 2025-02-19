@@ -131,7 +131,7 @@ function SearchPropertyPage() {
                 >
                     <form
                         onSubmit={onFilterSubmit}
-                        className=" md:w-full px-6 py-2 grid grid-cols-2 md:grid-cols-3 gap-4 md:text-[10px] z-20 xl:grid-cols-1 items-end"
+                        className=" md:w-full px-6 py-2 grid grid-cols-2 gap-4 md:text-[10px] z-20 sm:grid-cols-3 lg:grid-cols-1 items-end"
                     >
                         <Selects setOptSelected={setOptSelected} />
                         <button
