@@ -11,12 +11,12 @@ const Header = () => {
     const { jumboRef, headerRef } = useRefsContext();
     const location = useLocation();
 
-    const offset = document.documentElement.offsetWidth < 1024 ? 0 : 10;
+    const offset =
+        window.innerWidth < 1024
+            ? headerRef.current?.offsetHeight + 100
+            : headerRef.current?.offsetHeight + 30;
     // booleano controllato dallo scroll della window, useScroll prende come param l'offset
-    const isVisible = useScroll(
-        jumboRef.current?.offsetHeight -
-            (headerRef.current?.offsetHeight + offset)
-    );
+    const isVisible = useScroll(jumboRef.current?.offsetHeight - offset);
 
     // isVisible controlla la visibilita del bookLink
     // location limita l'animazione in HomePage ("/")
@@ -27,6 +27,7 @@ const Header = () => {
         }  
         ${
             location.pathname === "/" &&
+            window.innerHeight >= 640 &&
             "invisible sm:opacity-0 sm:translate-x-[50px] lg:translate-x-[-150px] lg:translate-y-[15px] transition-all duration-500"
         }  `;
     // hidden sm:block bg-[#d4c685] py-2 rounded-md border-2 border-stone-500 hover:bg-[#cabc7d] cursor-pointer

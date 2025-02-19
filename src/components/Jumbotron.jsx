@@ -34,7 +34,7 @@ function Jumbotron() {
             setFilterHeight(filterRef.current.offsetHeight);
         }
     }, [filterRef.current]);
-
+    console.log(window.innerHeight);
     return (
         <motion.section
             style={style}
@@ -42,7 +42,9 @@ function Jumbotron() {
             initial={animationConfig.section.initial}
             animate={animationConfig.section.animate}
             transition={animationConfig.section.transition}
-            className="md:h-[65vh] lg:h-[80vh] relative z-30 bg-linear-90/oklch from-15% from-[#d4c685] to-[#a7d3a6] text-stone-800 text-center lg:text-start flex items-center p-6 px-3 lg:px-[10vw] lg:py-12 justify-center lg:gap-32 lg:[&>div]:w-1/2 rounded-b-4xl will-change-[opacity, transform, translate]"
+            className={`md:h-[65vh] lg:h-[80vh] relative z-30 bg-linear-90/oklch from-15% from-[#d4c685] to-[#a7d3a6] text-stone-800 text-center lg:text-start flex items-center p-6 px-3 lg:px-[10vw] lg:py-12 justify-center lg:gap-32 lg:[&>div]:w-1/2 rounded-b-4xl will-change-[opacity, transform, translate] ${
+                window.innerHeight < 640 && "landscape:hidden"
+            }`}
         >
             <JumboSlogan jumboRef={jumboRef} headerRef={headerRef} />
             <JumboImages />
@@ -52,7 +54,7 @@ function Jumbotron() {
 
 function JumboSlogan({ headerRef, jumboRef }) {
     const h2Ref = useRef(null);
-    const width = document.documentElement.clientWidth;
+    const width = window.innerWidth;
     const initial = { opacity: 0, x: width < 1024 ? 0 : -100, y: -40 };
 
     // * ACTIONS
