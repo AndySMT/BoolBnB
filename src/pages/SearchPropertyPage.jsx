@@ -33,16 +33,11 @@ function SearchPropertyPage() {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     const [currPage, setCurrPage] = useState(1);
-    const { isLoading, isError, refetch } = useGetPropertiesQuery(
-        params,
-        isEnabled
-    );
-    const { data, fetchNextPage, isFetchingNextPage, isFetched } = useInfiniteGetPropsQuery(params);
-
-    // Ricarica i dati ogni volta che i parametri cambiano
-    useEffect(() => {
-        refetch();
-    }, [params]);
+    // const { isLoading, isError, refetch } = useGetPropertiesQuery(
+    //     params,
+    //     isEnabled
+    // );
+    const { isLoading, isError, refetch, data, fetchNextPage, isFetchingNextPage, isFetched } = useInfiniteGetPropsQuery(params);
 
     useEffect(() => {
         // vai giu dopo il fetch e se sei dal 2 fetch in poi
@@ -56,6 +51,12 @@ function SearchPropertyPage() {
         console.log(data);
     }, [currPage]);
 
+    // Ricarica i dati ogni volta che i parametri cambiano
+    useEffect(() => {
+        refetch();
+        console.log(data);
+    }, [params]);
+
     // * ACTIONS
     const onInputSubmit = (e) => {
         e.preventDefault();
@@ -63,7 +64,7 @@ function SearchPropertyPage() {
             setParams((curr) => ({ ...curr, city: inputValue })); //setto i params in modo tale che arrivino nel formato corretto nel server
             setInputValue(inputValue);
             setIsEnabled(true); // dal submit in poi della prima ricerca, abilito il fetch
-            refetch(); // rifai il fetch delle properties
+            
         }
         setIsFilterOpen(false);
     };
@@ -141,18 +142,10 @@ function SearchPropertyPage() {
             </div>
             <div className="p-6 pt-14 lg:px-12 lg:w-5/6">
                 {/* data */}
-                {isLoading ? (
-                    <CardsSection classes={"lg:!px-0"} title={""}>
-                        {[...Array(8)].map((_, i) => (
-                            <SkeleCard key={i} />
-                        ))}
-                    </CardsSection>
-                ) : isError || !data.results?.length ? (
-                    <h2>La tua ricerca non ha prodotto nessun risultato</h2>
-                ) : (
                     <>
                         <CardsSection classes={"lg:!px-0 !pt-0"} title={""}>
                             <>
+                                {console.log(data)}
                                 {/* paginazione */}
                                 {data?.pages.map((group, i) => (
                                     <Fragment key={i}>
@@ -194,7 +187,6 @@ function SearchPropertyPage() {
                             </div>
                         )}
                     </>
-                )}
             </div>
         </>
     );
