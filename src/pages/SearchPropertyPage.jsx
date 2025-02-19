@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import Select from "react-select";
-import { useGetPropertiesQuery } from "../hooks/useDataQuery";
+import { useGetPropertiesQuery, useInfiniteGetPropsQuery } from "../hooks/useDataQuery";
 import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
 import { FaFilter, FaSearch } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { useRefsContext } from "../Context/RefsContext";
 import SkeleCard from "../components/SkeleCard";
+import LoadMoreButton from "../components/LoadMoreButton";
+import { Fragment } from "react";
 
 // options delle select iniziali
 const initialOptions = {
@@ -30,10 +32,29 @@ function SearchPropertyPage() {
     const [optSelected, setOptSelected] = useState(initialOptions); // oggetto che salva le options
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-    const { data, isLoading, isError, refetch } = useGetPropertiesQuery(
+    const [currPage, setCurrPage] = useState(1);
+    const { isLoading, isError, refetch } = useGetPropertiesQuery(
         params,
         isEnabled
     );
+    const { data, fetchNextPage, isFetchingNextPage, isFetched } = useInfiniteGetPropsQuery(params);
+
+    // Ricarica i dati ogni volta che i parametri cambiano
+    useEffect(() => {
+        refetch();
+    }, [params]);
+
+    useEffect(() => {
+        // vai giu dopo il fetch e se sei dal 2 fetch in poi
+        if (currPage > 1 && isFetched) {
+            window.scroll({
+                left: 0,
+                top: document.documentElement.scrollTop + 600, // ? offset da calcolare invece con l'altezza della card (useRefsContext)
+                behavior: "smooth",
+            });
+        }
+        console.log(data);
+    }, [currPage]);
 
     // * ACTIONS
     const onInputSubmit = (e) => {
@@ -75,7 +96,7 @@ function SearchPropertyPage() {
             >
                 <form
                     onSubmit={onInputSubmit}
-                    className="flex justify-center gap-1 my-5 md:items-baseline"
+                    className="flex justify-center gap-1 my-4 md:items-baseline"
                 >
                     <input
                         type="text"
@@ -99,22 +120,20 @@ function SearchPropertyPage() {
                     <FaFilter />
                 </button>
                 <div
-                    className={`${
-                        !isFilterOpen && "hidden lg:block"
-                    } bg-white absolute w-full lg:h-screen z-30 top-[102%] lg:w-1/6 right-0`}
+                    className={`${!isFilterOpen && "hidden lg:block"
+                        } bg-white absolute w-full lg:h-screen z-30 top-[102%] lg:w-1/6 right-0`}
                 >
                     <form
                         onSubmit={onFilterSubmit}
-                        className=" md:w-full p-6 grid grid-cols-2 md:grid-cols-3 gap-4 md:text-[10px] z-20 xl:grid-cols-1 items-end"
+                        className=" md:w-full px-6 py-2 grid grid-cols-2 md:grid-cols-3 gap-4 md:text-[10px] z-20 xl:grid-cols-1 items-end"
                     >
                         <Selects setOptSelected={setOptSelected} />
                         <button
                             disabled={!isEnabled || !inputValue.length}
                             type="submit"
-                            className={`${
-                                (!isEnabled || !inputValue.length) &&
+                            className={`${(!isEnabled || !inputValue.length) &&
                                 "!cursor-not-allowed opacity-50"
-                            } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
+                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
                         >
                             Applica filtri
                         </button>
@@ -134,13 +153,49 @@ function SearchPropertyPage() {
                         La tua ricerca non ha prodotto nessun risultato
                     </h2>
                 ) : (
-                    <CardsSection classes={"lg:!px-0"} title={""}>
-                        {data.results.map((prop) => (
+                    <>
+                        <CardsSection classes={"lg:!px-0"} title={""}>
+                            <>
+                                {/* paginazione */}
+                                {data?.pages.map((group, i) => (
+                                    <Fragment key={i}>
+                                        {group?.results?.map((prop, index) => (
+                                            <Card
+                                                key={prop.id}
+                                                property={prop}
+                                                index={index}
+                                            />
+                                        ))}
+                                    </Fragment>
+                                ))}
+                                {/* Skeleton durante il fetch */}
+                                {(isFetchingNextPage || isLoading) && (
+                                    <>
+                                        {Array.from({ length: 4 }).map((_, index) => (
+                                            <SkeleCard key={index} />
+                                        ))}
+                                    </>
+                                )}
+                            </>
+                            {/* {data.results.map((prop) => (
                             <Card key={prop.id} property={prop} />
-                        ))}
-                    </CardsSection>
+                        ))} */}
+                        </CardsSection>
+                        {data?.pages[data?.pages.length - 1]?.total_res >= 4 && (
+                            <div className="flex justify-center">
+                                <LoadMoreButton
+                                    noMore={false}
+                                    // al click fetcha la prossima pagina e setta la prossima pagina
+                                    onClick={() => {
+                                        fetchNextPage();
+                                        setCurrPage((curr) => curr + 1);
+                                    }}
+                                />
+                            </div>
+                        )}
+                    </>
                 )}
-            </div>
+            </div >
         </>
     );
 }
@@ -164,6 +219,12 @@ const smqOptions = [
     { value: "700", label: "700+" },
 ];
 
+const bathOptions = [
+    { value: "1", label: "1" },
+    { value: "2", label: "2" },
+    { value: "3", label: "3+" },
+];
+
 const typeOptions = [
     { value: "villa", label: "Villa" },
     { value: "appartamento", label: "Appartamento" },
@@ -175,8 +236,8 @@ const typeOptions = [
 ];
 
 const customStyles = {
-    control: () => {}, //style della select
-    option: () => {}, //style delle options
+    control: () => { }, //style della select
+    option: () => { }, //style delle options
 };
 
 const selectFields = [
@@ -187,7 +248,7 @@ const selectFields = [
         options: options,
     },
     { label: "Letti", id: "letti", field: "n_beds", options: options },
-    { label: "Bagni", id: "bagni", field: "n_bathrooms", options: options },
+    { label: "Bagni", id: "bagni", field: "n_bathrooms", options: bathOptions },
     {
         label: "Metri quadri",
         id: "smq",
