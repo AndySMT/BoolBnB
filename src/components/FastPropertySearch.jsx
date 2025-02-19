@@ -13,7 +13,7 @@ const customStyles = {
             color: "black",
         },
     }),
-    control: (provided) => ({
+    control: () => ({
         display: "flex",
         textAlign: "start",
         paddingInline: "4px",
@@ -77,6 +77,7 @@ function FastPropertySearch({
                 type: optSelected.value !== "tutti" ? optSelected.value : "",
             },
         });
+        reset()
     };
     return (
         <form
@@ -115,7 +116,6 @@ function FastPropertySearch({
 
 const schema = yup.object().shape({
     city: yup.string().trim().required(),
-    // // reviewText: yup.string().trim().required("La recensione è obbligatoria"),
 });
 
 export default FastPropertySearch;

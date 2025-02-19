@@ -1,4 +1,3 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useRefsContext } from "../Context/RefsContext";
 import { useEffect, useRef, useState } from "react";
@@ -88,7 +87,7 @@ function JumboSlogan({ headerRef, jumboRef }) {
                     ref={h2Ref}
                     className="font-black tracking-wide text-xl text-stone-700 sm:text-2xl md:text-xl xl:text-2xl "
                 >
-                    Dal rifugio accogliente alla villa di lusso, Trova lo Spazio
+                    Dal rifugio accogliente alla villa di lusso. Trova lo Spazio
                     Perfetto per la Tua Prossima Avventura!
                 </h2>
             </div>

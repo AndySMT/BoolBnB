@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
@@ -8,7 +8,6 @@ import NavbarMobile from "../components/NavbarMobile";
 import { RefsProvider } from "../Context/RefsContext";
 import { lazy, Suspense } from "react";
 import SkeleJumbotron from "../components/SkeleJumbotron";
-import Jumbotron from "../components/Jumbotron";
 const LazyJumbotron = lazy(() => import("../components/Jumbotron"));
 
 function DefaultLayout() {

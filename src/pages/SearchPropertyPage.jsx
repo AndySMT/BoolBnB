@@ -71,7 +71,7 @@ function SearchPropertyPage() {
         <>
             <div
                 style={style}
-                className="flex items-center justify-center gap-8 border-b bg-[#fcfcfc] px-6 md:px-24 fixed top-[-1px] left-0 w-screen z-30"
+                className="flex top-14 items-center justify-center gap-8 border-b bg-[#fcfcfc] px-6 md:px-24 fixed left-0 w-screen z-30"
             >
                 <form
                     onSubmit={onInputSubmit}

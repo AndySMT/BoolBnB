@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { IoIosStarOutline } from "react-icons/io";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import useScroll from "../hooks/useScroll";

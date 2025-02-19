@@ -6,7 +6,6 @@ import PropertyDetail from "./pages/PropertyDetailPage";
 import ErrorPage from "./pages/ErrorPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LostPage from "./pages/lostPage";
-import { RefsProvider } from "./Context/RefsContext";
 import { lazy, Suspense } from "react";
 import FavouritesPage from "./pages/FavouritesPage";
 import SkeleCardsSection from "./components/SkeleCardsSection";
@@ -17,7 +16,6 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      {/* <RefsProvider> */}
       <BrowserRouter>
         <Routes>
           <Route path="/" Component={DefaultLayout}>
@@ -38,7 +36,6 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-      {/* </RefsProvider> */}
     </QueryClientProvider>
   );
 }
