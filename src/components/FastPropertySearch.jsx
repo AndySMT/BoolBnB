@@ -71,6 +71,7 @@ function FastPropertySearch({
     // * ACTIONS
     const onSubmit = (data) => {
         let params = [];
+        
         data?.city && params.push(`city=${encodeURIComponent(data.city)}`);
         optSelected?.value &&
             optSelected.value !== "tutti" &&

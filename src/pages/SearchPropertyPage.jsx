@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import Select from "react-select";
-import { useGetPropertiesQuery, useInfiniteGetPropsQuery } from "../hooks/useDataQuery";
+import { useInfiniteGetPropsQuery } from "../hooks/useDataQuery";
 import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
 import { FaFilter, FaSearch } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useRefsContext } from "../Context/RefsContext";
 import SkeleCard from "../components/SkeleCard";
 import LoadMoreButton from "../components/LoadMoreButton";
@@ -22,9 +22,11 @@ const initialOptions = {
 
 function SearchPropertyPage() {
     const { headerRef } = useRefsContext();
-    const location = useLocation();
-    const city = location?.state?.city;
-    const property_type = location?.state?.type;
+
+    const [searchParams] = useSearchParams();
+
+    const city = searchParams.get("city");
+    const property_type = searchParams.get("property_type");
 
     const [inputValue, setInputValue] = useState(city ? city : ""); // controllo dinamico dell'input della citta
     const [params, setParams] = useState({ city, property_type }); // per salvare l'oggetto params per la query in get
@@ -33,11 +35,18 @@ function SearchPropertyPage() {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     const [currPage, setCurrPage] = useState(1);
-    // const { isLoading, isError, refetch } = useGetPropertiesQuery(
-    //     params,
-    //     isEnabled
-    // );
-    const { isLoading, isError, refetch, data, fetchNextPage, isFetchingNextPage, isFetched } = useInfiniteGetPropsQuery(params);
+
+    const navigate = useNavigate();
+
+    const {
+        isLoading,
+        isError,
+        refetch,
+        data,
+        fetchNextPage,
+        isFetchingNextPage,
+        isFetched,
+    } = useInfiniteGetPropsQuery(params);
 
     useEffect(() => {
         // vai giu dopo il fetch e se sei dal 2 fetch in poi
@@ -48,13 +57,11 @@ function SearchPropertyPage() {
                 behavior: "smooth",
             });
         }
-        console.log(data);
     }, [currPage]);
 
     // Ricarica i dati ogni volta che i parametri cambiano
     useEffect(() => {
         refetch();
-        console.log(data);
     }, [params]);
 
     // * ACTIONS
@@ -64,7 +71,6 @@ function SearchPropertyPage() {
             setParams((curr) => ({ ...curr, city: inputValue })); //setto i params in modo tale che arrivino nel formato corretto nel server
             setInputValue(inputValue);
             setIsEnabled(true); // dal submit in poi della prima ricerca, abilito il fetch
-            
         }
         setIsFilterOpen(false);
     };
@@ -85,6 +91,7 @@ function SearchPropertyPage() {
 
     const style = { top: `${headerHeight}px` };
 
+    if (isError) navigate("/lost");
     // * RETURNS
     return (
         <>
@@ -142,51 +149,49 @@ function SearchPropertyPage() {
             </div>
             <div className="p-6 pt-14 lg:px-12 lg:w-5/6">
                 {/* data */}
-                    <>
-                        <CardsSection classes={"lg:!px-0 !pt-0"} title={""}>
-                            <>
-                                {console.log(data)}
-                                {/* paginazione */}
-                                {data?.pages.map((group, i) => (
-                                    <Fragment key={i}>
-                                        {group?.results?.map((prop, index) => (
-                                            <Card
-                                                key={prop.id}
-                                                property={prop}
-                                                index={index}
-                                            />
-                                        ))}
-                                    </Fragment>
-                                ))}
-                                {/* Skeleton durante il fetch */}
-                                {(isFetchingNextPage || isLoading) && (
-                                    <>
-                                        {Array.from({ length: 4 }).map(
-                                            (_, index) => (
-                                                <SkeleCard key={index} />
-                                            )
-                                        )}
-                                    </>
-                                )}
-                            </>
-                            {/* {data.results.map((prop) => (
+                <>
+                    <CardsSection classes={"lg:!px-0 !pt-0"} title={""}>
+                        <>
+                            {/* paginazione */}
+                            {data?.pages.map((group, i) => (
+                                <Fragment key={i}>
+                                    {group?.results?.map((prop, index) => (
+                                        <Card
+                                            key={prop.id}
+                                            property={prop}
+                                            index={index}
+                                        />
+                                    ))}
+                                </Fragment>
+                            ))}
+                            {/* Skeleton durante il fetch */}
+                            {(isFetchingNextPage || isLoading) && (
+                                <>
+                                    {Array.from({ length: 4 }).map(
+                                        (_, index) => (
+                                            <SkeleCard key={index} />
+                                        )
+                                    )}
+                                </>
+                            )}
+                        </>
+                        {/* {data.results.map((prop) => (
                             <Card key={prop.id} property={prop} />
                         ))} */}
-                        </CardsSection>
-                        {data?.pages[data?.pages.length - 1]?.total_res >=
-                            4 && (
-                            <div className="flex justify-center">
-                                <LoadMoreButton
-                                    noMore={false}
-                                    // al click fetcha la prossima pagina e setta la prossima pagina
-                                    onClick={() => {
-                                        fetchNextPage();
-                                        setCurrPage((curr) => curr + 1);
-                                    }}
-                                />
-                            </div>
-                        )}
-                    </>
+                    </CardsSection>
+                    {data?.pages[data?.pages.length - 1]?.total_res >= 4 && (
+                        <div className="flex justify-center">
+                            <LoadMoreButton
+                                noMore={false}
+                                // al click fetcha la prossima pagina e setta la prossima pagina
+                                onClick={() => {
+                                    fetchNextPage();
+                                    setCurrPage((curr) => curr + 1);
+                                }}
+                            />
+                        </div>
+                    )}
+                </>
             </div>
         </>
     );
@@ -228,8 +233,8 @@ const typeOptions = [
 ];
 
 const customStyles = {
-    control: () => { }, //style della select
-    option: () => { }, //style delle options
+    control: () => {}, //style della select
+    option: () => {}, //style delle options
 };
 
 const selectFields = [
