@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LostPage from "./pages/lostPage";
 import { lazy, Suspense } from "react";
 import FavouritesPage from "./pages/FavouritesPage";
+import AddPropertyForm from "./components/AddPropertyForm";
 import SkeleCardsSection from "./components/SkeleCardsSection";
 const LazyHomePage = lazy(() => import("./pages/HomePage"));
 
@@ -28,7 +29,8 @@ function App() {
               }
             />
             <Route path="search" Component={SearchPropertyPage} />
-            <Route path="addproperty" Component={AddPropertyPage} />
+            <Route path="addproperty" Component={AddPropertyPage}></Route>
+            <Route path="add-your-property-form" Component={AddPropertyForm} />
             <Route path="detail/:id" Component={PropertyDetail} />
             <Route path="favourites" Component={FavouritesPage} />
             <Route path="lost" Component={LostPage} />
