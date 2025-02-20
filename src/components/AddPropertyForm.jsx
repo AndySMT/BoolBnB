@@ -42,14 +42,17 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
   const handleFileChange = (event) => {
     event.preventDefault();
     const files = Array.from(event.target.files);
-    setSelectedFiles((prev) => [...prev, ...files]); // Mantiene i file già caricati
+    setSelectedFiles((prev) => [...prev, ...files]);
+    setValue("files", [...selectedFiles, ...files], { shouldValidate: true });
   };
 
   // * DND
   const handleDrop = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    handleFiles(event.dataTransfer.files);
+    const files = Array.from(event.dataTransfer.files);
+    setSelectedFiles((prev) => [...prev, ...files]);
+    setValue("files", [...selectedFiles, ...files], { shouldValidate: true });
   };
   // useDroppable hook for drag & drop area
   const { setNodeRef } = useDroppable({
@@ -61,6 +64,8 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
 
   const onSubmit = (data, event) => {
     event.preventDefault();
+    console.log("Dati del form:", data);
+    console.log("File selezionati:", selectedFiles);
     /* console.log("Form submitted!"); */ // Verifica che il form sia inviato
     const formData = new FormData();
     // Aggiungo tutti i valori del form a FormData
@@ -74,10 +79,12 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
       });
     }
     console.log("Dati inviati:", Object.fromEntries(formData.entries()));
+    console.log("FormData:", Object.fromEntries(formData.entries()));
     mutate(formData);
   };
 
   useEffect(() => {
+    console.log("Errori del form:", errors);
     console.log("File selezionati aggiornati:", selectedFiles);
     if (isSuccess) {
       setValue("files", selectedFiles, { shouldValidate: true });
@@ -454,31 +461,16 @@ const schema = yup.object().shape({
 
   property_type: yup.string().required("Tipo di proprietà obbligatorio"),
   email: yup.string().email("Invalid email").required("Email is required"),
-  /* files: yup
+  files: yup
     .array()
-    .of(
-      yup
-        .mixed()
-        .test(
-          "required",
-          "Il file è obbligatorio",
-          (value) => value && value.length > 0
-        ) // Verifica che ci sia almeno un file
-        .test("fileSize", "Il file è troppo grande", (value) => {
-          return (
-            value &&
-            Array.from(value).every((file) => file.size <= 2 * 1024 * 1024)
-          );
-        })
-        .test("fileType", "Formato non supportato", (value) => {
-          // Verifica che ogni file sia di tipo immagine jpeg o png
-          return (
-            value &&
-            Array.from(value).every((file) =>
-              ["image/jpeg", "image/png"].includes(file.type)
-            )
-          );
-        })
+    .min(1, "Devi caricare almeno un file")
+    .required("Devi caricare almeno un file")
+    .test("fileSize", "Il file è troppo grande", (files) =>
+      files.every((file) => file.size <= 5 * 1024 * 1024)
     )
-    .required("Devi caricare almeno un file"), // Verifica che ci sia almeno un file */
+    .test("fileType", "Formato non supportato", (files) =>
+      files.every((file) =>
+        ["image/jpeg", "image/png", "image/gif"].includes(file.type)
+      )
+    ),
 });
