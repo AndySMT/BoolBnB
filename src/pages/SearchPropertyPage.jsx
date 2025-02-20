@@ -10,6 +10,7 @@ import { useRefsContext } from "../Context/RefsContext";
 import SkeleCard from "../components/SkeleCard";
 import LoadMoreButton from "../components/LoadMoreButton";
 import { Fragment } from "react";
+import { Listbox } from "@headlessui/react";
 
 // options delle select iniziali
 const initialOptions = {
@@ -29,6 +30,7 @@ function SearchPropertyPage() {
     const property_type = searchParams.get("property_type");
 
     const [inputValue, setInputValue] = useState(city ? city : ""); // controllo dinamico dell'input della citta
+
     const [params, setParams] = useState({ city, property_type }); // per salvare l'oggetto params per la query in get
     const [isEnabled, setIsEnabled] = useState(true); // booleano che abilita o no il fetch (controllare useGetPropertiesQuery)
     const [optSelected, setOptSelected] = useState(initialOptions); // oggetto che salva le options
@@ -71,6 +73,10 @@ function SearchPropertyPage() {
             setParams((curr) => ({ ...curr, city: inputValue })); //setto i params in modo tale che arrivino nel formato corretto nel server
             setInputValue(inputValue);
             setIsEnabled(true); // dal submit in poi della prima ricerca, abilito il fetch
+            let params = [];
+            params.push(`city=${encodeURIComponent(inputValue)}`);
+            console.log(params);
+            navigate(`/search?${params}`);
         }
         setIsFilterOpen(false);
     };
@@ -78,14 +84,20 @@ function SearchPropertyPage() {
     const onFilterSubmit = (e) => {
         e.preventDefault();
         if (inputValue.length) {
-            const params = optSelected; // le options le indico come params da mettere nella query params
+            let params = optSelected; // le options le indico come params da mettere nella query params
             setParams({ city: inputValue, ...params }); //setto i params in modo tale che arrivino nel formato corretto nel server
             refetch();
+            params = Object.entries(params);
+            params = params.map(([key, value]) => `${key}=${value}`);
+            params = `&${params.join("&")}`
+            navigate(`/search?city=${inputValue}${params}`);
+
         } else {
             console.log("Cerca prima la città!");
         }
         setIsFilterOpen(false);
     };
+
 
     const headerHeight = headerRef?.current?.offsetHeight - 2;
 
@@ -125,9 +137,8 @@ function SearchPropertyPage() {
                     <FaFilter />
                 </button>
                 <div
-                    className={`${
-                        !isFilterOpen && "hidden lg:block"
-                    } bg-white absolute w-full lg:h-screen z-30 top-[102%] lg:w-1/6 right-0`}
+                    className={`${!isFilterOpen && "hidden lg:block"
+                        } bg-white absolute w-full lg:h-screen z-30 top-[102%] lg:w-1/6 right-0`}
                 >
                     <form
                         onSubmit={onFilterSubmit}
@@ -137,12 +148,20 @@ function SearchPropertyPage() {
                         <button
                             disabled={!isEnabled || !inputValue.length}
                             type="submit"
-                            className={`${
-                                (!isEnabled || !inputValue.length) &&
+                            className={`${(!isEnabled || !inputValue.length) &&
                                 "!cursor-not-allowed opacity-50"
-                            } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
+                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
                         >
                             Applica filtri
+                        </button>
+                        <button
+                            disabled={!isEnabled || !inputValue.length}
+                            type="reset"
+                            className={`${(!isEnabled || !inputValue.length) &&
+                                "!cursor-not-allowed opacity-50"
+                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
+                        >
+                            Reset
                         </button>
                     </form>
                 </div>
@@ -233,8 +252,22 @@ const typeOptions = [
 ];
 
 const customStyles = {
-    control: () => {}, //style della select
-    option: () => {}, //style delle options
+    control: (baseStyles, state) => ({
+        ...baseStyles,
+        borderColor: state.isFocused ? 'black' : 'grey',
+        borderRadius: '10px'
+
+    }), //style della select
+    option: (styles, state) => {
+        const backgroundColor = state.isFocused ? "black" : "white";
+
+        return {
+            ...styles,
+            backgroundColor: backgroundColor,
+            color: state.isFocused ? 'white' : 'black',
+            borderRadius: '5px',
+        };
+    }, //style delle options
 };
 
 const selectFields = [
@@ -270,6 +303,8 @@ const Selects = ({ setOptSelected }) => {
                         id={id}
                         name={id}
                         options={options}
+                        placeholder={label == "Tipo di proprietà" ? "Proprietà" : "Inserisci"}
+                        styles={customStyles}
                         onChange={(opt) =>
                             setOptSelected((prev) => ({
                                 ...prev,
