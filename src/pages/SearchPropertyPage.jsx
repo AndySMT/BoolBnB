@@ -76,17 +76,19 @@ function SearchPropertyPage() {
         setIsFilterOpen(false);
     };
 
-    function setSearchParamsAndFetch() {
+    const setSearchParamsAndFetch = () => {
         let optParams = Object.fromEntries(
             Object.entries(optSelected).filter(([_, value]) => Boolean(value))
         );
-        let paramsObj = { city: inputValue, ...optParams };
+        let paramsObj = { ...optParams, city: inputValue };
         setParams(paramsObj);
         refetch();
         let paramsArr = Object.entries(paramsObj).map(([key, value]) => `${key}=${value}`);
         paramsArr = `?${paramsArr.join("&")}`;
         navigate(`/search${paramsArr}`);
     }
+
+
 
     if (isError) navigate("/lost");
 
@@ -293,7 +295,7 @@ const Selects = ({ optSelected, setOptSelected, paramsObj }) => {
                         options={options}
                         placeholder={label === "Tipo di proprietà" ? "Proprietà" : "Inserisci"}
                         styles={customStyles}
-                        value={options.find(opt => opt.value === optSelected[field] || opt.value === paramsObj[field]) || null}
+                        value={options.find(opt => opt.value === optSelected[field]) || null}
                         onChange={(opt) =>
                             setOptSelected((prev) => ({
                                 ...prev,
