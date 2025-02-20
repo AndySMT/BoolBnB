@@ -15,31 +15,39 @@ const LazyHomePage = lazy(() => import("./pages/HomePage"));
 const queryClient = new QueryClient();
 
 function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" Component={DefaultLayout}>
-            <Route
-              index
-              element={
-                <Suspense fallback={<SkeleCardsSection/>}>
-                  <LazyHomePage />
-                </Suspense>
-              }
-            />
-            <Route path="search" Component={SearchPropertyPage} />
-            <Route path="addproperty" Component={AddPropertyPage}></Route>
-            <Route path="add-your-property-form" Component={AddPropertyForm} />
-            <Route path="detail/:id" Component={PropertyDetail} />
-            <Route path="favourites" Component={FavouritesPage} />
-            <Route path="lost" Component={LostPage} />
-            <Route path="*" Component={ErrorPage} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </QueryClientProvider>
-  );
+    window.sessionStorage.setItem("newRevsCount", 0);
+
+    return (
+        <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" Component={DefaultLayout}>
+                        <Route
+                            index
+                            element={
+                                <Suspense fallback={<SkeleCardsSection />}>
+                                    <LazyHomePage />
+                                </Suspense>
+                            }
+                        />
+                        <Route path="search" Component={SearchPropertyPage} />
+                        <Route
+                            path="addproperty"
+                            Component={AddPropertyPage}
+                        ></Route>
+                        <Route
+                            path="add-your-property-form"
+                            Component={AddPropertyForm}
+                        />
+                        <Route path="detail/:id" Component={PropertyDetail} />
+                        <Route path="favourites" Component={FavouritesPage} />
+                        <Route path="lost" Component={LostPage} />
+                        <Route path="*" Component={ErrorPage} />
+                    </Route>
+                </Routes>
+            </BrowserRouter>
+        </QueryClientProvider>
+    );
 }
 
 export default App;
