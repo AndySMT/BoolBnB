@@ -1,5 +1,5 @@
 //? Importazioni librerie e componenti 
-import React, { useRef, useState, useEffect, Fragment } from "react";
+import React, { useRef, useState, useEffect, Fragment, createContext } from "react";
 import LoadMoreButton from "../components/LoadMoreButton";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -29,6 +29,7 @@ import { useRefsContext } from "../Context/RefsContext";
 import SkeleDetailSection from "../components/SkeleDetailSection";
 import ReviewComponent from "../components/ReviewComponent";
 import { toast } from "react-toastify";
+import RevsFilter from "../components/RevsFilter";
 
 //! Funzione propertyDetail
 function PropertyDetail() {
@@ -65,6 +66,8 @@ function PropertyDetail() {
     } = useGetNewReviewsQuery(id, newRevsCount);
 
     const { mutate, isSuccess } = useAddReviewQuery(id);
+
+    const revsCountContext = createContext()
 
     // * ACTIONS
 
@@ -425,24 +428,7 @@ function SectionRecensioni({
         setReviewsCount((curr) => curr + 4);
     };
 
-    const onFilterBtnClick = (e) => {
-        const btnClicked = e.target
-        switch (btnClicked.name) {
-            case "rating-desc":
-                setRevsParams({})
-                break;
-            case "rating-asc":
-                setRevsParams({ asc: "true" })
-                break;
-            case "data-desc":
-                setRevsParams({ data: "true" })
-                break;
-            case "data-asc":
-                setRevsParams({ data: "true", asc: "true" })
-                break;
-        }
 
-    }
 
     // Aggiorno scrollMargin quando headerRef è disponibile
     useEffect(() => {
@@ -461,11 +447,8 @@ function SectionRecensioni({
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide  ">
                     Recensioni
                 </h1>
-                <div className="flex gap-1">
-                    <button onClick={onFilterBtnClick} name="rating-desc" className="px-4 py-2 rounded-lg bg-blue-300 hover:bg-blue-400 cursor-pointer">Dal più votato</button>
-                    <button onClick={onFilterBtnClick} name="rating-asc" className="px-4 py-2 rounded-lg bg-blue-300 hover:bg-blue-400 cursor-pointer">Dal meno votato</button>
-                    <button onClick={onFilterBtnClick} name="data-desc" className="px-4 py-2 rounded-lg bg-blue-300 hover:bg-blue-400 cursor-pointer">Dal più recente</button>
-                    <button onClick={onFilterBtnClick} name="data-asc" className="px-4 py-2 rounded-lg bg-blue-300 hover:bg-blue-400 cursor-pointer">Dal meno recente</button>
+                <div className="relative">
+                    <RevsFilter setRevsParams={setRevsParams} />
                 </div>
             </div>
 
