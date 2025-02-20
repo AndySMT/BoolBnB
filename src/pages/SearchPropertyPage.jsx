@@ -23,7 +23,7 @@ function SearchPropertyPage() {
 
     // Stato per i parametri di ricerca
     const [params, setParams] = useState(paramsObj);
-    const [optSelected, setOptSelected] = useState({});
+    const [optSelected, setOptSelected] = useState(paramsObj);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     const [currPage, setCurrPage] = useState(1);
@@ -129,7 +129,7 @@ function SearchPropertyPage() {
                         onSubmit={onFilterSubmit}
                         className=" md:w-full px-6 py-2 grid grid-cols-2 gap-4 md:text-[10px] z-20 sm:grid-cols-3 lg:grid-cols-1 items-end"
                     >
-                        <Selects optSelected={optSelected} setOptSelected={setOptSelected} />
+                        <Selects optSelected={optSelected} setOptSelected={setOptSelected} paramsObj={paramsObj} />
                         <button
                             disabled={!inputValue.length}
                             type="submit"
@@ -281,7 +281,7 @@ const selectFields = [
 ];
 
 // Componente per i campi di selezione
-const Selects = ({ optSelected, setOptSelected }) => {
+const Selects = ({ optSelected, setOptSelected, paramsObj }) => {
     return (
         <>
             {selectFields.map(({ label, id, field, options }) => (
@@ -293,7 +293,7 @@ const Selects = ({ optSelected, setOptSelected }) => {
                         options={options}
                         placeholder={label === "Tipo di proprietà" ? "Proprietà" : "Inserisci"}
                         styles={customStyles}
-                        value={options.find(opt => opt.value === optSelected[field]) || null}
+                        value={options.find(opt => opt.value === optSelected[field] || opt.value === paramsObj[field]) || null}
                         onChange={(opt) =>
                             setOptSelected((prev) => ({
                                 ...prev,
