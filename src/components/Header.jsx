@@ -99,7 +99,7 @@ function HeaderLink({ to, text, children }) {
         <NavLink
             to={to}
             className={({ isActive }) =>
-                "flex items-center gap-1 pb-1 px-1 text-stone-600" +
+                "flex items-center gap-1 pb-1 px-1 text-stone-600 hover:text-stone-900 " +
                 (isActive ? " text-stone-900 font-semibold" : "")
             }
         >

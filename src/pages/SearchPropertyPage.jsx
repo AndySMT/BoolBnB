@@ -1,15 +1,16 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import Select from "react-select";
-import { useGetPropertiesQuery, useInfiniteGetPropsQuery } from "../hooks/useDataQuery";
+import { useInfiniteGetPropsQuery } from "../hooks/useDataQuery";
 import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
 import { FaFilter, FaSearch } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useRefsContext } from "../Context/RefsContext";
 import SkeleCard from "../components/SkeleCard";
 import LoadMoreButton from "../components/LoadMoreButton";
 import { Fragment } from "react";
+import { Listbox } from "@headlessui/react";
 
 // options delle select iniziali
 const initialOptions = {
@@ -22,27 +23,32 @@ const initialOptions = {
 
 function SearchPropertyPage() {
     const { headerRef } = useRefsContext();
-    const location = useLocation();
-    const city = location?.state?.city;
-    const property_type = location?.state?.type;
+
+    const [searchParams] = useSearchParams();
+
+    const city = searchParams.get("city");
+    const property_type = searchParams.get("property_type");
 
     const [inputValue, setInputValue] = useState(city ? city : ""); // controllo dinamico dell'input della citta
+
     const [params, setParams] = useState({ city, property_type }); // per salvare l'oggetto params per la query in get
     const [isEnabled, setIsEnabled] = useState(true); // booleano che abilita o no il fetch (controllare useGetPropertiesQuery)
     const [optSelected, setOptSelected] = useState(initialOptions); // oggetto che salva le options
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     const [currPage, setCurrPage] = useState(1);
-    const { isLoading, isError, refetch } = useGetPropertiesQuery(
-        params,
-        isEnabled
-    );
-    const { data, fetchNextPage, isFetchingNextPage, isFetched } = useInfiniteGetPropsQuery(params);
 
-    // Ricarica i dati ogni volta che i parametri cambiano
-    useEffect(() => {
-        refetch();
-    }, [params]);
+    const navigate = useNavigate();
+
+    const {
+        isLoading,
+        isError,
+        refetch,
+        data,
+        fetchNextPage,
+        isFetchingNextPage,
+        isFetched,
+    } = useInfiniteGetPropsQuery(params);
 
     useEffect(() => {
         // vai giu dopo il fetch e se sei dal 2 fetch in poi
@@ -53,8 +59,12 @@ function SearchPropertyPage() {
                 behavior: "smooth",
             });
         }
-        console.log(data);
     }, [currPage]);
+
+    // Ricarica i dati ogni volta che i parametri cambiano
+    useEffect(() => {
+        refetch();
+    }, [params]);
 
     // * ACTIONS
     const onInputSubmit = (e) => {
@@ -63,7 +73,10 @@ function SearchPropertyPage() {
             setParams((curr) => ({ ...curr, city: inputValue })); //setto i params in modo tale che arrivino nel formato corretto nel server
             setInputValue(inputValue);
             setIsEnabled(true); // dal submit in poi della prima ricerca, abilito il fetch
-            refetch(); // rifai il fetch delle properties
+            let params = [];
+            params.push(`city=${encodeURIComponent(inputValue)}`);
+            console.log(params);
+            navigate(`/search?${params}`);
         }
         setIsFilterOpen(false);
     };
@@ -71,19 +84,26 @@ function SearchPropertyPage() {
     const onFilterSubmit = (e) => {
         e.preventDefault();
         if (inputValue.length) {
-            const params = optSelected; // le options le indico come params da mettere nella query params
+            let params = optSelected; // le options le indico come params da mettere nella query params
             setParams({ city: inputValue, ...params }); //setto i params in modo tale che arrivino nel formato corretto nel server
             refetch();
+            params = Object.entries(params);
+            params = params.map(([key, value]) => `${key}=${value}`);
+            params = `&${params.join("&")}`
+            navigate(`/search?city=${inputValue}${params}`);
+
         } else {
             console.log("Cerca prima la città!");
         }
         setIsFilterOpen(false);
     };
 
+
     const headerHeight = headerRef?.current?.offsetHeight - 2;
 
     const style = { top: `${headerHeight}px` };
 
+    if (isError) navigate("/lost");
     // * RETURNS
     return (
         <>
@@ -117,84 +137,80 @@ function SearchPropertyPage() {
                     <FaFilter />
                 </button>
                 <div
-                    className={`${
-                        !isFilterOpen && "hidden lg:block"
-                    } bg-white absolute w-full lg:h-screen z-30 top-[102%] lg:w-1/6 right-0`}
+                    className={`${!isFilterOpen && "hidden lg:block"
+                        } bg-white absolute w-full lg:h-screen z-30 top-[102%] lg:w-1/6 right-0`}
                 >
                     <form
                         onSubmit={onFilterSubmit}
-                        className=" md:w-full px-6 py-2 grid grid-cols-2 md:grid-cols-3 gap-4 md:text-[10px] z-20 xl:grid-cols-1 items-end"
+                        className=" md:w-full px-6 py-2 grid grid-cols-2 gap-4 md:text-[10px] z-20 sm:grid-cols-3 lg:grid-cols-1 items-end"
                     >
                         <Selects setOptSelected={setOptSelected} />
                         <button
                             disabled={!isEnabled || !inputValue.length}
                             type="submit"
-                            className={`${
-                                (!isEnabled || !inputValue.length) &&
+                            className={`${(!isEnabled || !inputValue.length) &&
                                 "!cursor-not-allowed opacity-50"
-                            } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
+                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
                         >
                             Applica filtri
+                        </button>
+                        <button
+                            disabled={!isEnabled || !inputValue.length}
+                            type="reset"
+                            className={`${(!isEnabled || !inputValue.length) &&
+                                "!cursor-not-allowed opacity-50"
+                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
+                        >
+                            Reset
                         </button>
                     </form>
                 </div>
             </div>
             <div className="p-6 pt-14 lg:px-12 lg:w-5/6">
                 {/* data */}
-                {isLoading ? (
-                    <CardsSection classes={"lg:!px-0"} title={""}>
-                        {[...Array(8)].map((_, i) => (
-                            <SkeleCard key={i} />
-                        ))}
-                    </CardsSection>
-                ) : isError || !data.results?.length ? (
-                    <h2>La tua ricerca non ha prodotto nessun risultato</h2>
-                ) : (
-                    <>
-                        <CardsSection classes={"lg:!px-0 !pt-0"} title={""}>
-                            <>
-                                {/* paginazione */}
-                                {data?.pages.map((group, i) => (
-                                    <Fragment key={i}>
-                                        {group?.results?.map((prop, index) => (
-                                            <Card
-                                                key={prop.id}
-                                                property={prop}
-                                                index={index}
-                                            />
-                                        ))}
-                                    </Fragment>
-                                ))}
-                                {/* Skeleton durante il fetch */}
-                                {(isFetchingNextPage || isLoading) && (
-                                    <>
-                                        {Array.from({ length: 4 }).map(
-                                            (_, index) => (
-                                                <SkeleCard key={index} />
-                                            )
-                                        )}
-                                    </>
-                                )}
-                            </>
-                            {/* {data.results.map((prop) => (
+                <>
+                    <CardsSection classes={"lg:!px-0 !pt-0"} title={""}>
+                        <>
+                            {/* paginazione */}
+                            {data?.pages.map((group, i) => (
+                                <Fragment key={i}>
+                                    {group?.results?.map((prop, index) => (
+                                        <Card
+                                            key={prop.id}
+                                            property={prop}
+                                            index={index}
+                                        />
+                                    ))}
+                                </Fragment>
+                            ))}
+                            {/* Skeleton durante il fetch */}
+                            {(isFetchingNextPage || isLoading) && (
+                                <>
+                                    {Array.from({ length: 4 }).map(
+                                        (_, index) => (
+                                            <SkeleCard key={index} />
+                                        )
+                                    )}
+                                </>
+                            )}
+                        </>
+                        {/* {data.results.map((prop) => (
                             <Card key={prop.id} property={prop} />
                         ))} */}
-                        </CardsSection>
-                        {data?.pages[data?.pages.length - 1]?.total_res >=
-                            4 && (
-                            <div className="flex justify-center">
-                                <LoadMoreButton
-                                    noMore={false}
-                                    // al click fetcha la prossima pagina e setta la prossima pagina
-                                    onClick={() => {
-                                        fetchNextPage();
-                                        setCurrPage((curr) => curr + 1);
-                                    }}
-                                />
-                            </div>
-                        )}
-                    </>
-                )}
+                    </CardsSection>
+                    {data?.pages[data?.pages.length - 1]?.total_res >= 4 && (
+                        <div className="flex justify-center">
+                            <LoadMoreButton
+                                noMore={false}
+                                // al click fetcha la prossima pagina e setta la prossima pagina
+                                onClick={() => {
+                                    fetchNextPage();
+                                    setCurrPage((curr) => curr + 1);
+                                }}
+                            />
+                        </div>
+                    )}
+                </>
             </div>
         </>
     );
@@ -236,8 +252,22 @@ const typeOptions = [
 ];
 
 const customStyles = {
-    control: () => { }, //style della select
-    option: () => { }, //style delle options
+    control: (baseStyles, state) => ({
+        ...baseStyles,
+        borderColor: state.isFocused ? 'black' : 'grey',
+        borderRadius: '10px'
+
+    }), //style della select
+    option: (styles, state) => {
+        const backgroundColor = state.isFocused ? "black" : "white";
+
+        return {
+            ...styles,
+            backgroundColor: backgroundColor,
+            color: state.isFocused ? 'white' : 'black',
+            borderRadius: '5px',
+        };
+    }, //style delle options
 };
 
 const selectFields = [
@@ -273,6 +303,8 @@ const Selects = ({ setOptSelected }) => {
                         id={id}
                         name={id}
                         options={options}
+                        placeholder={label == "Tipo di proprietà" ? "Proprietà" : "Inserisci"}
+                        styles={customStyles}
                         onChange={(opt) =>
                             setOptSelected((prev) => ({
                                 ...prev,
