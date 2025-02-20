@@ -513,7 +513,11 @@ function SectionFormRecensioni({
             refetchNR();
             toast.success("Recensione pubblicata con successo!");
         }
-    }, [isSuccess]);
+        if (newRevsCount == 0) {
+            refetchNR();
+
+        }
+    }, [isSuccess, newRevsCount]);
 
     return (
         <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6">

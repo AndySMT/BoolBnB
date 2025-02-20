@@ -19,6 +19,7 @@ function RevsFilter({setRevsParams}) {
                 setRevsParams({ data: "true", asc: "true" })
                 break;
         }
+        window.sessionStorage.setItem("newRevsCount",  0);
 
     }
 
