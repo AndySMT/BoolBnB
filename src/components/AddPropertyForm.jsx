@@ -82,12 +82,11 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
 
   useEffect(() => {
     console.log("File selezionati aggiornati:", selectedFiles);
-    setValue("files", selectedFiles, { shouldValidate: true });
     if (isSuccess) {
+      setValue("files", selectedFiles, { shouldValidate: true });
       toast.success("Annuncio pubblicato con successo!");
       navigate("/");
       // isSuccess indica la proprieta salvata nel db correttamente
-      setSelectedFiles([]);
     } else if (isError) {
       toast.error("Errore nell'invio del form, riprova");
     }
