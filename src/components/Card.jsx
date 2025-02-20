@@ -88,7 +88,7 @@ function Card({ property, index }) {
                         </div>
                     )}
                     {/* hearth */}
-                    <div className="absolute top-3 right-3 p-2 transition-opacity z-10 ">
+                    <div className="absolute text-2xl top-3 right-3 p-2 transition-opacity z-10 ">
                         <Heart propertyId={property.id} />
                     </div>
                 </div>
