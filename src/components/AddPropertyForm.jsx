@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, use } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -19,8 +19,9 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
   } = useForm({ resolver: yupResolver(schema) }); //schema si trova sotto
 
   // * STATE Files
-  const [selectedFiles, setSelectedFiles] = useState([]);
   const fileInputRef = useRef(null);
+
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const navigate = useNavigate();
 
   // * Funzione per aggiungere i file selezionati
@@ -28,14 +29,25 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
     setSelectedFiles((prev) => [...prev, ...Array.from(files)]);
   };
 
+  // * Click
+  const handleClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    } else {
+      console.error("fileInputRef.current è null!");
+    }
+  };
+
   //  * Evento sui file che vengono selezionati manualmente
   const handleFileChange = (event) => {
-    handleFiles(event.target.files);
+    const files = Array.from(event.target.files);
+    setSelectedFiles((prev) => [...prev, ...files]); // Mantiene i file già caricati
   };
 
   // * DND
   const handleDrop = (event) => {
     event.preventDefault();
+    event.stopPropagation();
     handleFiles(event.dataTransfer.files);
   };
   // useDroppable hook for drag & drop area
@@ -64,11 +76,13 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
         formData.append("files", file);
       });
     }
+    console.log("Dati inviati:", Object.fromEntries(formData.entries()));
     mutate(formData);
   };
 
   useEffect(() => {
-    setValue("files", selectedFiles);
+    console.log("File selezionati aggiornati:", selectedFiles);
+    setValue("files", selectedFiles, { shouldValidate: true });
     if (isSuccess) {
       toast.success("Annuncio pubblicato con successo!");
       navigate("/");
@@ -77,7 +91,7 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
     } else if (isError) {
       toast.error("Errore nell'invio del form, riprova");
     }
-  }, [isSuccess, isError, /* setIsFormOpen */ selectedFiles, setValue]);
+  }, [isSuccess, isError, selectedFiles, setValue]);
 
   return (
     <>
@@ -322,9 +336,9 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
             <div
               ref={setNodeRef} // Assegniamo il riferimento dell'area di drop
               className="border-2 border-dashed border-gray-300 p-6 text-center rounded-lg cursor-pointer transition hover:bg-gray-100"
-              onClick={() => fileInputRef.current.click()} // 🔹 Click triggera l'input file
-              onDragOver={(e) => e.preventDefault()} // 🔹 Evita comportamento default
-              onDrop={handleDrop} // 🔹 Gestisce il drop dei file
+              onClick={handleClick}
+              onDragOver={(e) => e.preventDefault()} // Evita comportamento default
+              onDrop={handleDrop} // Gestisce il drop dei file
             >
               <p className="text-gray-500 flex items-center justify-center text-3xl">
                 {selectedFiles.length > 0 ? (
@@ -339,11 +353,11 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               {/* Input nascosto */}
               <input
                 ref={fileInputRef}
-                {...register("files")}
                 type="file"
                 multiple
                 className="hidden"
                 onChange={handleFileChange}
+                accept="image/jpeg, image/png"
               />
 
               {/* Lista dei file caricati */}
@@ -364,18 +378,6 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               )}
             </div>
           </DndContext>
-          {selectedFiles.length > 0 && (
-            <div className="mt-4">
-              <h4 className="font-semibold">File selezionati:</h4>
-              <ul>
-                {selectedFiles.map((file, index) => (
-                  <li key={index} className="text-sm flex items-center gap-2">
-                    <CiImageOn /> {file.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
           {errors.files && (
             <span className="text-red-500">{errors.files.message}</span>
           )}
@@ -456,7 +458,7 @@ const schema = yup.object().shape({
 
   property_type: yup.string().required("Tipo di proprietà obbligatorio"),
   email: yup.string().email("Invalid email").required("Email is required"),
-  files: yup
+  /* files: yup
     .array()
     .of(
       yup
@@ -482,5 +484,5 @@ const schema = yup.object().shape({
           );
         })
     )
-    .required("Devi caricare almeno un file"), // Verifica che ci sia almeno un file
+    .required("Devi caricare almeno un file"), // Verifica che ci sia almeno un file */
 });
