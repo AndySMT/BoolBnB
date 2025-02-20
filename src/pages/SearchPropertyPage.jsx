@@ -25,14 +25,14 @@ function SearchPropertyPage() {
     const { headerRef } = useRefsContext();
 
     const [searchParams] = useSearchParams();
-
-    const city = searchParams.get("city");
-    const property_type = searchParams.get("property_type");
+    const paramsObj = Object.fromEntries(searchParams.entries());
+    console.log(paramsObj)
+    const city = searchParams.get("city"); // prendo il parametro city dalla query della url
+    const property_type = searchParams.get("property_type"); // prendo il parametro property_type dalla query della url
 
     const [inputValue, setInputValue] = useState(city ? city : ""); // controllo dinamico dell'input della citta
 
-    const [params, setParams] = useState({ city, property_type }); // per salvare l'oggetto params per la query in get
-    const [isEnabled, setIsEnabled] = useState(true); // booleano che abilita o no il fetch (controllare useGetPropertiesQuery)
+    const [params, setParams] = useState(paramsObj); // per salvare l'oggetto params per la query in get
     const [optSelected, setOptSelected] = useState(initialOptions); // oggetto che salva le options
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -72,11 +72,7 @@ function SearchPropertyPage() {
         if (inputValue.length) {
             setParams((curr) => ({ ...curr, city: inputValue })); //setto i params in modo tale che arrivino nel formato corretto nel server
             setInputValue(inputValue);
-            setIsEnabled(true); // dal submit in poi della prima ricerca, abilito il fetch
-            let params = [];
-            params.push(`city=${encodeURIComponent(inputValue)}`);
-            console.log(params);
-            navigate(`/search?${params}`);
+            navigate(`/search?city=${encodeURIComponent(inputValue)}`);
         }
         setIsFilterOpen(false);
     };
@@ -84,20 +80,20 @@ function SearchPropertyPage() {
     const onFilterSubmit = (e) => {
         e.preventDefault();
         if (inputValue.length) {
-            let params = optSelected; // le options le indico come params da mettere nella query params
-            setParams({ city: inputValue, ...params }); //setto i params in modo tale che arrivino nel formato corretto nel server
+            let optParams = Object.fromEntries(
+                Object.entries(optSelected).filter(([_, value]) => Boolean(value))
+            ); // le options non falsy le indico come params da mettere nella query params
+            let paramsObj = { city: inputValue, ...optParams };
+            setParams(paramsObj); //setto i params in modo tale che arrivino nel formato corretto nel server
             refetch();
-            params = Object.entries(params);
-            params = params.map(([key, value]) => `${key}=${value}`);
-            params = `&${params.join("&")}`
-            navigate(`/search?city=${inputValue}${params}`);
-
+            let paramsArr = Object.entries(paramsObj).map(([key, value]) => `${key}=${value}`);
+            paramsArr = `?${paramsArr.join("&")}`;
+            navigate(`/search${paramsArr}`);
         } else {
             console.log("Cerca prima la città!");
         }
         setIsFilterOpen(false);
     };
-
 
     const headerHeight = headerRef?.current?.offsetHeight - 2;
 
@@ -146,18 +142,18 @@ function SearchPropertyPage() {
                     >
                         <Selects setOptSelected={setOptSelected} />
                         <button
-                            disabled={!isEnabled || !inputValue.length}
+                            disabled={!inputValue.length}
                             type="submit"
-                            className={`${(!isEnabled || !inputValue.length) &&
+                            className={`${!inputValue.length &&
                                 "!cursor-not-allowed opacity-50"
                                 } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
                         >
                             Applica filtri
                         </button>
                         <button
-                            disabled={!isEnabled || !inputValue.length}
+                            disabled={!inputValue.length}
                             type="reset"
-                            className={`${(!isEnabled || !inputValue.length) &&
+                            className={`${!inputValue.length &&
                                 "!cursor-not-allowed opacity-50"
                                 } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
                         >
@@ -169,35 +165,35 @@ function SearchPropertyPage() {
             <div className="p-6 pt-14 lg:px-12 lg:w-5/6">
                 {/* data */}
                 <>
-                    <CardsSection classes={"lg:!px-0 !pt-0"} title={""}>
-                        <>
-                            {/* paginazione */}
-                            {data?.pages.map((group, i) => (
-                                <Fragment key={i}>
-                                    {group?.results?.map((prop, index) => (
-                                        <Card
-                                            key={prop.id}
-                                            property={prop}
-                                            index={index}
-                                        />
-                                    ))}
-                                </Fragment>
-                            ))}
-                            {/* Skeleton durante il fetch */}
-                            {(isFetchingNextPage || isLoading) && (
-                                <>
-                                    {Array.from({ length: 4 }).map(
-                                        (_, index) => (
-                                            <SkeleCard key={index} />
-                                        )
-                                    )}
-                                </>
-                            )}
-                        </>
-                        {/* {data.results.map((prop) => (
-                            <Card key={prop.id} property={prop} />
-                        ))} */}
-                    </CardsSection>
+                    {data?.pages[0]?.total_quantity === 0 ? (
+                        // Nessun risultato
+                        <h2>La tua ricerca non ha prodotto nessun risultato</h2>
+                    ) : isFetchingNextPage || isLoading ? (
+                        // Skeleton loading
+                        <CardsSection classes="lg:!px-0 !pt-0" title="">
+                            <>
+                                {Array.from({ length: 4 }).map((_, index) => (
+                                    <SkeleCard key={index} />
+                                ))}
+                            </>
+                        </CardsSection>
+                    ) : (
+                        // Paginazione
+                        <CardsSection classes="lg:!px-0 !pt-0" title="">
+                            <>
+                                {data?.pages.map((group, i) => (
+                                    <Fragment key={i}>
+                                        {group?.results?.map((prop, index) => (
+                                            <Card key={prop.id} property={prop} index={index} />
+                                        ))}
+                                    </Fragment>
+                                ))}
+                            </>
+                        </CardsSection>
+                    )}
+
+
+                    {/* Load More Btn */}
                     {data?.pages[data?.pages.length - 1]?.total_res >= 4 && (
                         <div className="flex justify-center">
                             <LoadMoreButton
@@ -254,9 +250,8 @@ const typeOptions = [
 const customStyles = {
     control: (baseStyles, state) => ({
         ...baseStyles,
-        borderColor: state.isFocused ? 'black' : 'grey',
-        borderRadius: '10px'
-
+        borderColor: state.isFocused ? "black" : "grey",
+        borderRadius: "10px",
     }), //style della select
     option: (styles, state) => {
         const backgroundColor = state.isFocused ? "black" : "white";
@@ -264,8 +259,8 @@ const customStyles = {
         return {
             ...styles,
             backgroundColor: backgroundColor,
-            color: state.isFocused ? 'white' : 'black',
-            borderRadius: '5px',
+            color: state.isFocused ? "white" : "black",
+            borderRadius: "5px",
         };
     }, //style delle options
 };
@@ -303,13 +298,16 @@ const Selects = ({ setOptSelected }) => {
                         id={id}
                         name={id}
                         options={options}
-                        placeholder={label == "Tipo di proprietà" ? "Proprietà" : "Inserisci"}
+                        placeholder={
+                            label == "Tipo di proprietà"
+                                ? "Proprietà"
+                                : "Inserisci"
+                        }
                         styles={customStyles}
-                        onChange={(opt) =>
-                            setOptSelected((prev) => ({
-                                ...prev,
-                                [field]: opt.value,
-                            }))
+                        onChange={(opt) => opt.value && setOptSelected((prev) => ({
+                            ...prev,
+                            [field]: opt.value,
+                        }))
                         }
                     />
                 </div>

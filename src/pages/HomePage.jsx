@@ -40,8 +40,6 @@ const CardsSectionContainer = ({ params, setPropsCount, propsCount }) => {
         fetchNextPage,
         refetch,
     } = useInfiniteGetPropsQuery(params);
-    console.log(data);
-    console.log(propsCount);
 
     const navigate = useNavigate();
 
