@@ -1,3 +1,4 @@
+//? Importazioni librerie e componenti 
 import React, { useRef, useState, useEffect, Fragment } from "react";
 import LoadMoreButton from "../components/LoadMoreButton";
 import { useParams, useNavigate } from "react-router-dom";
@@ -29,6 +30,7 @@ import SkeleDetailSection from "../components/SkeleDetailSection";
 import ReviewComponent from "../components/ReviewComponent";
 import { toast } from "react-toastify";
 
+//! Funzione propertyDetail
 function PropertyDetail() {
     const { id } = useParams();
     const reviewsRef = useRef(null);
@@ -83,8 +85,9 @@ function PropertyDetail() {
 
     return (
         <>
+            {/* Dettaglio proprietà con immagini e caratteristiche */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-8 border-b border-stone-400">
-                {/* SECTION IMAGES*/}
+                {/* sezione images */}
                 <SectionImages property={property} savePost={savePost} />
                 {/* sezione dettaglio */}
                 <SectionDetails
@@ -97,7 +100,7 @@ function PropertyDetail() {
                 />
             </div>
             <div className="flex flex-col">
-                {/* sezizone posizione */}
+                {/* sezione posizione */}
                 <SectionPosition property={property} />
                 {/* sezione host */}
                 <SectionHost property={property} />
@@ -123,10 +126,12 @@ function PropertyDetail() {
     );
 }
 
-// SECTION IMAGES
+//! Sezione images
 function SectionImages({ property, savePost }) {
+    // Stato per tracciare l'indice dell'immagine attiva
     const [activeIndex, setActiveIndex] = useState(0);
 
+    // Funzione per cambiare l'immagine attiva quando si clicca su una miniatura
     const handleThumbnailClick = (index) => {
         setActiveIndex(index);
     };
@@ -136,6 +141,7 @@ function SectionImages({ property, savePost }) {
             {/* sezione immagini mobile */}
             <section className="block sm:hidden p-4">
                 <div className="flex overflow-auto rounded-lg snap-x snap-mandatory">
+                    {/* Mappa su tutte le immagini del property per mostrare le miniature */}
                     {property.img_endpoints.map((img, index) => (
                         <img
                             key={index}
@@ -150,6 +156,7 @@ function SectionImages({ property, savePost }) {
             {/* immagini desktop e dettaglio */}
             <section className="hidden sm:flex gap-2 aspect-video h-full w-full">
                 <div className="relative">
+                    {/* Immagine grande in dettaglio (attiva in base all'indice) */}
                     <img
                         src={`${imagesUrl}/${property.id}${property.img_endpoints[activeIndex]}`}
                         alt={`Property Image ${activeIndex + 1}`}
@@ -159,6 +166,7 @@ function SectionImages({ property, savePost }) {
 
                 {/* Miniature */}
                 <div className="overflow-auto w-1/4 flex flex-col gap-2 p-1 border-y border-y-gray-600 rounded-md">
+                {/* Mappa su tutte le immagini per creare le miniature */}
                     {property.img_endpoints.map((img, index) => (
                         <img
                             key={index}
@@ -222,17 +230,18 @@ function SectionDetails({ property, reviewsCount, reviewsRef }) {
     return (
         <>
             <section className="flex flex-col flex-wrap gap-3 px-3 sm:pt-3">
+                {/* Sezione titolo e icone (cuore, condividi, salva) */}
                 <div className="flex items-center gap-4 justify-between">
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider ">
                         {property.title}
                     </h1>
                     <div className="flex gap-2 items-center text-2xl ">
-                        {/* HEART */}
+                        {/* Icona cuore (per aggiungere i likes) */}
                         <Heart classes={`${isHeartClicked && "bg-red-300"} flex items-center rounded-xl boxShad box-content py-2 px-1.5 cursor-pointer hover:text-red-500`} onClick={onHeartClick} propertyId={property.id} />
-                        {/* icona condividi */}
+                        {/* icona di condivisione */}
                         <CiShare2 onClick={onShareClick}
                             className="flex items-center rounded-xl boxShad py-2 px-1.5 cursor-pointer box-content hover:text-blue-500" />
-                        {/* icona Save */}
+                        {/* icona di salvataggio (aggiungi ai preferiti) */}
                         <PiBookmarks onClick={onSaveClick}
                             className={`${isSaved && "bg-green-300"} flex items-center rounded-xl boxShad box-content  py-2 px-1.5 cursor-pointer hover:text-green-600`} />
                     </div>
@@ -505,6 +514,7 @@ function SectionFormRecensioni({
             toast.success("Recensione pubblicata con successo!");
         }
     }, [isSuccess]);
+
     return (
         <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6">
             <h1
@@ -523,18 +533,17 @@ function SectionFormRecensioni({
                         trigger={trigger}
                     />
                 </div>
+                <p className="text-red-500">{errors?.rating?.message}</p>
                 {/* Nome */}
-                <p className="text-red-500">{errors?.name?.message}</p>
                 <input type="hidden" value={name} {...register("name")} />
                 <input
                     type="text"
-                    placeholder="Inserisci il tuo  nome "
+                    placeholder="Inserisci il tuo nome "
                     className="mt-4 w-full p-2 border rounded-lg"
                     {...register("name")}
                 />
                 <p className="text-red-500">{errors?.name?.message}</p>
                 {/* TITOLO */}
-                <p className="text-red-500">{errors?.rating?.message}</p>
                 <input type="hidden" value={rating} {...register("rating")} />
                 <input
                     type="text"
@@ -570,6 +579,7 @@ const schema = yup.object().shape({
         )
         .required("Il voto è obbligatorio")
         .min(1, "Il voto minimo è 1"),
+    name: yup.string().trim().required("Il nome è obbligatorio"),
     reviewTitle: yup.string().trim().required("Il titolo è obbligatorio"),
     reviewText: yup.string().trim().required("La recensione è obbligatoria"),
 });
