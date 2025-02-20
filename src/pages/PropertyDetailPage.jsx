@@ -1,5 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo, Fragment } from "react";
-import Select from "react-select";
+import React, { useRef, useState, useEffect, Fragment } from "react";
 import LoadMoreButton from "../components/LoadMoreButton";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -18,7 +17,6 @@ import MyMapComponent from "../components/MapComponent";
 import StarsComponent from "../components/StarsComponent";
 import Heart from "../components/Heart";
 import ChatBot from "../components/ChatBot";
-import PopUp from "./PopUp";
 import "leaflet/dist/leaflet.css";
 import {
   useAddReviewQuery,
@@ -483,6 +481,7 @@ function SectionFormRecensioni({
   const onSubmit = (data) => {
     mutate({
       property_id: id,
+      name: data.name,
       title: data.reviewTitle,
       description: data.reviewText,
       rating: data.rating,
