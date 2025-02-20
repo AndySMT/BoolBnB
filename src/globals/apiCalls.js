@@ -13,8 +13,16 @@ export const addProperty = async (data) => {
     return await axios.post(baseUrl + propsEndpoint, data);
 };
 
-export const getReviews = async (propertyId) => {
-    return await axios.get(`${baseUrl}${revsEndpoint}/${propertyId}`);
+export const getReviews = async (propertyId, params) => {
+    return await axios.get(`${baseUrl}${revsEndpoint}/${propertyId}`, {
+        params,
+    });
+};
+
+export const getNewReviews = async (propertyId, params) => {
+    return await axios.get(`${baseUrl}${revsEndpoint}/${propertyId}/new`, {
+        params,
+    });
 };
 
 export const addReview = async (newReview) => {

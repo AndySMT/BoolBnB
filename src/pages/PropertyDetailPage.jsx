@@ -1,8 +1,7 @@
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, { useRef, useState, useEffect, useMemo, Fragment } from "react";
 import Select from "react-select";
+import LoadMoreButton from "../components/LoadMoreButton";
 import { useParams, useNavigate } from "react-router-dom";
-import { format } from 'date-fns';
-import { it } from 'date-fns/locale';
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -10,7 +9,7 @@ import { PiBookmarks } from "react-icons/pi";
 import { CiShare2 } from "react-icons/ci";
 import { MdBed, MdBathroom } from "react-icons/md";
 import { TbRulerMeasure } from "react-icons/tb";
-import { FaMapMarkerAlt, FaBed, FaStar } from "react-icons/fa";
+import { FaMapMarkerAlt, FaBed } from "react-icons/fa";
 import { GiFamilyHouse } from "react-icons/gi";
 import { MdOutlineLocationCity } from "react-icons/md";
 import { imagesUrl } from "../globals/apiUrls";
@@ -23,40 +22,49 @@ import PopUp from "./PopUp";
 import "leaflet/dist/leaflet.css";
 import {
     useAddReviewQuery,
-    useGetLikesByPropsIdQuery,
+    useGetNewReviewsQuery,
     useGetPropertyQuery,
-    useGetReviewsQuery,
+    useInfiniteGetRevsQuery,
 } from "../hooks/useDataQuery";
 import { useRefsContext } from "../Context/RefsContext";
 import SkeleDetailSection from "../components/SkeleDetailSection";
-const schema = yup.object().shape({
-    reviewTitle: yup.string().trim().required("Il titolo è obbligatorio"),
-    reviewText: yup.string().trim().required("La recensione è obbligatoria"),
-});
+import ReviewComponent from "../components/ReviewComponent";
+import { toast } from "react-toastify";
+
 function PropertyDetail() {
     const { id } = useParams();
-    const { mutate } = useAddReviewQuery(id);
     const reviewsRef = useRef(null);
     const navigate = useNavigate();
-    const [rating, setRating] = useState(0);
+    const newRevsCount =
+        Number(window.sessionStorage.getItem("newRevsCount")) || 0;
+
+    //* QUERIES
+    // query per la proprieta
     const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors },
-    } = useForm({
-        resolver: yupResolver(schema),
-    });
+        isLoading: isLoadingP,
+        isError: isErrorP,
+        data: propertyRes,
+    } = useGetPropertyQuery(id);
+
+    // query per le recensioni
+    const {
+        isLoading: isLoadingR,
+        isError: isErrorR,
+        data: reviewsRes,
+        fetchNextPage,
+    } = useInfiniteGetRevsQuery(id, {});
+
+    const {
+        isLoading: isLoadingNR,
+        isError: isErrorNR,
+        data: newReviewsRes,
+        refetch: refetchNR,
+    } = useGetNewReviewsQuery(id, newRevsCount);
+
+    const { mutate, isSuccess } = useAddReviewQuery(id);
+
     // * ACTIONS
-    const onSubmit = (data) => {
-        mutate({
-            property_id: id,
-            title: data.reviewTitle,
-            description: data.reviewText,
-            rating: data.rating,
-        });
-        reset();
-    };
+
     //   Funzione per salvare il Post
     const savePost = () => {
         const favouritesIds =
@@ -65,37 +73,15 @@ function PropertyDetail() {
             favouritesIds.push(property.id);
             localStorage.setItem("favourites", JSON.stringify(favouritesIds));
         }
-        // navigate("/favourites");
     };
-    //* QUERIES
-    // query per la proprieta
-    const {
-        isLoading: isLoadingP,
-        isError: isErrorP,
-        data: propertyRes,
-    } = useGetPropertyQuery(id);
-    // query per le recensioni della proprieta
-    const {
-        isLoading: isLoadingR,
-        isError: isErrorR,
-        data: reviewsRes,
-    } = useGetReviewsQuery(id);
-    //  query per i likes della proprieta (ancora non viene usato)
-    const {
-        isLoading: isLoadingL,
-        isError: isErrorL,
-        data: likesRes,
-    } = useGetLikesByPropsIdQuery(id);
 
     //* RETURNS
     // attesa risposta
-    if (isLoadingP || isLoadingR || isLoadingL) return <SkeleDetailSection />;
+    if (isLoadingP || isLoadingR || isLoadingNR) return <SkeleDetailSection />;
     // chiamata fallita
-    if (isErrorP || isErrorR || isErrorR) navigate("/notfound");
+    if (isErrorP || isErrorR || isErrorNR) navigate("/notfound");
     // risposta ricevuta
     const property = propertyRes.results[0];
-    const reviews = reviewsRes.results;
-    const likesQty = likesRes.total_res; // ? ancora non viene usato
 
     return (
         <>
@@ -106,7 +92,9 @@ function PropertyDetail() {
                 <SectionDetails
                     property={property}
                     savePost={savePost}
-                    reviews={reviews}
+                    reviewsCount={
+                        reviewsRes.pages[0].total_quantity + newRevsCount
+                    }
                     reviewsRef={reviewsRef}
                 />
             </div>
@@ -117,18 +105,19 @@ function PropertyDetail() {
                 <SectionHost property={property} />
                 {/* sezione recensioni*/}
                 <SectionRecensioni
-                    reviews={reviews}
-                    reviewsRef={reviewsRef}
                     id={id}
+                    reviewsRes={reviewsRes}
+                    reviewsRef={reviewsRef}
+                    fetchNextPage={fetchNextPage}
+                    newReviewsRes={newReviewsRes}
                 />
                 {/* sezione form recensione */}
                 <SectionFormRecensioni
-                    handleSubmit={handleSubmit}
-                    onSubmit={onSubmit}
-                    register={register}
-                    errors={errors}
-                    setRating={setRating}
-                // (rate) => setValue("rating", rate)
+                    id={id}
+                    mutate={mutate}
+                    isSuccess={isSuccess}
+                    refetchNR={refetchNR}
+                    newRevsCount={newRevsCount}
                 />
             </div>
             <ChatBot propertyId={property.id} />
@@ -149,13 +138,6 @@ function SectionImages({ property, savePost }) {
             {/* sezione immagini mobile */}
             <section className="block sm:hidden p-4">
                 <div className="flex overflow-auto rounded-lg snap-x snap-mandatory">
-                    {/* <div className="absolute top-6 right-5 text-black flex items-center gap-3">
-                        <span className="text-xs">icona share</span>
-                        <PiBookmarks
-                            onClick={savePost}
-                            className="text-4xl cursor-pointer"
-                        />
-                    </div> */}
                     {property.img_endpoints.map((img, index) => (
                         <img
                             key={index}
@@ -184,10 +166,11 @@ function SectionImages({ property, savePost }) {
                             key={index}
                             src={`${imagesUrl}/${property.id}${img}`}
                             alt={`Thumbnail ${index + 1}`}
-                            className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${activeIndex === index
-                                ? "outline-2 outline-blue-500"
-                                : ""
-                                }`}
+                            className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${
+                                activeIndex === index
+                                    ? "outline-2 outline-blue-500"
+                                    : ""
+                            }`}
                             onClick={() => handleThumbnailClick(index)}
                         />
                     ))}
@@ -197,7 +180,7 @@ function SectionImages({ property, savePost }) {
     );
 }
 // SECTION DETAILS
-function SectionDetails({ property, savePost, reviews, reviewsRef }) {
+function SectionDetails({ property, savePost, reviewsCount, reviewsRef }) {
     const [clickedHeart, setClickedHeart] = useState(null);
     const [clickedShare, setClickedShare] = useState(null);
     const [clickedSave, setClickedSave] = useState(null);
@@ -226,10 +209,11 @@ function SectionDetails({ property, savePost, reviews, reviewsRef }) {
                         {/* HEART */}
                         <div
                             className={`flex items-center rounded-xl boxShad  py-1 px-1.5 sm:block  
-                         ${clickedHeart === "heart"
-                                    ? "bg-red-400"
-                                    : "bg-white"
-                                }`}
+                         ${
+                             clickedHeart === "heart"
+                                 ? "bg-red-400"
+                                 : "bg-white"
+                         }`}
                             onClick={() => toggleHeart("heart")}
                         >
                             <Heart propertyId={property.id} />
@@ -237,10 +221,11 @@ function SectionDetails({ property, savePost, reviews, reviewsRef }) {
                         {/* icona condividi */}
                         <div
                             className={`flex items-center rounded-xl boxShad  py-2 px-1.5 sm:block  
-                         ${clickedShare === "share"
-                                    ? "bg-blue-400"
-                                    : "bg-white"
-                                }`}
+                         ${
+                             clickedShare === "share"
+                                 ? "bg-blue-400"
+                                 : "bg-white"
+                         }`}
                             onClick={() => toggleShare("share")}
                         >
                             <span className="text-xs underline underline-offset-2">
@@ -250,10 +235,11 @@ function SectionDetails({ property, savePost, reviews, reviewsRef }) {
                         {/* icona Save */}
                         <div
                             className={`flex items-center rounded-xl boxShad   sm:block cursor-pointer  
-                         ${clickedSave === "save"
-                                    ? "bg-green-300"
-                                    : "bg-white"
-                                }`}
+                         ${
+                             clickedSave === "save"
+                                 ? "bg-green-300"
+                                 : "bg-white"
+                         }`}
                             onClick={() => toggleSave("save")}
                         >
                             <button onClick={savePost} className="py-2 px-1.5">
@@ -306,8 +292,9 @@ function SectionDetails({ property, savePost, reviews, reviewsRef }) {
                             />
                         </div>
                         <p className="text-center">
-                            {reviews && reviews.length > 0 ? reviews.length : 0}{" "}
-                            recensioni
+                            {reviewsCount && reviewsCount > 0
+                                ? `${reviewsCount} recensioni`
+                                : "Nessuna recensione"}
                         </p>
                     </div>
                 </div>
@@ -368,10 +355,10 @@ function SectionPosition({ property }) {
                         {property.city === "Roma"
                             ? "Elegante quartiere di Roma, molto strategico per la sua posizione, dove troverete negozi di ogni genere, supermercati, bar, tabaccherie, caffetterie e servizi di ristorazione da asporto e non."
                             : property.city === "Milano"
-                                ? "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
-                                : property.city === "Firenze"
-                                    ? "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
-                                    : `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`}
+                            ? "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
+                            : property.city === "Firenze"
+                            ? "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
+                            : `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`}
                     </div>
                 </div>
 
@@ -432,13 +419,21 @@ function SectionHost({ property }) {
     );
 }
 // SECTION RECENSIONE
-function SectionRecensioni({ reviews, reviewsRef }) {
+function SectionRecensioni({
+    reviewsRef,
+    reviewsRes,
+    fetchNextPage,
+    newReviewsRes,
+}) {
     const { headerRef } = useRefsContext();
-    const [filterText, setFilterText] = useState("Filtro");
-    const [sortedReviews, setSortedReviews] = useState(reviews || []);
     const [scrollMargin, setScrollMargin] = useState("0px");
-    const [activeFilter, setActiveFilter] = useState(null);
-
+    const [reviewsCount, setReviewsCount] = useState(
+        reviewsRes.pages[0].total_res || 4
+    );
+    const onClick = () => {
+        fetchNextPage();
+        setReviewsCount((curr) => curr + 4);
+    };
     // Aggiorno scrollMargin quando headerRef è disponibile
     useEffect(() => {
         if (headerRef.current) {
@@ -446,61 +441,7 @@ function SectionRecensioni({ reviews, reviewsRef }) {
         }
     }, [headerRef]);
 
-    // Riapplico il filtro quando reviews o activeFilter cambiano
-    useEffect(() => {
-        if (activeFilter) {
-            let sorted;
-            if (activeFilter.value === "date") {
-                sorted = [...reviews].sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
-            } else if (activeFilter.value === "rating") {
-                sorted = [...reviews].sort((a, b) => b.rating - a.rating);
-            }
-            setSortedReviews(sorted);
-        } else {
-            // Se non c'è un filtro attivo, usa l'ordine predefinito
-            setSortedReviews(reviews || []);
-        }
-    }, [reviews, activeFilter]); // Aggiungi activeFilter come dipendenza
-
-    // Funzione per formattare la data
-    const formatDate = (dateString) => {
-        const parsedDate = Date.parse(dateString);
-        if (isNaN(parsedDate)) {
-            return "Data non valida";
-        }
-        return format(new Date(parsedDate), 'dd MMMM yyyy', { locale: it });
-    };
-
-    // Gestisce il cambio del filtro
-    const handleFilterChange = (selectedOption) => {
-        setFilterText(`Filtro: ${selectedOption.label}`);
-        setActiveFilter(selectedOption); // Memorizza il filtro attivo
-
-        let sorted;
-        if (selectedOption.value === "date") {
-            sorted = [...reviews].sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
-        } else if (selectedOption.value === "rating") {
-            sorted = [...reviews].sort((a, b) => b.rating - a.rating);
-        }
-        setSortedReviews(sorted);
-    };
-
-    // Dettaglio per l'opzione "Data"
     const detail = <span className="text-xs">{"(Dal più Recente)"}</span>;
-
-    // Placeholder personalizzato per il Select
-    const placeholder = (
-        <div className="flex items-center gap-1">
-            <span>Filtra</span>
-            <img className="h-5" src="/filter.png" alt="Filter Icon" />
-        </div>
-    );
-
-    // Opzioni del filtro (memoizzate per evitare ri-render non necessari)
-    const filterOptions = useMemo(() => [
-        { value: "date", label: <> Data {detail}</> },
-        { value: "rating", label: "Stelle" }
-    ], [detail]);
 
     return (
         <section
@@ -508,95 +449,106 @@ function SectionRecensioni({ reviews, reviewsRef }) {
             style={{ scrollMarginTop: scrollMargin }}
             className="reviews-section px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400"
         >
-            <div className="flex justify-between items-center">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
+            <div className="flex justify-between items-center mb-4">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide  ">
                     Recensioni
                 </h1>
-                <div className="relative">
-                    <Select
-                        placeholder={placeholder}
-                        options={filterOptions}
-                        onChange={handleFilterChange}
-                        className="w-40"
-                    />
-                </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 whitespace-wrap">
-                {sortedReviews?.length > 0 ? (
-                    sortedReviews.map((review) => (
-                        <div key={review.id} className="review-card boxShad max-w-96 m-2 p-2">
-                            <p className="font-medium text-xl">{review.title}</p>
-                            <p className="text-md text-gray-700">{review.description}</p>
-                            <div className="justify-between flex items-center mt-2">
-                                <p className="text-sm text-gray-500">
-                                    <span className="flex ml-1">
-                                        {[...Array(5)].map((_, index) => (
-                                            index < review.rating ? (
-                                                <FaStar key={index} className="text-yellow-500" />
-                                            ) : (
-                                                <FaStar key={index} className="text-stone-300" />
-                                            )
-                                        ))}
-                                    </span>
-                                </p>
-                                <p className="text-[0.6rem] text-gray-400">
-                                    {formatDate(review.create_at)}
-                                </p>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p>No reviews yet.</p>
-                )}
+            <div className="flex flex-wrap whitespace-wrap">
+                {/* reviews appena scritte */}
+                {newReviewsRes?.map((rev) => (
+                    <ReviewComponent key={rev.id} rev={rev} />
+                ))}
+                {/* reviews gia presenti */}
+                {reviewsRes?.pages.map((group, i) => (
+                    <Fragment key={i}>
+                        {group?.results?.map((rev) => (
+                            <ReviewComponent key={rev.id} rev={rev} />
+                        ))}
+                    </Fragment>
+                ))}
             </div>
+            {reviewsCount < reviewsRes?.pages[0].total_quantity && (
+                <div className="flex justify-center my-4">
+                    <LoadMoreButton onClick={onClick} />
+                </div>
+            )}
         </section>
     );
 }
 
 // SECTION FORM RECENSIONI
-function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
-    const [showConfirmation, setShowConfirmation] = useState(false);
+function SectionFormRecensioni({
+    id,
+    mutate,
+    isSuccess,
+    newRevsCount,
+    refetchNR,
+}) {
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+        setValue,
+        trigger,
+    } = useForm({
+        resolver: yupResolver(schema),
+    });
 
     const [rating, setRating] = useState(0);
 
-    const handleFormSubmit = (data) => {
-        onSubmit({ ...data, rating });
+    const onSubmit = (data) => {
+        mutate({
+            property_id: id,
+            title: data.reviewTitle,
+            description: data.reviewText,
+            rating: data.rating,
+        });
+        reset();
+        window.sessionStorage.setItem("newRevsCount", Number(newRevsCount) + 1);
     };
 
-
+    useEffect(() => {
+        if (isSuccess) {
+            refetchNR();
+            toast.success("Recensione pubblicata con successo!");
+        }
+    }, [isSuccess]);
     return (
-        <section
-            className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6">
+        <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6">
             <h1
                 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4"
                 id="reviews"
             >
                 Lascia la tua Recensione
             </h1>
-
-            <h1>Lascia la tua Recensione</h1>
-
-            <form onSubmit={handleSubmit(handleFormSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex border w-fit rounded-lg p-2 gap-1">
-                    Voto: <StarsComponent setRating={setRating} rating={rating} />
+                    Voto:{" "}
+                    <StarsComponent
+                        setRating={setRating}
+                        rating={rating}
+                        setValue={setValue}
+                        trigger={trigger}
+                    />
                 </div>
-                <input
-                    type="hidden"
-                    value={rating}
-                    {...register("rating")}
-                />
+                <p className="text-red-500">{errors?.rating?.message}</p>
+                <input type="hidden" value={rating} {...register("rating")} />
                 <input
                     type="text"
                     placeholder="Inserisci il titolo della recensione"
                     className="mt-4 w-full p-2 border rounded-lg"
                     {...register("reviewTitle")}
                 />
+                <p className="text-red-500">{errors?.reviewTitle?.message}</p>
                 <textarea
                     placeholder="Scrivi una recensione"
                     className="mt-4 w-full p-2 border rounded-lg"
                     {...register("reviewText")}
                 />
+                <p className="text-red-500">{errors?.reviewText?.message}</p>
                 <button
                     type="submit"
                     className="mt-2 px-3 sm:px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-lg sm:text-xl cursor-pointer"
@@ -604,19 +556,20 @@ function SectionFormRecensioni({ handleSubmit, onSubmit, register, errors }) {
                     Invia recensione
                 </button>
             </form>
-
-            <PopUp
-                isOpen={showConfirmation}
-                onClose={() => setShowConfirmation(false)}
-            >
-                <h2 className="text-green-600 text-lg font-bold">
-                    ✅ Recensione pubblicata con successo!
-                </h2>
-            </PopUp>
-
         </section>
     );
 }
 
+const schema = yup.object().shape({
+    rating: yup
+        .number()
+        .transform((value, originalValue) =>
+            originalValue === "" ? undefined : value
+        )
+        .required("Il voto è obbligatorio")
+        .min(1, "Il voto minimo è 1"),
+    reviewTitle: yup.string().trim().required("Il titolo è obbligatorio"),
+    reviewText: yup.string().trim().required("La recensione è obbligatoria"),
+});
 
 export default PropertyDetail;
