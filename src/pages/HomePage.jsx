@@ -4,20 +4,32 @@ import Card from "../components/Card";
 import { useInfiniteGetPropsQuery } from "../hooks/useDataQuery";
 import { useRefsContext } from "../Context/RefsContext";
 import SkeleCard from "../components/SkeleCard";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import LoadMoreButton from "../components/LoadMoreButton";
 import { motion } from "framer-motion";
 
 function HomePage() {
+    const { headerRef, jumboRef, filterRef } = useRefsContext();
+    // Ottiene i parametri di ricerca dalla query della URL
+    const [searchParams] = useSearchParams();
+    const paramsObj = Object.fromEntries(searchParams.entries());
     // Stato per i parametri di filtro
-    const [params, setParams] = useState({});
+    const [params, setParams] = useState(paramsObj);
     // Stato per il numero di proprietà visualizzate
     const [propsCount, setPropsCount] = useState(4); // ? numero di proprietà per pagina
+
+    // Scrolla alla sezione delle proprieta se la query params non e vuota
+    useEffect(() => {
+        Object.keys(paramsObj).length && window.scrollTo({
+            top: jumboRef?.current?.offsetHeight + headerRef?.current?.offsetHeight,
+            behavior: "smooth"
+        })
+    }, [])
 
     return (
         <>
             {/* Sezione di filtro */}
-            <FilterSection setParams={setParams} setPropsCount={setPropsCount} />
+            <FilterSection setParams={setParams} setPropsCount={setPropsCount} jumboRef={jumboRef} headerRef={headerRef} filterRef={filterRef} />
             {/* Container per far rerenderizzare solo CardsSection */}
             <CardsSectionContainer params={params} propsCount={propsCount} setPropsCount={setPropsCount} />
         </>
@@ -99,11 +111,11 @@ const CardsSectionContainer = ({ params, propsCount, setPropsCount }) => {
     );
 };
 
-function FilterSection({ setParams, setPropsCount }) {
-    const { headerRef, jumboRef, filterRef } = useRefsContext();
-
+function FilterSection({ setParams, setPropsCount, jumboRef, filterRef, headerRef }) {
     // Stato per il filtro attivo
     const [activeFilter, setActiveFilter] = useState(0);
+
+    const navigate = useNavigate();
 
     // Lista dei tipi di proprietà per il filtro
     const filters = [
@@ -119,12 +131,19 @@ function FilterSection({ setParams, setPropsCount }) {
     // Funzione per applicare un filtro
     const handleFilterClick = (type, index) => {
         setPropsCount(4);
-        setParams({ property_type: type === "tutti" ? "" : type });
+        const property_type = type === "tutti" ? "" : type
+        if (property_type === "") {
+            setParams({})
+            navigate(`/`);
+        } else {
+            setParams({ property_type: property_type });
+            navigate(`/?property_type=${encodeURIComponent(property_type)}`);
+        }
         setActiveFilter(index);
         window.scrollTo({
-            top: jumboRef.current.offsetHeight + headerRef.current.offsetHeight,
-            behavior: "smooth",
-        });
+            top: jumboRef?.current?.offsetHeight + headerRef?.current?.offsetHeight,
+            behavior: "smooth"
+        })
     };
 
     const style =
@@ -132,7 +151,7 @@ function FilterSection({ setParams, setPropsCount }) {
             ? {
                 top: "-1px",
             }
-            : { top: `${headerRef.current.offsetHeight - 1}px` };
+            : { top: `${headerRef?.current?.offsetHeight - 1}px` };
 
     // classes
     const navClasses = `border-b p-3 bg-white w-screen border-gray-300 fixed md:sticky z-20 rounded-b-2xl`;

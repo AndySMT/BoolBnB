@@ -32,6 +32,7 @@ function SearchPropertyPage() {
 
     const headerHeight = headerRef?.current?.offsetHeight - 2;
     const style = { top: `${headerHeight}px` };
+    const title = paramsObj?.city ? `Risultati per: ${paramsObj.city}` : "I più cercati";
 
     // Hook per ottenere i dati delle proprietà
     const {
@@ -171,7 +172,7 @@ function SearchPropertyPage() {
                         </CardsSection>
                     ) : (
                         // Paginazione
-                        <CardsSection classes="lg:!px-0 !pt-0" title="">
+                        <CardsSection classes="lg:!px-0 !pt-4" title={title}>
                             <>
                                 {data?.pages.map((group, i) => (
                                     <Fragment key={i}>

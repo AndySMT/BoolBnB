@@ -13,10 +13,12 @@ function ReviewComponent({ rev }) {
     };
     return (
         <div className="w-full sm:w-1/2 lg:w-1/3 p-2" key={rev.id}>
-            <div key={rev.id} className="review-card boxShad p-2 h-full">
-                <p className="font-medium text-xl">{rev.title}</p>
-                <p className="text-md text-gray-700">{rev.description}</p>
-                <div className="justify-between flex items-center mt-2">
+            <div key={rev.id} className="review-card boxShad p-2 h-full flex flex-col gap-3">
+                <div>
+                    <p className="font-medium text-xl">{rev.title}</p>
+                    <p className="text-md text-gray-700">{rev.description}</p>
+                </div>
+                <div className="justify-between flex items-center mt-auto">
                     <p className="text-sm text-gray-500">
                         <span className="flex ml-1">
                             {[...Array(5)].map((_, index) =>
@@ -34,9 +36,12 @@ function ReviewComponent({ rev }) {
                             )}
                         </span>
                     </p>
-                    <p className="text-[0.6rem] text-gray-400">
-                        {formatDate(rev.create_at)}
-                    </p>
+                    <div className="flex flex-col ">
+                        <span className="text-sm text-end">{rev.name}</span>
+                        <span className="text-[0.6rem] text-gray-400">
+                            {formatDate(rev.create_at)}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
