@@ -4,32 +4,32 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useAddPropertyQuery } from "../hooks/useDataQuery";
-// import PopUp from "../pages/PopUp";
 import { toast } from "react-toastify";
-import { useDroppable, useDraggable, DndContext } from "@dnd-kit/core";
+import { useDroppable, DndContext } from "@dnd-kit/core";
 import { BiImageAdd } from "react-icons/bi";
 import { CiImageOn } from "react-icons/ci";
+import PreviewFormCard from "./PreviewFormCard";
 
-function AddPropertyForm(/* { setIsFormOpen } */) {
+function AddPropertyForm() {
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm({ resolver: yupResolver(schema) }); //schema si trova sotto
+    watch,
+  } = useForm({ resolver: yupResolver(schema) });
 
-  // * STATE Files
   const fileInputRef = useRef(null);
-
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [showPreview, setShowPreview] = useState(false);
   const navigate = useNavigate();
 
-  // * Funzione per aggiungere i file selezionati
+  const formData = watch(); // Ottieni i valori del form in tempo reale
+
   const handleFiles = (files) => {
     setSelectedFiles((prev) => [...prev, ...Array.from(files)]);
   };
 
-  // * Click
   const handleClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -38,7 +38,6 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
     }
   };
 
-  //  * Evento sui file che vengono selezionati manualmente
   const handleFileChange = (event) => {
     event.preventDefault();
     const files = Array.from(event.target.files);
@@ -46,7 +45,6 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
     setValue("files", [...selectedFiles, ...files], { shouldValidate: true });
   };
 
-  // * DND
   const handleDrop = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -54,344 +52,361 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
     setSelectedFiles((prev) => [...prev, ...files]);
     setValue("files", [...selectedFiles, ...files], { shouldValidate: true });
   };
-  // useDroppable hook for drag & drop area
+
   const { setNodeRef } = useDroppable({
-    id: "file-drop-area", // Un ID per identificare l'area di drop
+    id: "file-drop-area",
   });
 
-  // * MUTATIONS
-  const { mutate, isSuccess, isError, error, data } = useAddPropertyQuery();
+  const { mutate, isSuccess, isError } = useAddPropertyQuery();
 
-  const onSubmit = (data, event) => {
-    event.preventDefault();
-    console.log("Dati del form:", data);
-    console.log("File selezionati:", selectedFiles);
-    /* console.log("Form submitted!"); */ // Verifica che il form sia inviato
+  const onSubmit = (data) => {
     const formData = new FormData();
-    // Aggiungo tutti i valori del form a FormData
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, value);
     });
-    // Aggiungo i file multipli
     if (selectedFiles.length > 0) {
       Array.from(selectedFiles).forEach((file) => {
         formData.append("files", file);
       });
     }
-    console.log("Dati inviati:", Object.fromEntries(formData.entries()));
-    console.log("FormData:", Object.fromEntries(formData.entries()));
     mutate(formData);
   };
 
   useEffect(() => {
-    console.log("Errori del form:", errors);
-    console.log("File selezionati aggiornati:", selectedFiles);
     if (isSuccess) {
-      setValue("files", selectedFiles, { shouldValidate: true });
       toast.success("Annuncio pubblicato con successo!");
       navigate("/");
-      // isSuccess indica la proprieta salvata nel db correttamente
     } else if (isError) {
       toast.error("Errore nell'invio del form, riprova");
     }
-  }, [isSuccess, isError, selectedFiles, setValue]);
+  }, [isSuccess, isError]);
 
   return (
     <>
-      <h1 className="text-2xl font-bold text-gray-700 flex justify-center mt-5 p-3">
-        Inserisci qui dettagli del tuo annuncio, lo pubblicheremo per te
-      </h1>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="grid grid-cols-2 gap-3 px-8 sm:px-24 lg:px-130 mt-5"
-      >
-        {/* Sinistra */}
-        <div className="flex flex-col gap-3">
-          <div>
-            <label className="text-gray-700">Name</label>
-            <input
-              {...register("name")}
-              type="text"
-              className={`w-full p-2 border rounded ${
-                errors.name ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Es: Marcolino"
-            />
-            {errors.name && (
-              <span className="text-red-500">{errors.name.message}</span>
-            )}
-          </div>
-
-          <div>
-            <label className="text-gray-700">Title</label>
-            <input
-              {...register("title")}
-              type="text"
-              className={`w-full p-2 border rounded ${
-                errors.title ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Es: Perfect house in Milan"
-            />
-            {errors.title && (
-              <span className="text-red-500">{errors.title.message}</span>
-            )}
-          </div>
-
-          <div>
-            <label className="text-gray-700">Address</label>
-            <input
-              {...register("address")}
-              type="text"
-              className={`w-full p-2 border rounded ${
-                errors.address ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Es: Via Roma 10"
-            />
-            {errors.address && (
-              <span className="text-red-500">{errors.address.message}</span>
-            )}
-          </div>
-
-          <div>
-            <label className="text-gray-700">City</label>
-            <input
-              {...register("city")}
-              type="text"
-              className={`w-full p-2 border rounded ${
-                errors.city ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Es: Milano"
-            />
-            {errors.city && (
-              <span className="text-red-500">{errors.city.message}</span>
-            )}
-          </div>
-          <div>
-            <label className="text-gray-700">Zip</label>
-            <input
-              {...register("zipcode")}
-              type="number"
-              className={`w-full p-2 border rounded ${
-                errors.zipcode ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Es: Milano"
-              min={1}
-            />
-            {errors.zipcode && (
-              <span className="text-red-500">{errors.zipcode.message}</span>
-            )}
-          </div>
-
-          <div>
-            <label className="text-gray-700">Square Meters</label>
-            <input
-              {...register("square_meters")}
-              type="number"
-              className={`w-full p-2 border rounded ${
-                errors.square_meters ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Es: 40"
-              min={1}
-            />
-            {errors.square_meters && (
-              <span className="text-red-500">
-                {errors.square_meters.message}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Destra */}
-        <div className="flex flex-col gap-3">
-          <div>
-            <label className="text-gray-700">Email</label>
-            <input
-              {...register("email")}
-              type="email"
-              className={`w-full p-2 border rounded ${
-                errors.email ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Es: example@mail.com"
-            />
-            {errors.email && (
-              <span className="text-red-500">{errors.email.message}</span>
-            )}
-          </div>
-
-          <div>
-            <label className="text-gray-700">Price per Night (€)</label>
-            <input
-              {...register("pricePerNight")}
-              type="number"
-              className={`w-full p-2 border rounded ${
-                errors.pricePerNight ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Es: 100"
-              min={1}
-            />
-            {errors.pricePerNight && (
-              <span className="text-red-500">
-                {errors.pricePerNight.message}
-              </span>
-            )}
-          </div>
-
-          <div>
-            <label className="text-gray-700">Number of Bedrooms</label>
-            <select
-              {...register("n_bedrooms")}
-              className={`w-full h-[41.6px] p-2 border rounded ${
-                errors.n_bedrooms ? "border-red-500" : "border-gray-300"
-              }`}
-            >
-              <option value="" hidden>
-                Select bedrooms
-              </option>
-              {[1, 2, 3, 4].map((num) => (
-                <option key={num} value={num}>
-                  {num}
-                </option>
-              ))}
-              <option value="5">5+</option>
-            </select>
-            {errors.n_bedrooms && (
-              <span className="text-red-500">{errors.n_bedrooms.message}</span>
-            )}
-          </div>
-
-          <div>
-            <label className="text-gray-700 whitespace-nowrap">
-              Number of Bathrooms
-            </label>
-            <select
-              {...register("n_bathrooms")}
-              className={`w-full p-2 h-[41.6px]  border rounded ${
-                errors.n_bathrooms ? "border-red-500" : "border-gray-300"
-              }`}
-            >
-              <option value="" hidden>
-                Select bathrooms
-              </option>
-              {[1, 2, 3].map((num) => (
-                <option key={num} value={num}>
-                  {num}
-                </option>
-              ))}
-              <option value="4">4+</option>
-            </select>
-
-            {errors.n_bathrooms && (
-              <span className="text-red-500">{errors.n_bathrooms.message}</span>
-            )}
-          </div>
-
-          <div>
-            <label className="text-gray-700">Number of Beds</label>
-            <select
-              {...register("n_beds")}
-              className={`w-full p-2 h-[41.6px]  border rounded ${
-                errors.n_beds ? "border-red-500" : "border-gray-300"
-              }`}
-            >
-              <option value="" hidden>
-                Select beds
-              </option>
-              {[1, 2, 3, 4].map((num) => (
-                <option key={num} value={num}>
-                  {num}
-                </option>
-              ))}
-              <option value="5">5+</option>
-            </select>
-            {errors.n_beds && (
-              <span className="text-red-500">{errors.n_beds.message}</span>
-            )}
-          </div>
-          <div>
-            <label className="text-gray-700">Property Type</label>
-            <select
-              {...register("property_type")}
-              className={`w-full h-[41.6px]  p-2 border rounded ${
-                errors.property_type ? "border-red-500" : "border-gray-300"
-              }`}
-            >
-              <option value="" hidden>
-                Select Type
-              </option>
-              <option value="Baita">Baita</option>
-              <option value="Schiera">Schiera</option>
-              <option value="Indipendente">Indipendente</option>
-              <option value="Villa">Villa</option>
-              <option value="Appartamento">Appartamento</option>
-              <option value="Chalet">Chalet</option>
-            </select>
-            {errors.property_type && (
-              <span className="text-red-500">
-                {errors.property_type.message}
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div className="col-span-2">
-          <label className="text-gray-700">Upload Image</label>
-          <DndContext>
-            <div
-              ref={setNodeRef} // Assegniamo il riferimento dell'area di drop
-              className="border-2 border-dashed border-gray-300 p-6 text-center rounded-lg cursor-pointer transition hover:bg-gray-100"
-              onClick={handleClick}
-              onDragOver={(e) => e.preventDefault()} // Evita comportamento default
-              onDrop={handleDrop} // Gestisce il drop dei file
-            >
-              <p className="text-gray-500 flex items-center justify-center text-3xl">
-                {selectedFiles.length > 0 ? (
-                  "File caricati! Aggiungine altri..."
-                ) : (
-                  <>
-                    <BiImageAdd /> Trascina o clicca per caricare
-                  </>
-                )}
-              </p>
-
-              {/* Input nascosto */}
+      <div className="px-8 sm:px-24 lg:px-130 mt-5">
+        <h1 className="text-2xl font-bold text-gray-700 flex justify-center mt-5 p-3">
+          Inserisci qui dettagli del tuo annuncio, lo pubblicheremo per te
+        </h1>
+        <form className="grid grid-cols-2 gap-3">
+          {/* Sinistra */}
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="text-gray-700">Name</label>
               <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                className="hidden"
-                accept="image/*"
-                onChange={handleFileChange}
+                {...register("name")}
+                type="text"
+                className={`w-full p-2 border rounded ${
+                  errors.name
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-gray-300"
+                }`}
+                placeholder={
+                  errors.name ? `${errors.name.message}` : "Es: Marcolino"
+                }
               />
-
-              {/* Lista dei file caricati */}
-              {selectedFiles.length > 0 && (
-                <div className="mt-4">
-                  <h4 className="font-semibold">File selezionati:</h4>
-                  <ul>
-                    {selectedFiles.map((file, index) => (
-                      <li
-                        key={index}
-                        className="text-sm text-gray-700 flex items-center justify-center gap-2"
-                      >
-                        <CiImageOn /> {file.name}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
-          </DndContext>
-          {errors.files && (
-            <span className="text-red-500">{errors.files.message}</span>
-          )}
-          <button
+
+            <div>
+              <label className="text-gray-700">Title</label>
+              <input
+                {...register("title")}
+                type="text"
+                className={`w-full p-2 border rounded ${
+                  errors.title
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-gray-300"
+                }`}
+                placeholder={
+                  errors.title
+                    ? `${errors.title.message}`
+                    : "Es: Perfect house in Milan"
+                }
+              />
+            </div>
+
+            <div>
+              <label className="text-gray-700">Address</label>
+              <input
+                {...register("address")}
+                type="text"
+                className={`w-full p-2 border rounded ${
+                  errors.address
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-gray-300"
+                }`}
+                placeholder={
+                  errors.address
+                    ? `${errors.address.message}`
+                    : "Es: Via Milano 1"
+                }
+              />
+            </div>
+
+            <div>
+              <label className="text-gray-700">City</label>
+              <input
+                {...register("city")}
+                type="text"
+                className={`w-full p-2 border rounded ${
+                  errors.city
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-gray-300"
+                }`}
+                placeholder={
+                  errors.city ? `${errors.city.message}` : "Es: Milano"
+                }
+              />
+            </div>
+            <div>
+              <label className="text-gray-700">Zip</label>
+              <input
+                {...register("zipcode")}
+                type="number"
+                className={`w-full p-2 border rounded ${
+                  errors.zipcode
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-gray-300"
+                }`}
+                placeholder={
+                  errors.zipcode ? `${errors.zipcode.message}` : "Es: 20124"
+                }
+                min={1}
+              />
+            </div>
+
+            <div>
+              <label className="text-gray-700">Square Meters</label>
+              <input
+                {...register("square_meters")}
+                type="number"
+                className={`w-full p-2 border rounded ${
+                  errors.square_meters
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-gray-300"
+                }`}
+                placeholder={
+                  errors.square_meters
+                    ? `${errors.square_meters.message}`
+                    : "Es: 100"
+                }
+                min={1}
+              />
+            </div>
+          </div>
+
+          {/* Destra */}
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="text-gray-700">Email</label>
+              <input
+                {...register("email")}
+                type="email"
+                className={`w-full p-2 border rounded ${
+                  errors.email
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-gray-300"
+                }`}
+                placeholder={
+                  errors.email
+                    ? `${errors.email.message}`
+                    : "Es: Gigi@example.com"
+                }
+              />
+            </div>
+
+            <div>
+              <label className="text-gray-700">Price per Night (€)</label>
+              <input
+                {...register("pricePerNight")}
+                type="number"
+                className={`w-full p-2 border rounded ${
+                  errors.pricePerNight
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-gray-300"
+                }`}
+                placeholder={
+                  errors.pricePerNight
+                    ? `${errors.pricePerNight.message}`
+                    : "Es: 100"
+                }
+                min={1}
+              />
+            </div>
+
+            <div>
+              <label className="text-gray-700">Number of Bedrooms</label>
+              <select
+                {...register("n_bedrooms")}
+                className={`w-full h-[41.6px] p-2 border rounded ${
+                  errors.n_bedrooms
+                    ? "border-red-500 text-red-500"
+                    : "border-gray-300"
+                }`}
+              >
+                <option value="" hidden>
+                  {errors.n_bedrooms
+                    ? errors.n_bedrooms.message
+                    : "Select number of bedrooms"}
+                </option>
+                {[1, 2, 3, 4].map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+                <option value="5">5+</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-gray-700 whitespace-nowrap">
+                Number of Bathrooms
+              </label>
+              <select
+                {...register("n_bathrooms")}
+                className={`w-full p-2 h-[41.6px]  border rounded ${
+                  errors.n_bathrooms
+                    ? "border-red-500 text-red-500"
+                    : "border-gray-300"
+                }`}
+              >
+                <option value="" hidden>
+                  {errors.n_bathrooms
+                    ? errors.n_bathrooms.message
+                    : "Select number of bathrooms"}
+                </option>
+                {[1, 2, 3].map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+                <option value="4">4+</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-gray-700">Number of Beds</label>
+              <select
+                {...register("n_beds")}
+                className={`w-full p-2 h-[41.6px]  border rounded ${
+                  errors.n_beds
+                    ? "border-red-500 text-red-500"
+                    : "border-gray-300"
+                }`}
+              >
+                <option value="" hidden>
+                  {errors.n_beds
+                    ? errors.n_beds.message
+                    : "Select number of beds"}
+                </option>
+                {[1, 2, 3, 4].map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+                <option value="5">5+</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-gray-700">Property Type</label>
+              <select
+                {...register("property_type")}
+                className={`w-full h-[41.6px] p-2 border rounded 
+      ${
+        errors.property_type ? "border-red-500 text-red-500" : "border-gray-300"
+      }
+    `}
+              >
+                <option value="" hidden>
+                  {errors.property_type
+                    ? errors.property_type.message
+                    : "Select Type"}
+                </option>
+                <option value="Baita">Baita</option>
+                <option value="Schiera">Schiera</option>
+                <option value="Indipendente">Indipendente</option>
+                <option value="Villa">Villa</option>
+                <option value="Appartamento">Appartamento</option>
+                <option value="Chalet">Chalet</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="col-span-2">
+            <label className="text-gray-700">Upload Image</label>
+            <DndContext>
+              <div
+                ref={setNodeRef} // Assegniamo il riferimento dell'area di drop
+                className="border-2 border-dashed border-gray-300 p-6 text-center rounded-lg cursor-pointer transition hover:bg-gray-100"
+                onClick={handleClick}
+                onDragOver={(e) => e.preventDefault()} // Evita comportamento default
+                onDrop={handleDrop} // Gestisce il drop dei file
+              >
+                <p className="text-gray-500 flex items-center justify-center text-3xl">
+                  {selectedFiles.length > 0 ? (
+                    "File caricati! Aggiungine altri..."
+                  ) : (
+                    <>
+                      <BiImageAdd /> Trascina o clicca per caricare
+                    </>
+                  )}
+                </p>
+
+                {/* Input nascosto */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+
+                {/* Lista dei file caricati */}
+                {selectedFiles.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-semibold">File selezionati:</h4>
+                    <ul>
+                      {selectedFiles.map((file, index) => (
+                        <li
+                          key={index}
+                          className="text-sm text-gray-700 flex items-center justify-center gap-2"
+                        >
+                          <CiImageOn /> {file.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </DndContext>
+            {errors.files && (
+              <span className="text-red-500">{errors.files.message}</span>
+            )}
+            {/* <button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg mt-3 transition"
           >
             📌 Add Your Property
-          </button>
-        </div>
-      </form>
+          </button> */}
+          </div>
+        </form>
+        <button
+          onClick={() => setShowPreview(true)}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg mt-3 transition"
+        >
+          Visualizza l'anteprima
+        </button>
+      </div>
+
+      {showPreview && (
+        <PreviewFormCard
+          property={{ ...formData, files: selectedFiles }}
+          onConfirm={() => {
+            handleSubmit(onSubmit)(); // Esegui il submit del form
+          }}
+          onEdit={() => setShowPreview(false)}
+        />
+      )}
     </>
   );
 }
@@ -459,16 +474,16 @@ const schema = yup.object().shape({
     .required("Beds required")
     .min(1, "At least 1 bed required"),
 
-  property_type: yup.string().required("Tipo di proprietà obbligatorio"),
+  property_type: yup.string().required("Property type is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
   files: yup
     .array()
-    .min(1, "Devi caricare almeno un file")
-    .required("Devi caricare almeno un file")
-    .test("fileSize", "Il file è troppo grande", (files) =>
+    .min(1, "You must upload at least one file")
+    .required("You must upload at least one file")
+    .test("fileSize", "File too large", (files) =>
       files.every((file) => file.size <= 5 * 1024 * 1024)
     )
-    .test("fileType", "Formato non supportato", (files) =>
+    .test("fileType", "Invalid file type", (files) =>
       files.every((file) =>
         ["image/jpeg", "image/png", "image/gif"].includes(file.type)
       )
