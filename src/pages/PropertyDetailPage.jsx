@@ -1,3 +1,4 @@
+//? Importazioni librerie e componenti 
 import React, { useRef, useState, useEffect, Fragment } from "react";
 import LoadMoreButton from "../components/LoadMoreButton";
 import { useParams, useNavigate } from "react-router-dom";
@@ -29,6 +30,7 @@ import SkeleDetailSection from "../components/SkeleDetailSection";
 import ReviewComponent from "../components/ReviewComponent";
 import { toast } from "react-toastify";
 
+//! Funzione propertyDetail
 function PropertyDetail() {
   const { id } = useParams();
   const reviewsRef = useRef(null);
@@ -80,97 +82,106 @@ function PropertyDetail() {
   // risposta ricevuta
   const property = propertyRes.results[0];
 
-  return (
-    <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-8 border-b border-stone-400">
-        {/* SECTION IMAGES*/}
-        <SectionImages property={property} savePost={savePost} />
-        {/* sezione dettaglio */}
-        <SectionDetails
-          property={property}
-          savePost={savePost}
-          reviewsCount={reviewsRes.pages[0].total_quantity + newRevsCount}
-          reviewsRef={reviewsRef}
-        />
-      </div>
-      <div className="flex flex-col">
-        {/* sezizone posizione */}
-        <SectionPosition property={property} />
-        {/* sezione host */}
-        <SectionHost property={property} />
-        {/* sezione recensioni*/}
-        <SectionRecensioni
-          id={id}
-          reviewsRes={reviewsRes}
-          reviewsRef={reviewsRef}
-          fetchNextPage={fetchNextPage}
-          newReviewsRes={newReviewsRes}
-        />
-        {/* sezione form recensione */}
-        <SectionFormRecensioni
-          id={id}
-          mutate={mutate}
-          isSuccess={isSuccess}
-          refetchNR={refetchNR}
-          newRevsCount={newRevsCount}
-        />
-      </div>
-      <ChatBot propertyId={property.id} />
-    </>
-  );
+    return (
+        <>
+            {/* Dettaglio proprietà con immagini e caratteristiche */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-8 border-b border-stone-400">
+                {/* sezione images */}
+                <SectionImages property={property} savePost={savePost} />
+                {/* sezione dettaglio */}
+                <SectionDetails
+                    property={property}
+                    savePost={savePost}
+                    reviewsCount={
+                        reviewsRes.pages[0].total_quantity + newRevsCount
+                    }
+                    reviewsRef={reviewsRef}
+                />
+            </div>
+            <div className="flex flex-col">
+                {/* sezione posizione */}
+                <SectionPosition property={property} />
+                {/* sezione host */}
+                <SectionHost property={property} />
+                {/* sezione recensioni*/}
+                <SectionRecensioni
+                    id={id}
+                    reviewsRes={reviewsRes}
+                    reviewsRef={reviewsRef}
+                    fetchNextPage={fetchNextPage}
+                    newReviewsRes={newReviewsRes}
+                />
+                {/* sezione form recensione */}
+                <SectionFormRecensioni
+                    id={id}
+                    mutate={mutate}
+                    isSuccess={isSuccess}
+                    refetchNR={refetchNR}
+                    newRevsCount={newRevsCount}
+                />
+            </div>
+            <ChatBot propertyId={property.id} />
+        </>
+    );
 }
 
-// SECTION IMAGES
+//! Sezione images
 function SectionImages({ property, savePost }) {
-  const [activeIndex, setActiveIndex] = useState(0);
+    // Stato per tracciare l'indice dell'immagine attiva
+    const [activeIndex, setActiveIndex] = useState(0);
 
-  const handleThumbnailClick = (index) => {
-    setActiveIndex(index);
-  };
+    // Funzione per cambiare l'immagine attiva quando si clicca su una miniatura
+    const handleThumbnailClick = (index) => {
+        setActiveIndex(index);
+    };
 
-  return (
-    <>
-      {/* sezione immagini mobile */}
-      <section className="block sm:hidden p-4">
-        <div className="flex overflow-auto rounded-lg snap-x snap-mandatory">
-          {property.img_endpoints.map((img, index) => (
-            <img
-              key={index}
-              src={`${imagesUrl}/${property.id}${img}`}
-              alt={`Thumbnail ${index + 1}`}
-              className="min-w-screen h-[37vh] object-cover snap-start"
-            />
-          ))}
-        </div>
-      </section>
+    return (
+        <>
+            {/* sezione immagini mobile */}
+            <section className="block sm:hidden p-4">
+                <div className="flex overflow-auto rounded-lg snap-x snap-mandatory">
+                    {/* Mappa su tutte le immagini del property per mostrare le miniature */}
+                    {property.img_endpoints.map((img, index) => (
+                        <img
+                            key={index}
+                            src={`${imagesUrl}/${property.id}${img}`}
+                            alt={`Thumbnail ${index + 1}`}
+                            className="min-w-screen h-[37vh] object-cover snap-start"
+                        />
+                    ))}
+                </div>
+            </section>
 
-      {/* immagini desktop e dettaglio */}
-      <section className="hidden sm:flex gap-2 aspect-video h-full w-full">
-        <div className="relative">
-          <img
-            src={`${imagesUrl}/${property.id}${property.img_endpoints[activeIndex]}`}
-            alt={`Property Image ${activeIndex + 1}`}
-            className="h-full aspect-video object-cover rounded-lg"
-          />
-        </div>
+            {/* immagini desktop e dettaglio */}
+            <section className="hidden sm:flex gap-2 aspect-video h-full w-full">
+                <div className="relative">
+                    {/* Immagine grande in dettaglio (attiva in base all'indice) */}
+                    <img
+                        src={`${imagesUrl}/${property.id}${property.img_endpoints[activeIndex]}`}
+                        alt={`Property Image ${activeIndex + 1}`}
+                        className="h-full aspect-video object-cover rounded-lg"
+                    />
+                </div>
 
-        {/* Miniature */}
-        <div className="overflow-auto w-1/4 flex flex-col gap-2 p-1 border-y border-y-gray-600 rounded-md">
-          {property.img_endpoints.map((img, index) => (
-            <img
-              key={index}
-              src={`${imagesUrl}/${property.id}${img}`}
-              alt={`Thumbnail ${index + 1}`}
-              className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${
-                activeIndex === index ? "outline-2 outline-blue-500" : ""
-              }`}
-              onClick={() => handleThumbnailClick(index)}
-            />
-          ))}
-        </div>
-      </section>
-    </>
-  );
+                {/* Miniature */}
+                <div className="overflow-auto w-1/4 flex flex-col gap-2 p-1 border-y border-y-gray-600 rounded-md">
+                {/* Mappa su tutte le immagini per creare le miniature */}
+                    {property.img_endpoints.map((img, index) => (
+                        <img
+                            key={index}
+                            src={`${imagesUrl}/${property.id}${img}`}
+                            alt={`Thumbnail ${index + 1}`}
+                            className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${activeIndex === index
+                                ? "outline-2 outline-blue-500"
+                                : ""
+                                }`}
+                            onClick={() => handleThumbnailClick(index)}
+                        />
+                    ))}
+                </div>
+            </section>
+        </>
+    );
 }
 // SECTION DETAILS
 function SectionDetails({ property, savePost, reviewsCount, reviewsRef }) {
@@ -214,40 +225,29 @@ function SectionDetails({ property, savePost, reviewsCount, reviewsRef }) {
     }
   }, [isHeartClicked]);
 
-  return (
-    <>
-      <section className="flex flex-col flex-wrap gap-3 px-3 sm:pt-3">
-        <div className="flex items-center gap-4 justify-between">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider ">
-            {property.title}
-          </h1>
-          <div className="flex gap-2 items-center text-2xl ">
-            {/* HEART */}
-            <Heart
-              classes={`${
-                isHeartClicked && "bg-red-300"
-              } flex items-center rounded-xl boxShad box-content py-2 px-1.5 cursor-pointer hover:text-red-500`}
-              onClick={onHeartClick}
-              propertyId={property.id}
-            />
-            {/* icona condividi */}
-            <CiShare2
-              onClick={onShareClick}
-              className="flex items-center rounded-xl boxShad py-2 px-1.5 cursor-pointer box-content hover:text-blue-500"
-            />
-            {/* icona Save */}
-            <PiBookmarks
-              onClick={onSaveClick}
-              className={`${
-                isSaved && "bg-green-300"
-              } flex items-center rounded-xl boxShad box-content  py-2 px-1.5 cursor-pointer hover:text-green-600`}
-            />
-          </div>
-        </div>
-        {/* Dettagli della proprietà */}
-        <p className="font-semibold md:text-lg text-stone-900">
-          {property.description}
-        </p>
+    return (
+        <>
+            <section className="flex flex-col flex-wrap gap-3 px-3 sm:pt-3">
+                {/* Sezione titolo e icone (cuore, condividi, salva) */}
+                <div className="flex items-center gap-4 justify-between">
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider ">
+                        {property.title}
+                    </h1>
+                    <div className="flex gap-2 items-center text-2xl ">
+                        {/* Icona cuore (per aggiungere i likes) */}
+                        <Heart classes={`${isHeartClicked && "bg-red-300"} flex items-center rounded-xl boxShad box-content py-2 px-1.5 cursor-pointer hover:text-red-500`} onClick={onHeartClick} propertyId={property.id} />
+                        {/* icona di condivisione */}
+                        <CiShare2 onClick={onShareClick}
+                            className="flex items-center rounded-xl boxShad py-2 px-1.5 cursor-pointer box-content hover:text-blue-500" />
+                        {/* icona di salvataggio (aggiungi ai preferiti) */}
+                        <PiBookmarks onClick={onSaveClick}
+                            className={`${isSaved && "bg-green-300"} flex items-center rounded-xl boxShad box-content  py-2 px-1.5 cursor-pointer hover:text-green-600`} />
+                    </div>
+                </div>
+                {/* Dettagli della proprietà */}
+                <p className="font-semibold md:text-lg text-stone-900">
+                    {property.description}
+                </p>
 
         <span className="sm:text-xl font-bold">Cosa offre:</span>
         <div className="grid grid-cols-2 grid-rows-2 sm:gap-2 text-base text-gray-500 sm:text-lg  border px-4 py-2 rounded-lg whitespace-nowrap">
@@ -490,66 +490,80 @@ function SectionFormRecensioni({
     window.sessionStorage.setItem("newRevsCount", Number(newRevsCount) + 1);
   };
 
-  useEffect(() => {
-    if (isSuccess) {
-      refetchNR();
-      toast.success("Recensione pubblicata con successo!");
-    }
-  }, [isSuccess]);
-  return (
-    <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6">
-      <h1
-        className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4"
-        id="reviews"
-      >
-        Lascia la tua Recensione
-      </h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex border w-fit rounded-lg p-2 gap-1">
-          Voto:{" "}
-          <StarsComponent
-            setRating={setRating}
-            rating={rating}
-            setValue={setValue}
-            trigger={trigger}
-          />
-        </div>
-        <p className="text-red-500">{errors?.rating?.message}</p>
-        <input type="hidden" value={rating} {...register("rating")} />
-        <input
-          type="text"
-          placeholder="Inserisci il titolo della recensione"
-          className="mt-4 w-full p-2 border rounded-lg"
-          {...register("reviewTitle")}
-        />
-        <p className="text-red-500">{errors?.reviewTitle?.message}</p>
-        <textarea
-          placeholder="Scrivi una recensione"
-          className="mt-4 w-full p-2 border rounded-lg"
-          {...register("reviewText")}
-        />
-        <p className="text-red-500">{errors?.reviewText?.message}</p>
-        <button
-          type="submit"
-          className="mt-2 px-3 sm:px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-lg sm:text-xl cursor-pointer"
-        >
-          Invia recensione
-        </button>
-      </form>
-    </section>
-  );
+    useEffect(() => {
+        if (isSuccess) {
+            refetchNR();
+            toast.success("Recensione pubblicata con successo!");
+        }
+    }, [isSuccess]);
+
+    return (
+        <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6">
+            <h1
+                className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4"
+                id="reviews"
+            >
+                Lascia la tua Recensione
+            </h1>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="flex border w-fit rounded-lg p-2 gap-1">
+                    Voto:{" "}
+                    <StarsComponent
+                        setRating={setRating}
+                        rating={rating}
+                        setValue={setValue}
+                        trigger={trigger}
+                    />
+                </div>
+                <p className="text-red-500">{errors?.rating?.message}</p>
+                {/* Nome */}
+                <input type="hidden" value={name} {...register("name")} />
+                <input
+                    type="text"
+                    placeholder="Inserisci il tuo nome "
+                    className="mt-4 w-full p-2 border rounded-lg"
+                    {...register("name")}
+                />
+                <p className="text-red-500">{errors?.name?.message}</p>
+                {/* TITOLO */}
+                <input type="hidden" value={rating} {...register("rating")} />
+                <input
+                    type="text"
+                    placeholder="Inserisci il titolo della recensione"
+                    className="mt-4 w-full p-2 border rounded-lg"
+                    {...register("reviewTitle")}
+                />
+                <p className="text-red-500">{errors?.reviewTitle?.message}</p>
+
+                {/* Discrezione */}
+                <textarea
+                    placeholder="Scrivi una recensione"
+                    className="mt-4 w-full p-2 border rounded-lg"
+                    {...register("reviewText")}
+                />
+                <p className="text-red-500">{errors?.reviewText?.message}</p>
+                <button
+                    type="submit"
+                    className="mt-2 px-3 sm:px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-lg sm:text-xl cursor-pointer"
+                >
+                    Invia recensione
+                </button>
+            </form>
+        </section>
+    );
 }
 
 const schema = yup.object().shape({
-  rating: yup
-    .number()
-    .transform((value, originalValue) =>
-      originalValue === "" ? undefined : value
-    )
-    .required("Il voto è obbligatorio")
-    .min(1, "Il voto minimo è 1"),
-  reviewTitle: yup.string().trim().required("Il titolo è obbligatorio"),
-  reviewText: yup.string().trim().required("La recensione è obbligatoria"),
+    rating: yup
+        .number()
+        .transform((value, originalValue) =>
+            originalValue === "" ? undefined : value
+        )
+        .required("Il voto è obbligatorio")
+        .min(1, "Il voto minimo è 1"),
+    name: yup.string().trim().required("Il nome è obbligatorio"),
+    reviewTitle: yup.string().trim().required("Il titolo è obbligatorio"),
+    reviewText: yup.string().trim().required("La recensione è obbligatoria"),
 });
 
 export default PropertyDetail;
