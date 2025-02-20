@@ -228,7 +228,7 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
           <div className="w-full h-full text-black">
             <p className="flex justify-center font-bold">Prenota ora</p>
             <PayPalButton
-              amount={10.0} // Passa il prezzo della proprietà
+              amount={100.0} // Passa il prezzo della proprietà
               currency="EUR" // Passa la valuta
               onSuccess={handlePaymentSuccess} // Funzione di successo
               onError={handlePaymentError} // Funzione di errore
