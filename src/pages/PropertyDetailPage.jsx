@@ -129,6 +129,7 @@ function PropertyDetail() {
                     isSuccess={isSuccess}
                     refetchNR={refetchNR}
                     newRevsCount={newRevsCount}
+                    reviewsRef={reviewsRef}
                 />
             </div>
             <ChatBot propertyId={property.id} />
@@ -482,6 +483,7 @@ function SectionFormRecensioni({
     isSuccess,
     newRevsCount,
     refetchNR,
+    reviewsRef
 }) {
     const {
         register,
@@ -496,6 +498,7 @@ function SectionFormRecensioni({
 
     const [rating, setRating] = useState(0);
 
+    // * ACTIONS
     const onSubmit = (data) => {
         mutate({
             property_id: id,
@@ -508,10 +511,17 @@ function SectionFormRecensioni({
         window.sessionStorage.setItem("newRevsCount", Number(newRevsCount) + 1);
     };
 
+    const handleScroll = () => {
+        reviewsRef.current &&
+            reviewsRef.current.scrollIntoView({ behavior: "smooth" });
+    };
+
+    // * EFFETTI COLLATERALI
     useEffect(() => {
         if (isSuccess) {
             refetchNR();
             toast.success("Recensione pubblicata con successo!");
+            handleScroll()
         }
         if (newRevsCount == 0) {
             refetchNR();
