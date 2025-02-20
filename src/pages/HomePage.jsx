@@ -11,26 +11,19 @@ import { motion } from "framer-motion";
 function HomePage() {
     // Stato per i parametri di filtro
     const [params, setParams] = useState({});
-    const [propsCount, setPropsCount] = useState(4);
 
     return (
         <>
             {/* Sezione di filtro */}
-            <FilterSection
-                setParams={setParams}
-                setPropsCount={setPropsCount}
-            />
+            <FilterSection setParams={setParams} />
             {/* Container per far rerenderizzare solo CardsSection */}
-            <CardsSectionContainer
-                params={params}
-                propsCount={propsCount}
-                setPropsCount={setPropsCount}
-            />
+            <CardsSectionContainer params={params} />
         </>
     );
 }
 
-const CardsSectionContainer = ({ params, setPropsCount, propsCount }) => {
+const CardsSectionContainer = ({ params }) => {
+    const [currPage, setCurrPage] = useState(1);
     const {
         isLoading,
         isFetchingNextPage,
@@ -50,14 +43,14 @@ const CardsSectionContainer = ({ params, setPropsCount, propsCount }) => {
 
     useEffect(() => {
         // vai giu dopo il fetch e se sei dal 2 fetch in poi
-        if (propsCount >= 4 && isFetched) {
+        if (currPage > 1 && isFetched) {
             window.scroll({
                 left: 0,
                 top: document.documentElement.scrollTop + 600, // ? offset da calcolare invece con l'altezza della card (useRefsContext)
                 behavior: "smooth",
             });
         }
-    }, [propsCount]);
+    }, [currPage]);
 
     // Gestione dello stato di caricamento e errore
     if (isError) {
@@ -89,14 +82,14 @@ const CardsSectionContainer = ({ params, setPropsCount, propsCount }) => {
                     )}
                 </>
             </CardsSection>
-            {propsCount < data?.pages[0]?.total_quantity && (
+            {data?.pages[data?.pages.length - 1]?.total_res >= 4 && (
                 <div className="flex justify-center">
                     <LoadMoreButton
                         noMore={false}
                         // al click fetcha la prossima pagina e setta la prossima pagina
                         onClick={() => {
                             fetchNextPage();
-                            setPropsCount((curr) => curr + 4);
+                            setCurrPage((curr) => curr + 1);
                         }}
                     />
                 </div>
@@ -105,7 +98,7 @@ const CardsSectionContainer = ({ params, setPropsCount, propsCount }) => {
     );
 };
 
-function FilterSection({ setParams, setPropsCount }) {
+function FilterSection({ setParams }) {
     const { headerRef, jumboRef, filterRef } = useRefsContext();
 
     // Stato per il filtro attivo
@@ -126,7 +119,6 @@ function FilterSection({ setParams, setPropsCount }) {
     const handleFilterClick = (type, index) => {
         setParams({ property_type: type === "tutti" ? "" : type });
         setActiveFilter(index);
-        setPropsCount(4);
         window.scrollTo({
             top: jumboRef.current.offsetHeight + headerRef.current.offsetHeight,
             behavior: "smooth",

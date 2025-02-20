@@ -5,41 +5,35 @@ import { useInfiniteGetPropsQuery } from "../hooks/useDataQuery";
 import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
 import { FaFilter, FaSearch } from "react-icons/fa";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useRefsContext } from "../Context/RefsContext";
 import SkeleCard from "../components/SkeleCard";
 import LoadMoreButton from "../components/LoadMoreButton";
 import { Fragment } from "react";
-import { Listbox } from "@headlessui/react";
-
-// options delle select iniziali
-const initialOptions = {
-    n_bathrooms: 0,
-    n_beds: 0,
-    square_meters: 0,
-    n_bedrooms: 0,
-    property_type: "",
-};
 
 function SearchPropertyPage() {
     const { headerRef } = useRefsContext();
 
+    // Ottiene i parametri di ricerca dalla query della URL
     const [searchParams] = useSearchParams();
     const paramsObj = Object.fromEntries(searchParams.entries());
-    console.log(paramsObj)
-    const city = searchParams.get("city"); // prendo il parametro city dalla query della url
-    const property_type = searchParams.get("property_type"); // prendo il parametro property_type dalla query della url
 
-    const [inputValue, setInputValue] = useState(city ? city : ""); // controllo dinamico dell'input della citta
+    // Stato per l'input della città
+    const [inputValue, setInputValue] = useState(paramsObj?.city ? paramsObj.city : "");
 
-    const [params, setParams] = useState(paramsObj); // per salvare l'oggetto params per la query in get
-    const [optSelected, setOptSelected] = useState(initialOptions); // oggetto che salva le options
+    // Stato per i parametri di ricerca
+    const [params, setParams] = useState(paramsObj);
+    const [optSelected, setOptSelected] = useState({});
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     const [currPage, setCurrPage] = useState(1);
 
     const navigate = useNavigate();
 
+    const headerHeight = headerRef?.current?.offsetHeight - 2;
+    const style = { top: `${headerHeight}px` };
+
+    // Hook per ottenere i dati delle proprietà
     const {
         isLoading,
         isError,
@@ -50,57 +44,52 @@ function SearchPropertyPage() {
         isFetched,
     } = useInfiniteGetPropsQuery(params);
 
+    // Effetto per scorrere verso il basso dopo il fetch
     useEffect(() => {
-        // vai giu dopo il fetch e se sei dal 2 fetch in poi
         if (currPage > 1 && isFetched) {
             window.scroll({
                 left: 0,
-                top: document.documentElement.scrollTop + 600, // ? offset da calcolare invece con l'altezza della card (useRefsContext)
+                top: document.documentElement.scrollTop + 600,
                 behavior: "smooth",
             });
         }
     }, [currPage]);
 
-    // Ricarica i dati ogni volta che i parametri cambiano
-    useEffect(() => {
-        refetch();
-    }, [params]);
-
-    // * ACTIONS
+    // Funzione per gestire la submit dell'input
     const onInputSubmit = (e) => {
         e.preventDefault();
         if (inputValue.length) {
-            setParams((curr) => ({ ...curr, city: inputValue })); //setto i params in modo tale che arrivino nel formato corretto nel server
             setInputValue(inputValue);
-            navigate(`/search?city=${encodeURIComponent(inputValue)}`);
+            setSearchParamsAndFetch();
         }
         setIsFilterOpen(false);
     };
 
+    // Funzione per gestire la submit dei filtri
     const onFilterSubmit = (e) => {
         e.preventDefault();
         if (inputValue.length) {
-            let optParams = Object.fromEntries(
-                Object.entries(optSelected).filter(([_, value]) => Boolean(value))
-            ); // le options non falsy le indico come params da mettere nella query params
-            let paramsObj = { city: inputValue, ...optParams };
-            setParams(paramsObj); //setto i params in modo tale che arrivino nel formato corretto nel server
-            refetch();
-            let paramsArr = Object.entries(paramsObj).map(([key, value]) => `${key}=${value}`);
-            paramsArr = `?${paramsArr.join("&")}`;
-            navigate(`/search${paramsArr}`);
+            setSearchParamsAndFetch();
         } else {
             console.log("Cerca prima la città!");
         }
         setIsFilterOpen(false);
     };
 
-    const headerHeight = headerRef?.current?.offsetHeight - 2;
-
-    const style = { top: `${headerHeight}px` };
+    function setSearchParamsAndFetch() {
+        let optParams = Object.fromEntries(
+            Object.entries(optSelected).filter(([_, value]) => Boolean(value))
+        );
+        let paramsObj = { city: inputValue, ...optParams };
+        setParams(paramsObj);
+        refetch();
+        let paramsArr = Object.entries(paramsObj).map(([key, value]) => `${key}=${value}`);
+        paramsArr = `?${paramsArr.join("&")}`;
+        navigate(`/search${paramsArr}`);
+    }
 
     if (isError) navigate("/lost");
-    // * RETURNS
+
     return (
         <>
             <div
@@ -140,7 +129,7 @@ function SearchPropertyPage() {
                         onSubmit={onFilterSubmit}
                         className=" md:w-full px-6 py-2 grid grid-cols-2 gap-4 md:text-[10px] z-20 sm:grid-cols-3 lg:grid-cols-1 items-end"
                     >
-                        <Selects setOptSelected={setOptSelected} />
+                        <Selects optSelected={optSelected} setOptSelected={setOptSelected} />
                         <button
                             disabled={!inputValue.length}
                             type="submit"
@@ -151,6 +140,7 @@ function SearchPropertyPage() {
                             Applica filtri
                         </button>
                         <button
+                            onClick={() => setOptSelected({})}
                             disabled={!inputValue.length}
                             type="reset"
                             className={`${!inputValue.length &&
@@ -192,7 +182,6 @@ function SearchPropertyPage() {
                         </CardsSection>
                     )}
 
-
                     {/* Load More Btn */}
                     {data?.pages[data?.pages.length - 1]?.total_res >= 4 && (
                         <div className="flex justify-center">
@@ -212,6 +201,7 @@ function SearchPropertyPage() {
     );
 }
 
+// Opzioni per i campi di selezione
 const options = [
     { value: "1", label: "1" },
     { value: "2", label: "2" },
@@ -247,12 +237,13 @@ const typeOptions = [
     { value: "villetta a schiera", label: "Villa a schiera" },
 ];
 
+// Stili personalizzati per i campi di selezione
 const customStyles = {
     control: (baseStyles, state) => ({
         ...baseStyles,
         borderColor: state.isFocused ? "black" : "grey",
         borderRadius: "10px",
-    }), //style della select
+    }),
     option: (styles, state) => {
         const backgroundColor = state.isFocused ? "black" : "white";
 
@@ -262,9 +253,10 @@ const customStyles = {
             color: state.isFocused ? "white" : "black",
             borderRadius: "5px",
         };
-    }, //style delle options
+    },
 };
 
+// Campi di selezione
 const selectFields = [
     {
         label: "Camere da letto",
@@ -288,7 +280,8 @@ const selectFields = [
     },
 ];
 
-const Selects = ({ setOptSelected }) => {
+// Componente per i campi di selezione
+const Selects = ({ optSelected, setOptSelected }) => {
     return (
         <>
             {selectFields.map(({ label, id, field, options }) => (
@@ -298,17 +291,16 @@ const Selects = ({ setOptSelected }) => {
                         id={id}
                         name={id}
                         options={options}
-                        placeholder={
-                            label == "Tipo di proprietà"
-                                ? "Proprietà"
-                                : "Inserisci"
-                        }
+                        placeholder={label === "Tipo di proprietà" ? "Proprietà" : "Inserisci"}
                         styles={customStyles}
-                        onChange={(opt) => opt.value && setOptSelected((prev) => ({
-                            ...prev,
-                            [field]: opt.value,
-                        }))
+                        value={options.find(opt => opt.value === optSelected[field]) || null}
+                        onChange={(opt) =>
+                            setOptSelected((prev) => ({
+                                ...prev,
+                                [field]: opt ? opt.value : "",
+                            }))
                         }
+                        isClearable
                     />
                 </div>
             ))}
