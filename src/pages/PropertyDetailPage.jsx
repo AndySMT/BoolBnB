@@ -1,5 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo, Fragment } from "react";
-import Select from "react-select";
+import React, { useRef, useState, useEffect, Fragment } from "react";
 import LoadMoreButton from "../components/LoadMoreButton";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -18,7 +17,6 @@ import MyMapComponent from "../components/MapComponent";
 import StarsComponent from "../components/StarsComponent";
 import Heart from "../components/Heart";
 import ChatBot from "../components/ChatBot";
-import PopUp from "./PopUp";
 import "leaflet/dist/leaflet.css";
 import {
     useAddReviewQuery,
@@ -179,7 +177,7 @@ function SectionImages({ property, savePost }) {
     );
 }
 // SECTION DETAILS
-function SectionDetails({ property, savePost, reviewsCount, reviewsRef }) {
+function SectionDetails({ property, reviewsCount, reviewsRef }) {
     const favouritesIds =
         JSON.parse(localStorage.getItem("favourites")) || [];
 
@@ -493,6 +491,7 @@ function SectionFormRecensioni({
         mutate({
             property_id: id,
             title: data.reviewTitle,
+            name: data.name,
             description: data.reviewText,
             rating: data.rating,
         });
@@ -524,6 +523,17 @@ function SectionFormRecensioni({
                         trigger={trigger}
                     />
                 </div>
+                {/* Nome */}
+                <p className="text-red-500">{errors?.name?.message}</p>
+                <input type="hidden" value={name} {...register("name")} />
+                <input
+                    type="text"
+                    placeholder="Inserisci il tuo  nome "
+                    className="mt-4 w-full p-2 border rounded-lg"
+                    {...register("name")}
+                />
+                <p className="text-red-500">{errors?.name?.message}</p>
+                {/* TITOLO */}
                 <p className="text-red-500">{errors?.rating?.message}</p>
                 <input type="hidden" value={rating} {...register("rating")} />
                 <input
@@ -533,6 +543,8 @@ function SectionFormRecensioni({
                     {...register("reviewTitle")}
                 />
                 <p className="text-red-500">{errors?.reviewTitle?.message}</p>
+
+                {/* Discrezione */}
                 <textarea
                     placeholder="Scrivi una recensione"
                     className="mt-4 w-full p-2 border rounded-lg"
