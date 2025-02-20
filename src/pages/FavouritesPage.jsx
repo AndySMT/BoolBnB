@@ -28,8 +28,10 @@ function FavouritesPage() {
         JSON.parse(localStorage.getItem("favourites")) || []
     );
 
+    const headerHeight = !headerRef?.current?.offsetHeight || headerRef?.current?.offsetHeight === 0 ? 56 : headerRef.current.offsetHeight;
+
     const style = {
-        marginTop: `${headerRef.current.offsetHeight}px`,
+        marginTop: `${headerHeight}px`,
     };
 
     return (

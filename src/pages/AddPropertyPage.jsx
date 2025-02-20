@@ -38,72 +38,74 @@ function HeroSection({ goToFormPage }) {
   const [range, setRange] = useState(16);
   const [showTooltip, setShowTooltip] = useState(false);
 
-    const handleRangeChange = (event) => {
-        setRange(event.target.value);
-    };
+  const handleRangeChange = (event) => {
+    setRange(event.target.value);
+  };
 
-    const style = {
-        marginTop: `${headerRef?.current?.offsetHeight}px`,
-    };
-    return (
-        <section style={style} className="p-8 sm:p-12 lg:px-24">
-            <div className="gap-10 grid grid-cols-1 md:grid-cols-2 justify-center items-center rounded-lg">
-                {/* Testo */}
-                <div className="flex flex-col justify-center items-center gap-5">
-                    <h1 className=" text-gray-700 text-4xl font-bold leading-tight text-center">
-                        Apri il tuo{" "}
-                        <span className="text-red-600">BoolBnB</span>
-                        <br />
-                        potresti <br />
-                        guadagnare <br />
-                        fino a <br />
-                        <span className="text-black">
-                            {(range * 56.12).toFixed(2)}€
-                        </span>
-                    </h1>
+  const headerHeight = !headerRef?.current?.offsetHeight || headerRef?.current?.offsetHeight === 0 ? 56 : headerRef.current.offsetHeight;
 
-                    <div className="flex flex-col items-center md:items-start relative w-5/6 ">
-                        <div className="relative w-full">
-                            {/* Tooltip */}
-                            {showTooltip && (
-                                <div
-                                    className="absolute bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-sm px-3 py-1 rounded-lg shadow-md"
-                                    style={{ left: `${(range / 30) * 100}%` }} // Posizione dinamica
-                                >
-                                    {range} {range == 1 ? "notte" : "notti"}
-                                </div>
-                            )}
+  const style = {
+    marginTop: `${headerHeight}px`,
+  };
+  return (
+    <section style={style} className="p-8 sm:p-12 lg:px-24">
+      <div className="gap-10 grid grid-cols-1 md:grid-cols-2 justify-center items-center rounded-lg">
+        {/* Testo */}
+        <div className="flex flex-col justify-center items-center gap-5">
+          <h1 className=" text-gray-700 text-4xl font-bold leading-tight text-center">
+            Apri il tuo{" "}
+            <span className="text-red-600">BoolBnB</span>
+            <br />
+            potresti <br />
+            guadagnare <br />
+            fino a <br />
+            <span className="text-black">
+              {(range * 56.12).toFixed(2)}€
+            </span>
+          </h1>
 
-                            {/* Input Range */}
-                            <input
-                                type="range"
-                                className="w-full cursor-pointer custom-range"
-                                min={1}
-                                max={30}
-                                value={range}
-                                onChange={handleRangeChange}
-                                onMouseEnter={() => setShowTooltip(true)}
-                                onMouseLeave={() => setShowTooltip(false)}
-                                onMouseDown={() => setShowTooltip(true)}
-                                onMouseUp={() => setShowTooltip(false)}
-                            />
-                        </div>
-                    </div>
-                    <button
-                        className="bg-red-500 hover:bg-red-700 text-2xl cursor-pointer text-white py-3 px-6 rounded-lg shadow-md transition-all"
-                        onClick={goToFormPage}
-                    >
-                        💵 Apri il tuo BnB
-                    </button>
+          <div className="flex flex-col items-center md:items-start relative w-5/6 ">
+            <div className="relative w-full">
+              {/* Tooltip */}
+              {showTooltip && (
+                <div
+                  className="absolute bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-sm px-3 py-1 rounded-lg shadow-md"
+                  style={{ left: `${(range / 30) * 100}%` }} // Posizione dinamica
+                >
+                  {range} {range == 1 ? "notte" : "notti"}
                 </div>
+              )}
 
-                {/* Immagine / Mappa */}
-                <div className="w-full  h-full">
-                    <MyMapComponent />
-                </div>
+              {/* Input Range */}
+              <input
+                type="range"
+                className="w-full cursor-pointer custom-range"
+                min={1}
+                max={30}
+                value={range}
+                onChange={handleRangeChange}
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                onMouseDown={() => setShowTooltip(true)}
+                onMouseUp={() => setShowTooltip(false)}
+              />
             </div>
-        </section>
-    );
+          </div>
+          <button
+            className="bg-red-500 hover:bg-red-700 text-2xl cursor-pointer text-white py-3 px-6 rounded-lg shadow-md transition-all"
+            onClick={goToFormPage}
+          >
+            💵 Apri il tuo BnB
+          </button>
+        </div>
+
+        {/* Immagine / Mappa */}
+        <div className="w-full  h-full">
+          <MyMapComponent />
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function InfoSection() {
