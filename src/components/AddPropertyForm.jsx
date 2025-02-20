@@ -40,6 +40,7 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
 
   //  * Evento sui file che vengono selezionati manualmente
   const handleFileChange = (event) => {
+    event.preventDefault();
     const files = Array.from(event.target.files);
     setSelectedFiles((prev) => [...prev, ...files]); // Mantiene i file già caricati
   };
@@ -58,12 +59,8 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
   // * MUTATIONS
   const { mutate, isSuccess, isError, error, data } = useAddPropertyQuery();
 
-  // * ACTIONS
-  /* const handleFileChange = (event) => {
-    setSelectedFiles(event.target.files);
-  }; */
-
-  const onSubmit = (data) => {
+  const onSubmit = (data, event) => {
+    event.preventDefault();
     /* console.log("Form submitted!"); */ // Verifica che il form sia inviato
     const formData = new FormData();
     // Aggiungo tutti i valori del form a FormData
@@ -355,8 +352,8 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
                 type="file"
                 multiple
                 className="hidden"
+                accept="image/*"
                 onChange={handleFileChange}
-                accept="image/jpeg, image/png"
               />
 
               {/* Lista dei file caricati */}
