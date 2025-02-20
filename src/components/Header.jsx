@@ -22,14 +22,12 @@ const Header = () => {
     // isVisible controlla la visibilita del bookLink
     // location limita l'animazione in HomePage ("/")
     const bookLinkClass = `
-        ${
-            !isVisible &&
-            "visible sm:opacity-100 sm:!translate-x-0 sm:!translate-y-0"
+        ${!isVisible &&
+        "visible sm:opacity-100 sm:!translate-x-0 sm:!translate-y-0"
         }  
-        ${
-            location.pathname === "/" &&
-            window.innerHeight >= 640 &&
-            "invisible sm:opacity-0 sm:translate-x-[50px] lg:translate-x-[-150px] lg:translate-y-[15px] transition-all duration-500"
+        ${location.pathname === "/" &&
+        window.innerHeight >= 640 &&
+        "invisible sm:opacity-0 sm:translate-x-[50px] lg:translate-x-[-150px] lg:translate-y-[15px] transition-all duration-500"
         }  `;
     // hidden sm:block bg-[#d4c685] py-2 rounded-md border-2 border-stone-500 hover:bg-[#cabc7d] cursor-pointer
     // min-w-72 lg:px-16 text-lg font-semibold text-stone-900`;
@@ -42,7 +40,7 @@ const Header = () => {
                 isVisible={isVisible}
                 location={location}
             >
-                <Link to="/">
+                <Link onClick={() => window.scrollTo({ behavior: "smooth", top: 0 })} to="/">
                     <img
                         src="/bed-and-breakfast.png"
                         alt="logo"
@@ -127,11 +125,10 @@ function HeaderComp({
         <header
             ref={headerRef}
             //
-            className={`${
-                !isNotTriggeredAnim &&
+            className={`${!isNotTriggeredAnim &&
                 location.pathname === "/" &&
                 "-translate-y-40 duration-300"
-            } ${!isVisible && "hidden sm:flex"} 
+                } ${!isVisible && "hidden sm:flex"} 
             lg:px-[4vw] items-center sm:!-translate-0 flex 
             bg-linear-90/oklch from-15% from-[#d4c685] to-[#a7d3a6] sm:drop-shadow-lg text-center py-2 px-5 
             justify-between gap-4 fixed sm:sticky w-screen top-[-1px] z-40 text-stone-800 text-sm transition-all duration-200 ease-in`}

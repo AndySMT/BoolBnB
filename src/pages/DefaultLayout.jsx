@@ -11,8 +11,8 @@ import SkeleJumbotron from "../components/SkeleJumbotron";
 const LazyJumbotron = lazy(() => import("../components/Jumbotron"));
 
 function DefaultLayout() {
-  window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   const location = useLocation();
+  location.pathname !== "/" && window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   return (
     <RefsProvider>
       <Header />
