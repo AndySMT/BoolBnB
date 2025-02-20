@@ -4,7 +4,7 @@ import { FiHeart } from "react-icons/fi";
 import axios from "axios";
 import { baseUrl, likesEndpoint } from "../globals/apiUrls";
 import { useAddLikeQuery } from "../hooks/useDataQuery";
-function Heart({ propertyId }) {
+function Heart({ propertyId, onClick, classes }) {
     const [rating, setRating] = useState(false);
 
     // * QUERIES
@@ -15,14 +15,11 @@ function Heart({ propertyId }) {
         e.preventDefault();
         e.stopPropagation();
         mutate(propertyId);
+        onClick();
     };
 
     return (
-        <div>
-            <button onClick={gestioneLike}>
-                <FiHeart className="text-2xl hover:text-red-500 text-slate-900 opacity-70 drop-shadow-lg hover:cursor-pointer" />
-            </button>
-        </div>
+        <FiHeart onClick={gestioneLike} className={`${classes} hover:text-red-500 text-slate-900 opacity-70 drop-shadow-lg hover:cursor-pointer`} />
     );
 }
 

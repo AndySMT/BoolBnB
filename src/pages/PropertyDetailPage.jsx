@@ -166,11 +166,10 @@ function SectionImages({ property, savePost }) {
                             key={index}
                             src={`${imagesUrl}/${property.id}${img}`}
                             alt={`Thumbnail ${index + 1}`}
-                            className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${
-                                activeIndex === index
-                                    ? "outline-2 outline-blue-500"
-                                    : ""
-                            }`}
+                            className={`w-full aspect-[3/2] object-cover rounded-md cursor-pointer hover:scale-[1.02] transition-all ${activeIndex === index
+                                ? "outline-2 outline-blue-500"
+                                : ""
+                                }`}
                             onClick={() => handleThumbnailClick(index)}
                         />
                     ))}
@@ -181,22 +180,46 @@ function SectionImages({ property, savePost }) {
 }
 // SECTION DETAILS
 function SectionDetails({ property, savePost, reviewsCount, reviewsRef }) {
-    const [clickedHeart, setClickedHeart] = useState(null);
-    const [clickedShare, setClickedShare] = useState(null);
-    const [clickedSave, setClickedSave] = useState(null);
-    const toggleHeart = (Heart) => {
-        setClickedHeart(clickedHeart === Heart ? null : Heart);
+    const favouritesIds =
+        JSON.parse(localStorage.getItem("favourites")) || [];
+
+    const [isHeartClicked, setIsHeartClicked] = useState(false);
+    const [isSaved, setIsSaved] = useState(favouritesIds.includes(property.id));
+
+    const onHeartClick = () => {
+        setIsHeartClicked(true);
     };
-    const toggleShare = (Share) => {
-        setClickedShare(clickedShare === Share ? null : Share);
-    };
-    const toggleSave = (Save) => {
-        setClickedSave(clickedSave === Save ? null : Save);
+    const onShareClick = () => {
+        toast.info("Link copiato negli appunti");
+        navigator.clipboard.writeText(window.location.href); // copia il link
     };
     const handleScroll = () => {
         reviewsRef.current &&
             reviewsRef.current.scrollIntoView({ behavior: "smooth" });
     };
+
+    const onSaveClick = () => {
+        if (isSaved) {
+            const newFavourites = favouritesIds.filter((id) => id !== property.id);
+            localStorage.setItem("favourites", JSON.stringify(newFavourites));
+            setIsSaved(false);
+        } else {
+            favouritesIds.push(property.id);
+            localStorage.setItem("favourites", JSON.stringify(favouritesIds));
+            setIsSaved(true);
+            toast.success("Proprietà salvata")
+        }
+    }
+
+    useEffect(() => {
+        if (isHeartClicked) {
+            toast.success("Like aggiunto");
+            const timer = setTimeout(() => {
+                setIsHeartClicked(false);
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [isHeartClicked])
 
     return (
         <>
@@ -207,46 +230,13 @@ function SectionDetails({ property, savePost, reviewsCount, reviewsRef }) {
                     </h1>
                     <div className="flex gap-2 items-center text-2xl ">
                         {/* HEART */}
-                        <div
-                            className={`flex items-center rounded-xl boxShad  py-1 px-1.5 sm:block  
-                         ${
-                             clickedHeart === "heart"
-                                 ? "bg-red-400"
-                                 : "bg-white"
-                         }`}
-                            onClick={() => toggleHeart("heart")}
-                        >
-                            <Heart propertyId={property.id} />
-                        </div>
+                        <Heart classes={`${isHeartClicked && "bg-red-300"} flex items-center rounded-xl boxShad box-content py-2 px-1.5 cursor-pointer hover:text-red-500`} onClick={onHeartClick} propertyId={property.id} />
                         {/* icona condividi */}
-                        <div
-                            className={`flex items-center rounded-xl boxShad  py-2 px-1.5 sm:block  
-                         ${
-                             clickedShare === "share"
-                                 ? "bg-blue-400"
-                                 : "bg-white"
-                         }`}
-                            onClick={() => toggleShare("share")}
-                        >
-                            <span className="text-xs underline underline-offset-2">
-                                <CiShare2 className="text-2xl hover:text-blue-500 cursor-pointer" />
-                            </span>
-                        </div>
+                        <CiShare2 onClick={onShareClick}
+                            className="flex items-center rounded-xl boxShad py-2 px-1.5 cursor-pointer box-content hover:text-blue-500" />
                         {/* icona Save */}
-                        <div
-                            className={`flex items-center rounded-xl boxShad   sm:block cursor-pointer  
-                         ${
-                             clickedSave === "save"
-                                 ? "bg-green-300"
-                                 : "bg-white"
-                         }`}
-                            onClick={() => toggleSave("save")}
-                        >
-                            <button onClick={savePost} className="py-2 px-1.5">
-                                <PiBookmarks className="text-2xl text-gray-700 hover:text-green-500 cursor-pointer" />
-                                <span className="text-xs underline underline-offset-2"></span>
-                            </button>
-                        </div>
+                        <PiBookmarks onClick={onSaveClick}
+                            className={`${isSaved && "bg-green-300"} flex items-center rounded-xl boxShad box-content  py-2 px-1.5 cursor-pointer hover:text-green-600`} />
                     </div>
                 </div>
                 {/* Dettagli della proprietà */}
@@ -355,10 +345,10 @@ function SectionPosition({ property }) {
                         {property.city === "Roma"
                             ? "Elegante quartiere di Roma, molto strategico per la sua posizione, dove troverete negozi di ogni genere, supermercati, bar, tabaccherie, caffetterie e servizi di ristorazione da asporto e non."
                             : property.city === "Milano"
-                            ? "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
-                            : property.city === "Firenze"
-                            ? "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
-                            : `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`}
+                                ? "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
+                                : property.city === "Firenze"
+                                    ? "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
+                                    : `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`}
                     </div>
                 </div>
 
