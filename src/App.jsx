@@ -10,6 +10,7 @@ import { lazy, Suspense } from "react";
 import FavouritesPage from "./pages/FavouritesPage";
 import AddPropertyForm from "./components/AddPropertyForm";
 import SkeleCardsSection from "./components/SkeleCardsSection";
+import AiSearchPage from './pages/AiSearchPage';
 const LazyHomePage = lazy(() => import("./pages/HomePage"));
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ function App() {
                         <Route path="detail/:id" Component={PropertyDetail} />
                         <Route path="favourites" Component={FavouritesPage} />
                         <Route path="lost" Component={LostPage} />
+                        <Route path="ai-search" element={<AiSearchPage />} />
                         <Route path="*" Component={ErrorPage} />
                     </Route>
                 </Routes>
