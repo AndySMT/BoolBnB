@@ -11,19 +11,20 @@ import { motion } from "framer-motion";
 function HomePage() {
     // Stato per i parametri di filtro
     const [params, setParams] = useState({});
+    // Stato per il numero di proprietà visualizzate
+    const [propsCount, setPropsCount] = useState(4); // ? numero di proprietà per pagina
 
     return (
         <>
             {/* Sezione di filtro */}
-            <FilterSection setParams={setParams} />
+            <FilterSection setParams={setParams} setPropsCount={setPropsCount} />
             {/* Container per far rerenderizzare solo CardsSection */}
-            <CardsSectionContainer params={params} />
+            <CardsSectionContainer params={params} propsCount={propsCount} setPropsCount={setPropsCount} />
         </>
     );
 }
 
-const CardsSectionContainer = ({ params }) => {
-    const [currPage, setCurrPage] = useState(1);
+const CardsSectionContainer = ({ params, propsCount, setPropsCount }) => {
     const {
         isLoading,
         isFetchingNextPage,
@@ -43,14 +44,14 @@ const CardsSectionContainer = ({ params }) => {
 
     useEffect(() => {
         // vai giu dopo il fetch e se sei dal 2 fetch in poi
-        if (currPage > 1 && isFetched) {
+        if (propsCount > 4 && isFetched) {
             window.scroll({
                 left: 0,
                 top: document.documentElement.scrollTop + 600, // ? offset da calcolare invece con l'altezza della card (useRefsContext)
                 behavior: "smooth",
             });
         }
-    }, [currPage]);
+    }, [propsCount]);
 
     // Gestione dello stato di caricamento e errore
     if (isError) {
@@ -82,14 +83,14 @@ const CardsSectionContainer = ({ params }) => {
                     )}
                 </>
             </CardsSection>
-            {data?.pages[data?.pages.length - 1]?.total_res >= 4 && (
+            {propsCount < data?.pages[0].total_quantity && (
                 <div className="flex justify-center">
                     <LoadMoreButton
                         noMore={false}
                         // al click fetcha la prossima pagina e setta la prossima pagina
                         onClick={() => {
                             fetchNextPage();
-                            setCurrPage((curr) => curr + 1);
+                            setPropsCount(curr => curr + 4)
                         }}
                     />
                 </div>
@@ -98,7 +99,7 @@ const CardsSectionContainer = ({ params }) => {
     );
 };
 
-function FilterSection({ setParams }) {
+function FilterSection({ setParams, setPropsCount }) {
     const { headerRef, jumboRef, filterRef } = useRefsContext();
 
     // Stato per il filtro attivo
@@ -117,6 +118,7 @@ function FilterSection({ setParams }) {
 
     // Funzione per applicare un filtro
     const handleFilterClick = (type, index) => {
+        setPropsCount(4);
         setParams({ property_type: type === "tutti" ? "" : type });
         setActiveFilter(index);
         window.scrollTo({
@@ -128,8 +130,8 @@ function FilterSection({ setParams }) {
     const style =
         document.documentElement.offsetWidth < 640
             ? {
-                  top: "-1px",
-              }
+                top: "-1px",
+            }
             : { top: `${headerRef.current.offsetHeight - 1}px` };
 
     // classes
@@ -150,19 +152,17 @@ function FilterSection({ setParams }) {
                     {filters.map((filter, index) => (
                         <div
                             key={Object.keys(filter)[0]}
-                            className={`group flex flex-col items-center gap-2 cursor-pointer ${
-                                activeFilter === index
-                                    ? "opacity-100 font-semibold"
-                                    : "opacity-40"
-                            }`}
+                            className={`group flex flex-col items-center gap-2 cursor-pointer ${activeFilter === index
+                                ? "opacity-100 font-semibold"
+                                : "opacity-40"
+                                }`}
                             onClick={() =>
                                 handleFilterClick(Object.keys(filter)[0], index)
                             }
                         >
                             <img
-                                src={`/filter_imgs/${
-                                    Object.values(filter)[0]
-                                }.png`}
+                                src={`/filter_imgs/${Object.values(filter)[0]
+                                    }.png`}
                                 alt={Object.values(filter)[0]}
                                 className="w-6 h-6 group-hover:opacity-100"
                             />
