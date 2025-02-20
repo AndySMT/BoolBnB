@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, use } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -19,8 +19,9 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
   } = useForm({ resolver: yupResolver(schema) }); //schema si trova sotto
 
   // * STATE Files
-  const [selectedFiles, setSelectedFiles] = useState([]);
   const fileInputRef = useRef(null);
+
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const navigate = useNavigate();
 
   // * Funzione per aggiungere i file selezionati
@@ -28,15 +29,30 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
     setSelectedFiles((prev) => [...prev, ...Array.from(files)]);
   };
 
+  // * Click
+  const handleClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    } else {
+      console.error("fileInputRef.current è null!");
+    }
+  };
+
   //  * Evento sui file che vengono selezionati manualmente
   const handleFileChange = (event) => {
-    handleFiles(event.target.files);
+    event.preventDefault();
+    const files = Array.from(event.target.files);
+    setSelectedFiles((prev) => [...prev, ...files]);
+    setValue("files", [...selectedFiles, ...files], { shouldValidate: true });
   };
 
   // * DND
   const handleDrop = (event) => {
     event.preventDefault();
-    handleFiles(event.dataTransfer.files);
+    event.stopPropagation();
+    const files = Array.from(event.dataTransfer.files);
+    setSelectedFiles((prev) => [...prev, ...files]);
+    setValue("files", [...selectedFiles, ...files], { shouldValidate: true });
   };
   // useDroppable hook for drag & drop area
   const { setNodeRef } = useDroppable({
@@ -46,12 +62,10 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
   // * MUTATIONS
   const { mutate, isSuccess, isError, error, data } = useAddPropertyQuery();
 
-  // * ACTIONS
-  /* const handleFileChange = (event) => {
-    setSelectedFiles(event.target.files);
-  }; */
-
-  const onSubmit = (data) => {
+  const onSubmit = (data, event) => {
+    event.preventDefault();
+    console.log("Dati del form:", data);
+    console.log("File selezionati:", selectedFiles);
     /* console.log("Form submitted!"); */ // Verifica che il form sia inviato
     const formData = new FormData();
     // Aggiungo tutti i valori del form a FormData
@@ -64,20 +78,23 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
         formData.append("files", file);
       });
     }
+    console.log("Dati inviati:", Object.fromEntries(formData.entries()));
+    console.log("FormData:", Object.fromEntries(formData.entries()));
     mutate(formData);
   };
 
   useEffect(() => {
-    setValue("files", selectedFiles);
+    console.log("Errori del form:", errors);
+    console.log("File selezionati aggiornati:", selectedFiles);
     if (isSuccess) {
+      setValue("files", selectedFiles, { shouldValidate: true });
       toast.success("Annuncio pubblicato con successo!");
       navigate("/");
       // isSuccess indica la proprieta salvata nel db correttamente
-      setSelectedFiles([]);
     } else if (isError) {
       toast.error("Errore nell'invio del form, riprova");
     }
-  }, [isSuccess, isError, /* setIsFormOpen */ selectedFiles, setValue]);
+  }, [isSuccess, isError, selectedFiles, setValue]);
 
   return (
     <>
@@ -322,9 +339,9 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
             <div
               ref={setNodeRef} // Assegniamo il riferimento dell'area di drop
               className="border-2 border-dashed border-gray-300 p-6 text-center rounded-lg cursor-pointer transition hover:bg-gray-100"
-              onClick={() => fileInputRef.current.click()} // 🔹 Click triggera l'input file
-              onDragOver={(e) => e.preventDefault()} // 🔹 Evita comportamento default
-              onDrop={handleDrop} // 🔹 Gestisce il drop dei file
+              onClick={handleClick}
+              onDragOver={(e) => e.preventDefault()} // Evita comportamento default
+              onDrop={handleDrop} // Gestisce il drop dei file
             >
               <p className="text-gray-500 flex items-center justify-center text-3xl">
                 {selectedFiles.length > 0 ? (
@@ -339,10 +356,10 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               {/* Input nascosto */}
               <input
                 ref={fileInputRef}
-                {...register("files")}
                 type="file"
                 multiple
                 className="hidden"
+                accept="image/*"
                 onChange={handleFileChange}
               />
 
@@ -364,18 +381,6 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               )}
             </div>
           </DndContext>
-          {selectedFiles.length > 0 && (
-            <div className="mt-4">
-              <h4 className="font-semibold">File selezionati:</h4>
-              <ul>
-                {selectedFiles.map((file, index) => (
-                  <li key={index} className="text-sm flex items-center gap-2">
-                    <CiImageOn /> {file.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
           {errors.files && (
             <span className="text-red-500">{errors.files.message}</span>
           )}
@@ -458,29 +463,14 @@ const schema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
   files: yup
     .array()
-    .of(
-      yup
-        .mixed()
-        .test(
-          "required",
-          "Il file è obbligatorio",
-          (value) => value && value.length > 0
-        ) // Verifica che ci sia almeno un file
-        .test("fileSize", "Il file è troppo grande", (value) => {
-          return (
-            value &&
-            Array.from(value).every((file) => file.size <= 2 * 1024 * 1024)
-          );
-        })
-        .test("fileType", "Formato non supportato", (value) => {
-          // Verifica che ogni file sia di tipo immagine jpeg o png
-          return (
-            value &&
-            Array.from(value).every((file) =>
-              ["image/jpeg", "image/png"].includes(file.type)
-            )
-          );
-        })
+    .min(1, "Devi caricare almeno un file")
+    .required("Devi caricare almeno un file")
+    .test("fileSize", "Il file è troppo grande", (files) =>
+      files.every((file) => file.size <= 5 * 1024 * 1024)
     )
-    .required("Devi caricare almeno un file"), // Verifica che ci sia almeno un file
+    .test("fileType", "Formato non supportato", (files) =>
+      files.every((file) =>
+        ["image/jpeg", "image/png", "image/gif"].includes(file.type)
+      )
+    ),
 });
