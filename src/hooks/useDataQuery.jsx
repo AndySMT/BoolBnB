@@ -63,11 +63,11 @@ export const useAddPropertyQuery = () => {
     });
 };
 
-export const useInfiniteGetRevsQuery = (property_id) => {
+export const useInfiniteGetRevsQuery = (property_id, params) => {
     return useInfiniteQuery({
-        queryKey: ["reviews", property_id],
+        queryKey: ["reviews", property_id, params],
         queryFn: async ({ pageParam }) => {
-            const res = await getReviews(property_id, { page: pageParam });
+            const res = await getReviews(property_id, {...params, page: pageParam });
             return res.data;
         },
         initialPageParam: 1,

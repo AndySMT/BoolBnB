@@ -20,10 +20,10 @@ import Heart from "../components/Heart";
 import ChatBot from "../components/ChatBot";
 import "leaflet/dist/leaflet.css";
 import {
-  useAddReviewQuery,
-  useGetNewReviewsQuery,
-  useGetPropertyQuery,
-  useInfiniteGetRevsQuery,
+    useAddReviewQuery,
+    useGetNewReviewsQuery,
+    useGetPropertyQuery,
+    useInfiniteGetRevsQuery,
 } from "../hooks/useDataQuery";
 import { useRefsContext } from "../Context/RefsContext";
 import SkeleDetailSection from "../components/SkeleDetailSection";
@@ -32,55 +32,62 @@ import { toast } from "react-toastify";
 
 //! Funzione propertyDetail
 function PropertyDetail() {
-  const { id } = useParams();
-  const reviewsRef = useRef(null);
-  const navigate = useNavigate();
-  const newRevsCount =
-    Number(window.sessionStorage.getItem("newRevsCount")) || 0;
+    const { id } = useParams();
+    const reviewsRef = useRef(null);
+    const navigate = useNavigate();
+    const newRevsCount =
+        Number(window.sessionStorage.getItem("newRevsCount")) || 0;
 
-  //* QUERIES
-  // query per la proprieta
-  const {
-    isLoading: isLoadingP,
-    isError: isErrorP,
-    data: propertyRes,
-  } = useGetPropertyQuery(id);
+    const [revsParams, setRevsParams] = useState({})
 
-  // query per le recensioni
-  const {
-    isLoading: isLoadingR,
-    isError: isErrorR,
-    data: reviewsRes,
-    fetchNextPage,
-  } = useInfiniteGetRevsQuery(id, {});
+    //* QUERIES
+    // query per la proprieta
+    const {
+        isLoading: isLoadingP,
+        isError: isErrorP,
+        data: propertyRes,
+    } = useGetPropertyQuery(id);
 
-  const {
-    isLoading: isLoadingNR,
-    isError: isErrorNR,
-    data: newReviewsRes,
-    refetch: refetchNR,
-  } = useGetNewReviewsQuery(id, newRevsCount);
+    // query per le recensioni
+    const {
+        isLoading: isLoadingR,
+        isError: isErrorR,
+        data: reviewsRes,
+        fetchNextPage,
+        refetch: refetchR
+    } = useInfiniteGetRevsQuery(id, revsParams);
 
-  const { mutate, isSuccess } = useAddReviewQuery(id);
+    const {
+        isLoading: isLoadingNR,
+        isError: isErrorNR,
+        data: newReviewsRes,
+        refetch: refetchNR,
+    } = useGetNewReviewsQuery(id, newRevsCount);
 
-  // * ACTIONS
+    const { mutate, isSuccess } = useAddReviewQuery(id);
 
-  //   Funzione per salvare il Post
-  const savePost = () => {
-    const favouritesIds = JSON.parse(localStorage.getItem("favourites")) || [];
-    if (!favouritesIds.includes(property.id)) {
-      favouritesIds.push(property.id);
-      localStorage.setItem("favourites", JSON.stringify(favouritesIds));
-    }
-  };
+    // * ACTIONS
 
-  //* RETURNS
-  // attesa risposta
-  if (isLoadingP || isLoadingR || isLoadingNR) return <SkeleDetailSection />;
-  // chiamata fallita
-  if (isErrorP || isErrorR || isErrorNR) navigate("/notfound");
-  // risposta ricevuta
-  const property = propertyRes.results[0];
+    //   Funzione per salvare il Post
+    const savePost = () => {
+        const favouritesIds = JSON.parse(localStorage.getItem("favourites")) || [];
+        if (!favouritesIds.includes(property.id)) {
+            favouritesIds.push(property.id);
+            localStorage.setItem("favourites", JSON.stringify(favouritesIds));
+        }
+    };
+
+    useEffect(() => {
+        refetchR()
+    }, [revsParams])
+
+    //* RETURNS
+    // attesa risposta
+    if (isLoadingP || isLoadingR || isLoadingNR) return <SkeleDetailSection />;
+    // chiamata fallita
+    if (isErrorP || isErrorR || isErrorNR) navigate("/notfound");
+    // risposta ricevuta
+    const property = propertyRes.results[0];
 
     return (
         <>
@@ -110,6 +117,7 @@ function PropertyDetail() {
                     reviewsRef={reviewsRef}
                     fetchNextPage={fetchNextPage}
                     newReviewsRes={newReviewsRes}
+                    setRevsParams={setRevsParams}
                 />
                 {/* sezione form recensione */}
                 <SectionFormRecensioni
@@ -165,7 +173,7 @@ function SectionImages({ property, savePost }) {
 
                 {/* Miniature */}
                 <div className="overflow-auto w-1/4 flex flex-col gap-2 p-1 border-y border-y-gray-600 rounded-md">
-                {/* Mappa su tutte le immagini per creare le miniature */}
+                    {/* Mappa su tutte le immagini per creare le miniature */}
                     {property.img_endpoints.map((img, index) => (
                         <img
                             key={index}
@@ -185,45 +193,45 @@ function SectionImages({ property, savePost }) {
 }
 // SECTION DETAILS
 function SectionDetails({ property, savePost, reviewsCount, reviewsRef }) {
-  const favouritesIds = JSON.parse(localStorage.getItem("favourites")) || [];
+    const favouritesIds = JSON.parse(localStorage.getItem("favourites")) || [];
 
-  const [isHeartClicked, setIsHeartClicked] = useState(false);
-  const [isSaved, setIsSaved] = useState(favouritesIds.includes(property.id));
+    const [isHeartClicked, setIsHeartClicked] = useState(false);
+    const [isSaved, setIsSaved] = useState(favouritesIds.includes(property.id));
 
-  const onHeartClick = () => {
-    setIsHeartClicked(true);
-  };
-  const onShareClick = () => {
-    toast.info("Link copiato negli appunti");
-    navigator.clipboard.writeText(window.location.href); // copia il link
-  };
-  const handleScroll = () => {
-    reviewsRef.current &&
-      reviewsRef.current.scrollIntoView({ behavior: "smooth" });
-  };
+    const onHeartClick = () => {
+        setIsHeartClicked(true);
+    };
+    const onShareClick = () => {
+        toast.info("Link copiato negli appunti");
+        navigator.clipboard.writeText(window.location.href); // copia il link
+    };
+    const handleScroll = () => {
+        reviewsRef.current &&
+            reviewsRef.current.scrollIntoView({ behavior: "smooth" });
+    };
 
-  const onSaveClick = () => {
-    if (isSaved) {
-      const newFavourites = favouritesIds.filter((id) => id !== property.id);
-      localStorage.setItem("favourites", JSON.stringify(newFavourites));
-      setIsSaved(false);
-    } else {
-      favouritesIds.push(property.id);
-      localStorage.setItem("favourites", JSON.stringify(favouritesIds));
-      setIsSaved(true);
-      toast.success("Proprietà salvata");
-    }
-  };
+    const onSaveClick = () => {
+        if (isSaved) {
+            const newFavourites = favouritesIds.filter((id) => id !== property.id);
+            localStorage.setItem("favourites", JSON.stringify(newFavourites));
+            setIsSaved(false);
+        } else {
+            favouritesIds.push(property.id);
+            localStorage.setItem("favourites", JSON.stringify(favouritesIds));
+            setIsSaved(true);
+            toast.success("Proprietà salvata");
+        }
+    };
 
-  useEffect(() => {
-    if (isHeartClicked) {
-      toast.success("Like aggiunto");
-      const timer = setTimeout(() => {
-        setIsHeartClicked(false);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [isHeartClicked]);
+    useEffect(() => {
+        if (isHeartClicked) {
+            toast.success("Like aggiunto");
+            const timer = setTimeout(() => {
+                setIsHeartClicked(false);
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [isHeartClicked]);
 
     return (
         <>
@@ -249,246 +257,273 @@ function SectionDetails({ property, savePost, reviewsCount, reviewsRef }) {
                     {property.description}
                 </p>
 
-        <span className="sm:text-xl font-bold">Cosa offre:</span>
-        <div className="grid grid-cols-2 grid-rows-2 sm:gap-2 text-base text-gray-500 sm:text-lg  border px-4 py-2 rounded-lg whitespace-nowrap">
-          <span className="flex items-center gap-1">
-            <MdBed />
-            Stanze: {property.n_bedrooms}
-          </span>
-          <span className="flex items-center gap-1">
-            <MdBathroom />
-            Bagni: {property.n_bathrooms}
-          </span>
-          <span className="flex items-center gap-1">
-            <FaBed />
-            Letti: {property.n_beds}
-          </span>
-          <span className="flex items-center gap-1">
-            <TbRulerMeasure />
-            Superficie: {property.square_meters} m²
-          </span>
-        </div>
-        {/* Amato dagli ospiti */}
+                <span className="sm:text-xl font-bold">Cosa offre:</span>
+                <div className="grid grid-cols-2 grid-rows-2 sm:gap-2 text-base text-gray-500 sm:text-lg  border px-4 py-2 rounded-lg whitespace-nowrap">
+                    <span className="flex items-center gap-1">
+                        <MdBed />
+                        Stanze: {property.n_bedrooms}
+                    </span>
+                    <span className="flex items-center gap-1">
+                        <MdBathroom />
+                        Bagni: {property.n_bathrooms}
+                    </span>
+                    <span className="flex items-center gap-1">
+                        <FaBed />
+                        Letti: {property.n_beds}
+                    </span>
+                    <span className="flex items-center gap-1">
+                        <TbRulerMeasure />
+                        Superficie: {property.square_meters} m²
+                    </span>
+                </div>
+                {/* Amato dagli ospiti */}
 
-        <div className="cursor-pointer mt-3" onClick={handleScroll}>
-          <div className="rounded-lg flex items-center gap-5 w-fit px-8 py-2 boxShad font-semibold">
-            <div className="flex justify-between">
-              <img
-                src="/images/left.png"
-                alt=""
-                className="scale-x-[-1] pl-1"
-              />
-              <p className="text-center text-xl">
-                Amato <br /> dagli ospiti
-              </p>
-              <img src="/images/left.png" alt="" className="pl-1" />
-            </div>
-            <p className="text-center">
-              {reviewsCount && reviewsCount > 0
-                ? `${reviewsCount} recensioni`
-                : "Nessuna recensione"}
-            </p>
-          </div>
-        </div>
-      </section>
-    </>
-  );
+                <div className="cursor-pointer mt-3" onClick={handleScroll}>
+                    <div className="rounded-lg flex items-center gap-5 w-fit px-8 py-2 boxShad font-semibold">
+                        <div className="flex justify-between">
+                            <img
+                                src="/images/left.png"
+                                alt=""
+                                className="scale-x-[-1] pl-1"
+                            />
+                            <p className="text-center text-xl">
+                                Amato <br /> dagli ospiti
+                            </p>
+                            <img src="/images/left.png" alt="" className="pl-1" />
+                        </div>
+                        <p className="text-center">
+                            {reviewsCount && reviewsCount > 0
+                                ? `${reviewsCount} recensioni`
+                                : "Nessuna recensione"}
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </>
+    );
 }
 
 // SECTION POSITION
 function SectionPosition({ property }) {
-  return (
-    <>
-      <section className="flex flex-col lg:flex-row  items-stretch justify-between gap-12 px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400 ">
-        {/* Informazioni sulla proprietà */}
-        <div className="lg:w-1/2">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4 ">
-            Posizione
-          </h1>
-          <div className="grid grid-cols-2 grid-rows-2  sm:gap-2  text-gray-500 border px-1 py-2 rounded-lg whitespace-nowrap ">
-            <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
-              <div className="flex items-center gap-1">
-                <MdOutlineLocationCity />
-                <span>Città:</span>{" "}
-              </div>
-              <span className="font-normal">{property.city}</span>
-            </div>
-            <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
-              <div className="flex items-center gap-1">
-                <FaMapMarkerAlt />
-                <span>Indirizzo:</span>{" "}
-              </div>
-              <div>
-                <span className="font-normal">{property.address}</span>
-              </div>
-            </div>
-            <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
-              <div className="flex items-center gap-1">
-                <FaMapMarkerAlt />
-                <span>Zip code:</span>
-              </div>
-              <span className="font-normal">{property.zipcode}</span>
-            </div>
-            <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
-              <div className="flex items-center gap-1">
-                <GiFamilyHouse />
-                <span>Tipo di proprietà:</span>{" "}
-              </div>
-              <span className="font-normal">{property.property_type}</span>
-            </div>
-          </div>
-          <div className="my-6 px-4 py-2 border rounded-lg whitespace-wrap">
-            {property.city === "Roma"
-              ? "Elegante quartiere di Roma, molto strategico per la sua posizione, dove troverete negozi di ogni genere, supermercati, bar, tabaccherie, caffetterie e servizi di ristorazione da asporto e non."
-              : property.city === "Milano"
-              ? "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
-              : property.city === "Firenze"
-              ? "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
-              : `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`}
-          </div>
-        </div>
+    return (
+        <>
+            <section className="flex flex-col lg:flex-row  items-stretch justify-between gap-12 px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400 ">
+                {/* Informazioni sulla proprietà */}
+                <div className="lg:w-1/2">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4 ">
+                        Posizione
+                    </h1>
+                    <div className="grid grid-cols-2 grid-rows-2  sm:gap-2  text-gray-500 border px-1 py-2 rounded-lg whitespace-nowrap ">
+                        <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
+                            <div className="flex items-center gap-1">
+                                <MdOutlineLocationCity />
+                                <span>Città:</span>{" "}
+                            </div>
+                            <span className="font-normal">{property.city}</span>
+                        </div>
+                        <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
+                            <div className="flex items-center gap-1">
+                                <FaMapMarkerAlt />
+                                <span>Indirizzo:</span>{" "}
+                            </div>
+                            <div>
+                                <span className="font-normal">{property.address}</span>
+                            </div>
+                        </div>
+                        <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
+                            <div className="flex items-center gap-1">
+                                <FaMapMarkerAlt />
+                                <span>Zip code:</span>
+                            </div>
+                            <span className="font-normal">{property.zipcode}</span>
+                        </div>
+                        <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
+                            <div className="flex items-center gap-1">
+                                <GiFamilyHouse />
+                                <span>Tipo di proprietà:</span>{" "}
+                            </div>
+                            <span className="font-normal">{property.property_type}</span>
+                        </div>
+                    </div>
+                    <div className="my-6 px-4 py-2 border rounded-lg whitespace-wrap">
+                        {property.city === "Roma"
+                            ? "Elegante quartiere di Roma, molto strategico per la sua posizione, dove troverete negozi di ogni genere, supermercati, bar, tabaccherie, caffetterie e servizi di ristorazione da asporto e non."
+                            : property.city === "Milano"
+                                ? "Milano è una delle città più dinamiche d'Italia, nota per la sua moda, arte e cultura. Il centro città è un mix affascinante di antico e moderno, con il famoso Duomo, gallerie d'arte e quartieri pieni di negozi di alta moda."
+                                : property.city === "Firenze"
+                                    ? "Firenze, culla del Rinascimento, è una città che incanta con le sue opere d'arte, i palazzi storici e la bellezza delle sue piazze. Qui potrai passeggiare lungo l'Arno, ammirare il Duomo e visitare i famosi musei come gli Uffizi."
+                                    : `${property.city} è una città vivace, ricca di storia, con strade affollate, edifici moderni, parchi verdi, cultura vibrante e diverse tradizioni`}
+                    </div>
+                </div>
 
-        {/* Mappa */}
-        <div className="lg:w-1/2 lg:py-8 lg:px-4 ">
-          <MyMapComponent property={property} />
-        </div>
-      </section>
-    </>
-  );
+                {/* Mappa */}
+                <div className="lg:w-1/2 lg:py-8 lg:px-4 ">
+                    <MyMapComponent property={property} />
+                </div>
+            </section>
+        </>
+    );
 }
 // SECTION CONTACT HOST
 function SectionHost({ property }) {
-  const [showContactForm, setShowContactForm] = useState(false);
-  const { id } = useParams();
-  return (
-    <>
-      <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400">
-        <section className="flex flex-col sm:flex-row justify-between gap-4">
-          {/* Informazioni sull'Host */}
-          <div className="md:w-1/2 space-y-2 border  px-4 py-2 rounded-lg whitespace-wrap self-start">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
-              Informazioni sull'Host
-            </h1>
-            <div className="flex items-center gap-2 text-lg">
-              <MdOutlineLocationCity />
-              <span className="font-semibold">Nome dell'host:</span>
-              <span>{property?.first_name}</span>
-            </div>
-            <div className="flex items-center gap-2 text-lg">
-              <FaMapMarkerAlt />
-              <span className="font-semibold">Cognome dell'host:</span>
-              <span>{property?.last_name}</span>
-            </div>
-            <div className="my-6">{property?.host_description}</div>
-          </div>
-          {/* Mobile toggle button */}
-          <button
-            className="sm:hidden w-full py-2 px-4 bg-teal-700 text-white rounded-lg mb-4 cursor-pointer"
-            onClick={() => setShowContactForm(!showContactForm)}
-          >
-            {showContactForm
-              ? "Nascondi form contatto"
-              : "Mostra form contatto"}
-          </button>
-          {/* Contact Form */}
-          <PaginaContact showContactForm={showContactForm} propertyId={id} />
-        </section>
-      </section>
-    </>
-  );
+    const [showContactForm, setShowContactForm] = useState(false);
+    const { id } = useParams();
+    return (
+        <>
+            <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400">
+                <section className="flex flex-col sm:flex-row justify-between gap-4">
+                    {/* Informazioni sull'Host */}
+                    <div className="md:w-1/2 space-y-2 border  px-4 py-2 rounded-lg whitespace-wrap self-start">
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide mb-4">
+                            Informazioni sull'Host
+                        </h1>
+                        <div className="flex items-center gap-2 text-lg">
+                            <MdOutlineLocationCity />
+                            <span className="font-semibold">Nome dell'host:</span>
+                            <span>{property?.first_name}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-lg">
+                            <FaMapMarkerAlt />
+                            <span className="font-semibold">Cognome dell'host:</span>
+                            <span>{property?.last_name}</span>
+                        </div>
+                        <div className="my-6">{property?.host_description}</div>
+                    </div>
+                    {/* Mobile toggle button */}
+                    <button
+                        className="sm:hidden w-full py-2 px-4 bg-teal-700 text-white rounded-lg mb-4 cursor-pointer"
+                        onClick={() => setShowContactForm(!showContactForm)}
+                    >
+                        {showContactForm
+                            ? "Nascondi form contatto"
+                            : "Mostra form contatto"}
+                    </button>
+                    {/* Contact Form */}
+                    <PaginaContact showContactForm={showContactForm} propertyId={id} />
+                </section>
+            </section>
+        </>
+    );
 }
 // SECTION RECENSIONE
 function SectionRecensioni({
-  reviewsRef,
-  reviewsRes,
-  fetchNextPage,
-  newReviewsRes,
+    reviewsRef,
+    reviewsRes,
+    fetchNextPage,
+    newReviewsRes,
+    setRevsParams
 }) {
-  const { headerRef } = useRefsContext();
-  const [scrollMargin, setScrollMargin] = useState("0px");
-  const [reviewsCount, setReviewsCount] = useState(
-    reviewsRes.pages[0].total_res || 4
-  );
-  const onClick = () => {
-    fetchNextPage();
-    setReviewsCount((curr) => curr + 4);
-  };
-  // Aggiorno scrollMargin quando headerRef è disponibile
-  useEffect(() => {
-    if (headerRef.current) {
-      setScrollMargin(`${headerRef.current.offsetHeight + 20}px`);
+    const { headerRef } = useRefsContext();
+    const [scrollMargin, setScrollMargin] = useState("0px");
+    const [reviewsCount, setReviewsCount] = useState(
+        reviewsRes.pages[0].total_res || 4
+    );
+
+    // btn che carica la pagina successiva delle reviews
+    const onLoadMoreBtnClick = () => {
+        fetchNextPage();
+        setReviewsCount((curr) => curr + 4);
+    };
+
+    const onFilterBtnClick = (e) => {
+        const btnClicked = e.target
+        switch (btnClicked.name) {
+            case "rating-desc":
+                setRevsParams({})
+                break;
+            case "rating-asc":
+                setRevsParams({ asc: "true" })
+                break;
+            case "data-desc":
+                setRevsParams({ data: "true" })
+                break;
+            case "data-asc":
+                setRevsParams({ data: "true", asc: "true" })
+                break;
+        }
+
     }
-  }, [headerRef]);
 
-  const detail = <span className="text-xs">{"(Dal più Recente)"}</span>;
+    // Aggiorno scrollMargin quando headerRef è disponibile
+    useEffect(() => {
+        if (headerRef.current) {
+            setScrollMargin(`${headerRef.current.offsetHeight + 20}px`);
+        }
+    }, [headerRef]);
 
-  return (
-    <section
-      ref={reviewsRef}
-      style={{ scrollMarginTop: scrollMargin }}
-      className="reviews-section px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400"
-    >
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide  ">
-          Recensioni
-        </h1>
-      </div>
+    return (
+        <section
+            ref={reviewsRef}
+            style={{ scrollMarginTop: scrollMargin }}
+            className="reviews-section px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6 border-b border-stone-400"
+        >
+            <div className="flex justify-between items-center mb-4">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-wide  ">
+                    Recensioni
+                </h1>
+                <div className="flex gap-1">
+                    <button onClick={onFilterBtnClick} name="rating-desc" className="px-4 py-2 rounded-lg bg-blue-300 hover:bg-blue-400 cursor-pointer">Dal più votato</button>
+                    <button onClick={onFilterBtnClick} name="rating-asc" className="px-4 py-2 rounded-lg bg-blue-300 hover:bg-blue-400 cursor-pointer">Dal meno votato</button>
+                    <button onClick={onFilterBtnClick} name="data-desc" className="px-4 py-2 rounded-lg bg-blue-300 hover:bg-blue-400 cursor-pointer">Dal più recente</button>
+                    <button onClick={onFilterBtnClick} name="data-asc" className="px-4 py-2 rounded-lg bg-blue-300 hover:bg-blue-400 cursor-pointer">Dal meno recente</button>
+                </div>
+            </div>
 
-      <div className="flex flex-wrap whitespace-wrap">
-        {/* reviews appena scritte */}
-        {newReviewsRes?.map((rev) => (
-          <ReviewComponent key={rev.id} rev={rev} />
-        ))}
-        {/* reviews gia presenti */}
-        {reviewsRes?.pages.map((group, i) => (
-          <Fragment key={i}>
-            {group?.results?.map((rev) => (
-              <ReviewComponent key={rev.id} rev={rev} />
-            ))}
-          </Fragment>
-        ))}
-      </div>
-      {reviewsCount < reviewsRes?.pages[0].total_quantity && (
-        <div className="flex justify-center my-4">
-          <LoadMoreButton onClick={onClick} />
-        </div>
-      )}
-    </section>
-  );
+            <div className="flex flex-wrap whitespace-wrap">
+                {/* reviews appena scritte */}
+                {newReviewsRes?.map((rev) => (
+                    <ReviewComponent key={rev.id} rev={rev} />
+                ))}
+                {/* reviews gia presenti */}
+                {reviewsRes?.pages.map((group, i) => (
+                    <Fragment key={i}>
+                        {group?.results?.map((rev) => (
+                            <ReviewComponent key={rev.id} rev={rev} />
+                        ))}
+                    </Fragment>
+                ))}
+            </div>
+            {reviewsCount < reviewsRes?.pages[0].total_quantity && (
+                <div className="flex justify-center my-4">
+                    <LoadMoreButton onClick={onLoadMoreBtnClick} />
+                </div>
+            )}
+        </section>
+    );
 }
 
 // SECTION FORM RECENSIONI
 function SectionFormRecensioni({
-  id,
-  mutate,
-  isSuccess,
-  newRevsCount,
-  refetchNR,
+    id,
+    mutate,
+    isSuccess,
+    newRevsCount,
+    refetchNR,
 }) {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-    setValue,
-    trigger,
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
-
-  const [rating, setRating] = useState(0);
-
-  const onSubmit = (data) => {
-    mutate({
-      property_id: id,
-      name: data.name,
-      title: data.reviewTitle,
-      description: data.reviewText,
-      rating: data.rating,
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+        setValue,
+        trigger,
+    } = useForm({
+        resolver: yupResolver(schema),
     });
-    reset();
-    window.sessionStorage.setItem("newRevsCount", Number(newRevsCount) + 1);
-  };
+
+    const [rating, setRating] = useState(0);
+
+    const onSubmit = (data) => {
+        mutate({
+            property_id: id,
+            name: data.name,
+            title: data.reviewTitle,
+            description: data.reviewText,
+            rating: data.rating,
+        });
+        reset();
+        window.sessionStorage.setItem("newRevsCount", Number(newRevsCount) + 1);
+    };
 
     useEffect(() => {
         if (isSuccess) {
@@ -567,3 +602,4 @@ const schema = yup.object().shape({
 });
 
 export default PropertyDetail;
+
