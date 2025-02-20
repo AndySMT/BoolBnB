@@ -113,13 +113,14 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               {...register("name")}
               type="text"
               className={`w-full p-2 border rounded ${
-                errors.name ? "border-red-500" : "border-gray-300"
+                errors.name
+                  ? "border-red-500 placeholder:text-red-500"
+                  : "border-gray-300"
               }`}
-              placeholder="Es: Marcolino"
+              placeholder={
+                errors.name ? `${errors.name.message}` : "Es: Marcolino"
+              }
             />
-            {errors.name && (
-              <span className="text-red-500">{errors.name.message}</span>
-            )}
           </div>
 
           <div>
@@ -128,13 +129,16 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               {...register("title")}
               type="text"
               className={`w-full p-2 border rounded ${
-                errors.title ? "border-red-500" : "border-gray-300"
+                errors.title
+                  ? "border-red-500 placeholder:text-red-500"
+                  : "border-gray-300"
               }`}
-              placeholder="Es: Perfect house in Milan"
+              placeholder={
+                errors.title
+                  ? `${errors.title.message}`
+                  : "Es: Perfect house in Milan"
+              }
             />
-            {errors.title && (
-              <span className="text-red-500">{errors.title.message}</span>
-            )}
           </div>
 
           <div>
@@ -143,13 +147,16 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               {...register("address")}
               type="text"
               className={`w-full p-2 border rounded ${
-                errors.address ? "border-red-500" : "border-gray-300"
+                errors.address
+                  ? "border-red-500 placeholder:text-red-500"
+                  : "border-gray-300"
               }`}
-              placeholder="Es: Via Roma 10"
+              placeholder={
+                errors.address
+                  ? `${errors.address.message}`
+                  : "Es: Via Milano 1"
+              }
             />
-            {errors.address && (
-              <span className="text-red-500">{errors.address.message}</span>
-            )}
           </div>
 
           <div>
@@ -158,13 +165,14 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               {...register("city")}
               type="text"
               className={`w-full p-2 border rounded ${
-                errors.city ? "border-red-500" : "border-gray-300"
+                errors.city
+                  ? "border-red-500 placeholder:text-red-500"
+                  : "border-gray-300"
               }`}
-              placeholder="Es: Milano"
+              placeholder={
+                errors.city ? `${errors.city.message}` : "Es: Milano"
+              }
             />
-            {errors.city && (
-              <span className="text-red-500">{errors.city.message}</span>
-            )}
           </div>
           <div>
             <label className="text-gray-700">Zip</label>
@@ -172,14 +180,15 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               {...register("zipcode")}
               type="number"
               className={`w-full p-2 border rounded ${
-                errors.zipcode ? "border-red-500" : "border-gray-300"
+                errors.zipcode
+                  ? "border-red-500 placeholder:text-red-500"
+                  : "border-gray-300"
               }`}
-              placeholder="Es: Milano"
+              placeholder={
+                errors.zipcode ? `${errors.zipcode.message}` : "Es: 20124"
+              }
               min={1}
             />
-            {errors.zipcode && (
-              <span className="text-red-500">{errors.zipcode.message}</span>
-            )}
           </div>
 
           <div>
@@ -188,16 +197,17 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               {...register("square_meters")}
               type="number"
               className={`w-full p-2 border rounded ${
-                errors.square_meters ? "border-red-500" : "border-gray-300"
+                errors.square_meters
+                  ? "border-red-500 placeholder:text-red-500"
+                  : "border-gray-300"
               }`}
-              placeholder="Es: 40"
+              placeholder={
+                errors.square_meters
+                  ? `${errors.square_meters.message}`
+                  : "Es: 100"
+              }
               min={1}
             />
-            {errors.square_meters && (
-              <span className="text-red-500">
-                {errors.square_meters.message}
-              </span>
-            )}
           </div>
         </div>
 
@@ -209,13 +219,16 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               {...register("email")}
               type="email"
               className={`w-full p-2 border rounded ${
-                errors.email ? "border-red-500" : "border-gray-300"
+                errors.email
+                  ? "border-red-500 placeholder:text-red-500"
+                  : "border-gray-300"
               }`}
-              placeholder="Es: example@mail.com"
+              placeholder={
+                errors.email
+                  ? `${errors.email.message}`
+                  : "Es: Gigi@example.com"
+              }
             />
-            {errors.email && (
-              <span className="text-red-500">{errors.email.message}</span>
-            )}
           </div>
 
           <div>
@@ -224,16 +237,17 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               {...register("pricePerNight")}
               type="number"
               className={`w-full p-2 border rounded ${
-                errors.pricePerNight ? "border-red-500" : "border-gray-300"
+                errors.pricePerNight
+                  ? "border-red-500 placeholder:text-red-500"
+                  : "border-gray-300"
               }`}
-              placeholder="Es: 100"
+              placeholder={
+                errors.pricePerNight
+                  ? `${errors.pricePerNight.message}`
+                  : "Es: 100"
+              }
               min={1}
             />
-            {errors.pricePerNight && (
-              <span className="text-red-500">
-                {errors.pricePerNight.message}
-              </span>
-            )}
           </div>
 
           <div>
@@ -241,11 +255,15 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
             <select
               {...register("n_bedrooms")}
               className={`w-full h-[41.6px] p-2 border rounded ${
-                errors.n_bedrooms ? "border-red-500" : "border-gray-300"
+                errors.n_bedrooms
+                  ? "border-red-500 text-red-500"
+                  : "border-gray-300"
               }`}
             >
               <option value="" hidden>
-                Select bedrooms
+                {errors.n_bedrooms
+                  ? errors.n_bedrooms.message
+                  : "Select number of bedrooms"}
               </option>
               {[1, 2, 3, 4].map((num) => (
                 <option key={num} value={num}>
@@ -254,9 +272,6 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               ))}
               <option value="5">5+</option>
             </select>
-            {errors.n_bedrooms && (
-              <span className="text-red-500">{errors.n_bedrooms.message}</span>
-            )}
           </div>
 
           <div>
@@ -266,11 +281,15 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
             <select
               {...register("n_bathrooms")}
               className={`w-full p-2 h-[41.6px]  border rounded ${
-                errors.n_bathrooms ? "border-red-500" : "border-gray-300"
+                errors.n_bathrooms
+                  ? "border-red-500 text-red-500"
+                  : "border-gray-300"
               }`}
             >
               <option value="" hidden>
-                Select bathrooms
+                {errors.n_bathrooms
+                  ? errors.n_bathrooms.message
+                  : "Select number of bathrooms"}
               </option>
               {[1, 2, 3].map((num) => (
                 <option key={num} value={num}>
@@ -279,10 +298,6 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               ))}
               <option value="4">4+</option>
             </select>
-
-            {errors.n_bathrooms && (
-              <span className="text-red-500">{errors.n_bathrooms.message}</span>
-            )}
           </div>
 
           <div>
@@ -290,11 +305,15 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
             <select
               {...register("n_beds")}
               className={`w-full p-2 h-[41.6px]  border rounded ${
-                errors.n_beds ? "border-red-500" : "border-gray-300"
+                errors.n_beds
+                  ? "border-red-500 text-red-500"
+                  : "border-gray-300"
               }`}
             >
               <option value="" hidden>
-                Select beds
+                {errors.n_beds
+                  ? errors.n_beds.message
+                  : "Select number of beds"}
               </option>
               {[1, 2, 3, 4].map((num) => (
                 <option key={num} value={num}>
@@ -303,20 +322,21 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               ))}
               <option value="5">5+</option>
             </select>
-            {errors.n_beds && (
-              <span className="text-red-500">{errors.n_beds.message}</span>
-            )}
           </div>
           <div>
             <label className="text-gray-700">Property Type</label>
             <select
               {...register("property_type")}
-              className={`w-full h-[41.6px]  p-2 border rounded ${
-                errors.property_type ? "border-red-500" : "border-gray-300"
-              }`}
+              className={`w-full h-[41.6px] p-2 border rounded 
+      ${
+        errors.property_type ? "border-red-500 text-red-500" : "border-gray-300"
+      }
+    `}
             >
               <option value="" hidden>
-                Select Type
+                {errors.property_type
+                  ? errors.property_type.message
+                  : "Select Type"}
               </option>
               <option value="Baita">Baita</option>
               <option value="Schiera">Schiera</option>
@@ -325,11 +345,6 @@ function AddPropertyForm(/* { setIsFormOpen } */) {
               <option value="Appartamento">Appartamento</option>
               <option value="Chalet">Chalet</option>
             </select>
-            {errors.property_type && (
-              <span className="text-red-500">
-                {errors.property_type.message}
-              </span>
-            )}
           </div>
         </div>
 
@@ -459,16 +474,16 @@ const schema = yup.object().shape({
     .required("Beds required")
     .min(1, "At least 1 bed required"),
 
-  property_type: yup.string().required("Tipo di proprietà obbligatorio"),
+  property_type: yup.string().required("Property type is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
   files: yup
     .array()
-    .min(1, "Devi caricare almeno un file")
-    .required("Devi caricare almeno un file")
-    .test("fileSize", "Il file è troppo grande", (files) =>
+    .min(1, "You must upload at least one file")
+    .required("You must upload at least one file")
+    .test("fileSize", "File too large", (files) =>
       files.every((file) => file.size <= 5 * 1024 * 1024)
     )
-    .test("fileType", "Formato non supportato", (files) =>
+    .test("fileType", "Invalid file type", (files) =>
       files.every((file) =>
         ["image/jpeg", "image/png", "image/gif"].includes(file.type)
       )
