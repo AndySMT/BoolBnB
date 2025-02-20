@@ -170,7 +170,6 @@ export const useAddLikeQuery = (property_id) => {
             return res.data;
         },
         onSuccess: (data) => {
-            console.log(data);
             queryClient.invalidateQueries({
                 queryKey: ["likes", property_id],
                 exact: true,

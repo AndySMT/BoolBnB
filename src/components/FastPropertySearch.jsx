@@ -83,7 +83,6 @@ function FastPropertySearch({
         } else {
             params = "";
         }
-        console.log(params);
         navigate(`/search${params}`);
         reset();
     };

@@ -29,6 +29,7 @@ import {
 import { useRefsContext } from "../Context/RefsContext";
 import SkeleDetailSection from "../components/SkeleDetailSection";
 import ReviewComponent from "../components/ReviewComponent";
+import { toast } from "react-toastify";
 
 function PropertyDetail() {
     const { id } = useParams();
@@ -469,7 +470,7 @@ function SectionRecensioni({
                 ))}
             </div>
             {reviewsCount < reviewsRes?.pages[0].total_quantity && (
-                <div>
+                <div className="flex justify-center my-4">
                     <LoadMoreButton onClick={onClick} />
                 </div>
             )}
@@ -496,23 +497,24 @@ function SectionFormRecensioni({
         resolver: yupResolver(schema),
     });
 
-    const [showConfirmation, setShowConfirmation] = useState(false);
     const [rating, setRating] = useState(0);
 
     const onSubmit = (data) => {
-        console.log(data);
         mutate({
             property_id: id,
             title: data.reviewTitle,
             description: data.reviewText,
-            rating: rating,
+            rating: data.rating,
         });
         reset();
         window.sessionStorage.setItem("newRevsCount", Number(newRevsCount) + 1);
     };
 
     useEffect(() => {
-        isSuccess && refetchNR();
+        if (isSuccess) {
+            refetchNR();
+            toast.success("Recensione pubblicata con successo!");
+        }
     }, [isSuccess]);
     return (
         <section className="px-3 sm:px-6 lg:px-12 xl:px-20 m-2 sm:m-6 lg:mx-20 mb-0 pb-6">
@@ -533,12 +535,7 @@ function SectionFormRecensioni({
                     />
                 </div>
                 <p className="text-red-500">{errors?.rating?.message}</p>
-                <input
-                    className="opacity-0 absolute -z-10"
-                    type="number"
-                    value={rating}
-                    {...register("rating")}
-                />
+                <input type="hidden" value={rating} {...register("rating")} />
                 <input
                     type="text"
                     placeholder="Inserisci il titolo della recensione"
@@ -559,15 +556,6 @@ function SectionFormRecensioni({
                     Invia recensione
                 </button>
             </form>
-
-            <PopUp
-                isOpen={showConfirmation}
-                onClose={() => setShowConfirmation(false)}
-            >
-                <h2 className="text-green-600 text-lg font-bold">
-                    ✅ Recensione pubblicata con successo!
-                </h2>
-            </PopUp>
         </section>
     );
 }
@@ -579,7 +567,7 @@ const schema = yup.object().shape({
             originalValue === "" ? undefined : value
         )
         .required("Il voto è obbligatorio")
-        .moreThan(1, "Il voto minimo è 1"),
+        .min(1, "Il voto minimo è 1"),
     reviewTitle: yup.string().trim().required("Il titolo è obbligatorio"),
     reviewText: yup.string().trim().required("La recensione è obbligatoria"),
 });

@@ -28,7 +28,6 @@ export const getNewReviews = async (propertyId, params) => {
 export const addReview = async (newReview) => {
     const { property_id, title, description, rating } = newReview;
     if (!title || !description || !rating) return undefined;
-    console.log(newReview);
     return await axios.post(baseUrl + revsEndpoint, {
         user_id: null,
         property_id,
