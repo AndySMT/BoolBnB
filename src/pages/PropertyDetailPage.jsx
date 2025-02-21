@@ -121,6 +121,7 @@ function PropertyDetail() {
                     reviewsRef={reviewsRef}
                     fetchNextPage={fetchNextPage}
                     newReviewsRes={newReviewsRes}
+                    revsParams={revsParams}
                     setRevsParams={setRevsParams}
                 />
                 {/* sezione form recensione */}
@@ -416,6 +417,7 @@ function SectionRecensioni({
     reviewsRes,
     fetchNextPage,
     newReviewsRes,
+    revsParams,
     setRevsParams
 }) {
     const { headerRef } = useRefsContext();
@@ -450,7 +452,7 @@ function SectionRecensioni({
                     Recensioni
                 </h1>
                 <div className="relative">
-                    <RevsFilter setRevsParams={setRevsParams} />
+                    <RevsFilter revsParams={revsParams} setRevsParams={setRevsParams} />
                 </div>
             </div>
 

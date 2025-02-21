@@ -1,46 +1,56 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-function RevsFilter({ setRevsParams }) {
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedFilter, setSelectedFilter] = useState("");
+function RevsFilter({ revsParams, setRevsParams }) {
+    const [isOpen, setIsOpen] = useState(false);  // per aprire options
+    const [selectedFilter, setSelectedFilter] = useState("");  // stringa che memorizza il testo della option selezionata
+
+    // azione che parte al click di una option
     const onFilterBtnClick = (e) => {
-        const btnClicked = e.target
-        setSelectedFilter(btnClicked.textContent);
+        const btnClicked = e.target // option selezionata
+        // console.log(btnClicked.innerHTML)
         switch (btnClicked.name) {
             case "rating-desc":
-                setRevsParams({})
+                setRevsParams({ message: btnClicked.innerHTML })
                 break;
             case "rating-asc":
-                setRevsParams({ asc: "true" })
+                setRevsParams({ asc: "true", message: btnClicked.innerHTML })
                 break;
             case "data-desc":
-                setRevsParams({ data: "true" })
+                setRevsParams({ data: "true", message: btnClicked.innerHTML })
                 break;
             case "data-asc":
-                setRevsParams({ data: "true", asc: "true" })
+                setRevsParams({ data: "true", asc: "true", message: btnClicked.innerHTML })
                 break;
         }
-        window.sessionStorage.setItem("newRevsCount", 0);
-
+        window.sessionStorage.setItem("newRevsCount", 0);  // per mandare le recensioni nuove ( se ce ne sono) nelle vecchie
     }
-    const details = <span className="text-[0.5rem]"> ({selectedFilter}) </span>
+
+    useEffect(() => {
+        setSelectedFilter(revsParams?.message || "Più votati") // sincronizzazione opzione selezionata (Piu votati default)
+    }, [revsParams])
+
     return (
-        <div onMouseEnter={() => setIsOpen(true)}
+        <div
+            onMouseEnter={() => setIsOpen(true)}
             onMouseLeave={() => setIsOpen(false)}
             className="relative py-2">
+
             {/* icon */}
             <button
-
                 onClick={() => setIsOpen((curr) => !curr)}
-                className="text-sm p-2 border rounded-lg cursor-pointer">Ordina per {details}  </button>
+                className="text-sm p-2 border rounded-lg cursor-pointer">
+                <span>Ordina per: </span>
+                <span className="text-xs">  {selectedFilter} </span>
+            </button>
+
             {/* menu */}
             {isOpen && (
                 <div className="flex flex-col absolute border bg-[#fcfcfc]/85 rounded-lg w-fit whitespace-nowrap  top-[90%] gap-1 right-0 [&>button]:hover:bg-[#b6cf978c]">
-                    <button onClick={onFilterBtnClick} name="rating-desc" className="px-4 py-2 cursor-pointer">Dal più votato</button>
+                    <button onClick={onFilterBtnClick} name="rating-desc" className="text-start pl-2 pr-4 py-2 cursor-pointer">Più votati</button>
 
-                    <button onClick={onFilterBtnClick} name="rating-asc" className="px-4 py-2 cursor-pointer">Dal meno votato</button>
-                    <button onClick={onFilterBtnClick} name="data-desc" className="px-4 py-2 cursor-pointer">Dal più recente</button>
-                    <button onClick={onFilterBtnClick} name="data-asc" className="px-4 py-2 cursor-pointer">Dal meno recente</button>
+                    <button onClick={onFilterBtnClick} name="rating-asc" className="text-start pl-2 pr-4 py-2 cursor-pointer">Meno votati</button>
+                    <button onClick={onFilterBtnClick} name="data-desc" className="text-start pl-2 pr-4 py-2 cursor-pointer">Più recenti</button>
+                    <button onClick={onFilterBtnClick} name="data-asc" className="text-start pl-2 pr-4 py-2 cursor-pointer">Meno recenti</button>
                 </div>
             )}
         </div>
