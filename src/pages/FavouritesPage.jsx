@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { useRefsContext } from "../Context/RefsContext";
 import PayPalButton from "../components/PayPalButton";
 import { toast } from "react-toastify";
+import LostSVG from "../components/LostSVG";
 
 const settings = {
   dots: true,
@@ -45,7 +46,7 @@ function FavouritesPage() {
         style={style}
         className="text-xl sm:text-3xl lg:text-4xl font-black tracking-wide p-8 px-8 sm:px-12 lg:px-24"
       >
-        Le tue proprietà preferite
+        I tuoi annunci preferiti
       </h1>
       <div className="grid grid-cols-1 2xl:grid-cols-2 gap-10 px-8 sm:px-12 lg:px-24">
         {favouritesIds.length > 0 ? (
@@ -58,7 +59,16 @@ function FavouritesPage() {
             />
           ))
         ) : (
-          <p>Non hai ancora salvato nessuna proprietà nei preferiti.</p>
+          <div className="mt-24 absolute top-1/2 -translate-1/2 left-1/2">
+            <div className="scale-125">
+              <LostSVG />
+            </div>
+            <div className="my-12 text-center">
+              <h2 className=" text-lg font-semibold">Non hai ancora salvato nessun annuncio nei preferiti</h2>
+              <p>Abbiamo tanti <span className=" underline underline-offset-2">annunci</span> che potrebbero <span className="font-semibold">interessarti!</span></p>
+              <p> Scrivi la città che vorrai visitare sulla  <span className="font-semibold">barra di ricerca</span> in alto!</p>
+            </div>
+          </div>
         )}
       </div>
     </>
