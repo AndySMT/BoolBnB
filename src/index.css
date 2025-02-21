@@ -159,3 +159,19 @@ body {
     border-radius: 50%;
     cursor: pointer;
 }
+
+@theme {
+  --border-angle: 0deg;
+}
+
+@property --border-angle {
+    inherits: false;
+    initial-value: 0deg;
+    syntax: '<angle>';
+}
+
+@keyframes border-rotate {
+    to {
+      --border-angle: 360deg;
+    }
+  }

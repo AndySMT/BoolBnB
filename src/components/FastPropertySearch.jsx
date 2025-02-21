@@ -44,7 +44,7 @@ const typeOptions = [
     { value: "chalet", label: "Chalet" },
     { value: "baita", label: "Baita" },
     { value: "attico", label: "Attico" },
-    { value: "casa_indipendente", label: "Casa indipendente" },
+    { value: "casa indipendente", label: "Casa indipendente" },
     { value: "villetta a schiera", label: "Villa a schiera" },
 ];
 
