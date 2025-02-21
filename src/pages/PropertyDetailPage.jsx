@@ -1,6 +1,7 @@
 //? Importazioni librerie e componenti 
 import React, { useRef, useState, useEffect, Fragment, createContext } from "react";
 import LoadMoreButton from "../components/LoadMoreButton";
+import { IoMdPerson } from "react-icons/io";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -337,7 +338,7 @@ function SectionPosition({ property }) {
                         <div className="flex items-center flex-wrap gap-1 text-base sm:text-lg font-semibold">
                             <div className="flex items-center gap-1">
                                 <FaMapMarkerAlt />
-                                <span>Zip code:</span>
+                                <span>Cap:</span>
                             </div>
                             <span className="font-normal">{property.zipcode}</span>
                         </div>
@@ -382,15 +383,15 @@ function SectionHost({ property }) {
                             Informazioni sull'Host
                         </h1>
                         <div className="flex items-center gap-2 text-lg">
-                            <MdOutlineLocationCity />
+                            <IoMdPerson />
                             <span className="font-semibold">Nome dell'host:</span>
-                            <span>{property?.first_name}</span>
+                            <span>{property?.first_name} {property?.last_name}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-lg">
+                        {/* <div className="flex items-center gap-2 text-lg">
                             <FaMapMarkerAlt />
                             <span className="font-semibold">Cognome dell'host:</span>
-                            <span>{property?.last_name}</span>
-                        </div>
+                            
+                        </div> */}
                         <div className="my-6">{property?.host_description}</div>
                     </div>
                     {/* Mobile toggle button */}
