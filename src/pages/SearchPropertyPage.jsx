@@ -139,7 +139,7 @@ function SearchPropertyPage() {
                             type="submit"
                             className={`${!inputValue.length &&
                                 "!cursor-not-allowed opacity-50"
-                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white hover:bg-slate-900 hover:text-white active:bg-black transition-all`}
+                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white bg-[#b6cf978c] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white transition-all`}
                         >
                             Applica filtri
                         </button>
@@ -149,7 +149,7 @@ function SearchPropertyPage() {
                             type="reset"
                             className={`${!inputValue.length &&
                                 "!cursor-not-allowed opacity-50"
-                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white hover:bg-slate-900 hover:text-white active:bg-black transition-all`}
+                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white bg-[#b6cf978c] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white transition-all`}
                         >
                             Cancella filtri
                         </button>
@@ -185,7 +185,7 @@ function SearchPropertyPage() {
                         </CardsSection>
                     ) : (
                         // Paginazione
-                        <CardsSection classes="lg:!px-0 !pt-4" title={`${data?.pages[0].total_quantity} ${title}`}>
+                        <CardsSection classes="lg:!px-0 !pt-4" title={`${!title.includes("cercati") ? data?.pages[0].total_quantity + " " + title : title}`}>
                             <>
                                 {data?.pages.map((group, i) => (
                                     <Fragment key={i}>

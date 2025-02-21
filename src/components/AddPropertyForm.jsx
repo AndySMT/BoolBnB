@@ -368,7 +368,7 @@ function AddPropertyForm() {
             <div className="mt-6 px-6 sm:px-12 lg:px-48">
                 <button
                     onClick={() => setShowPreview(true)}
-                    className="w-full bg-[#b6cf97d4] hover:bg-[#90aa72] text-stone-600 hover:text-white py-2 rounded-lg transition-all cursor-pointer"
+                    className="w-full bg-[#b6cf97d4] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white py-2 rounded-lg transition-all cursor-pointer"
                 >
                     Visualizza l'anteprima
                 </button>

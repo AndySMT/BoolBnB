@@ -102,7 +102,7 @@ function PaginaContact({ showContactForm, propertyId }) {
                     ></textarea>
                 </div>
 
-                <button type="submit" className="border rounded-xl py-2">
+                <button type="submit" className="border rounded-xl py-2 cursor-pointer bg-[#b6cf978c] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white transition-all">
                     Invia Messaggio
                 </button>
 

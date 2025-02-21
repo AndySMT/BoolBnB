@@ -54,7 +54,7 @@ function HeroSection({ goToFormPage }) {
         <div className="flex flex-col justify-center items-center gap-5">
           <h1 className=" text-gray-700 text-4xl font-bold leading-tight text-center">
             Apri il tuo{" "}
-            <span className="text-red-600">BoolBnB</span>
+            <span className="text-[#71904f]">BoolBnB</span>
             <br />
             potresti <br />
             guadagnare <br />
@@ -92,7 +92,7 @@ function HeroSection({ goToFormPage }) {
             </div>
           </div>
           <button
-            className="bg-red-500 hover:bg-red-700 text-2xl cursor-pointer text-white py-3 px-6 rounded-lg shadow-md transition-all"
+            className="bg-[#90aa72] hover:bg-[#7a925f] text-2xl cursor-pointer text-white py-3 px-6 rounded-lg shadow-md transition-all"
             onClick={goToFormPage}
           >
             💵 Apri il tuo BnB

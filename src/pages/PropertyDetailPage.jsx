@@ -385,7 +385,7 @@ function SectionHost({ property }) {
                         </h1>
                         <div className="flex items-center gap-2 text-lg">
                             <IoMdPerson />
-                            <span className="font-semibold">Nome dell'host:</span>
+                            <span className="font-semibold">Host:</span>
                             <span>{property?.first_name} {property?.last_name}</span>
                         </div>
                         {/* <div className="flex items-center gap-2 text-lg">
@@ -397,7 +397,7 @@ function SectionHost({ property }) {
                     </div>
                     {/* Mobile toggle button */}
                     <button
-                        className="sm:hidden w-full py-2 px-4 bg-teal-700 text-white rounded-lg mb-4 cursor-pointer"
+                        className="sm:hidden w-full py-2 px-4 border active:border-white bg-[#b6cf978c] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white rounded-lg mb-4 cursor-pointer"
                         onClick={() => setShowContactForm(!showContactForm)}
                     >
                         {showContactForm
@@ -579,7 +579,7 @@ function SectionFormRecensioni({
                 <p className="text-red-500">{errors?.reviewText?.message}</p>
                 <button
                     type="submit"
-                    className="mt-2 px-3 sm:px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-lg sm:text-xl cursor-pointer"
+                    className="mt-2 px-3 sm:px-4 py-2 border bg-[#b6cf978c] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white rounded-lg text-lg cursor-pointer"
                 >
                     Invia recensione
                 </button>

@@ -40,7 +40,7 @@ function RevsFilter({ revsParams, setRevsParams }) {
                 onClick={() => setIsOpen((curr) => !curr)}
                 className="text-sm p-2 border rounded-lg cursor-pointer">
                 <span>Ordina per: </span>
-                <span className="text-xs">  {selectedFilter} </span>
+                <span className="text-xs lowercase">  {selectedFilter} </span>
             </button>
 
             {/* menu */}
