@@ -10,6 +10,7 @@ import { useRefsContext } from "../Context/RefsContext";
 import SkeleCard from "../components/SkeleCard";
 import LoadMoreButton from "../components/LoadMoreButton";
 import { Fragment } from "react";
+import LostSVG from "../components/LostSVG"
 
 function SearchPropertyPage() {
     const { headerRef } = useRefsContext();
@@ -32,7 +33,7 @@ function SearchPropertyPage() {
 
     const headerHeight = headerRef?.current?.offsetHeight - 2;
     const style = { top: `${headerHeight}px` };
-    const title = paramsObj?.city ? `Risultati per: ${paramsObj.city}` : "I più cercati";
+    const title = paramsObj?.city ? `risultati per: ${paramsObj.city}` : "I più cercati";
 
     // Hook per ottenere i dati delle proprietà
     const {
@@ -138,7 +139,7 @@ function SearchPropertyPage() {
                             type="submit"
                             className={`${!inputValue.length &&
                                 "!cursor-not-allowed opacity-50"
-                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
+                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white hover:bg-slate-900 hover:text-white active:bg-black transition-all`}
                         >
                             Applica filtri
                         </button>
@@ -148,9 +149,9 @@ function SearchPropertyPage() {
                             type="reset"
                             className={`${!inputValue.length &&
                                 "!cursor-not-allowed opacity-50"
-                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-black active:text-white`}
+                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white hover:bg-slate-900 hover:text-white active:bg-black transition-all`}
                         >
-                            Reset
+                            Cancella filtri
                         </button>
                     </form>
                 </div>
@@ -160,7 +161,19 @@ function SearchPropertyPage() {
                 <>
                     {data?.pages[0]?.total_quantity === 0 ? (
                         // Nessun risultato
-                        <h2>La tua ricerca non ha prodotto nessun risultato</h2>
+                        <>
+                            <div className="mt-24">
+                                <div className="scale-125">
+                                    <LostSVG />
+                                </div>
+                                <div className="my-12 text-center">
+                                    <h2 className=" text-lg font-semibold">La tua ricerca non ha prodotto nessun risultato</h2>
+                                    <p>Ma abbiamo per te molte altre <span className=" underline underline-offset-2">alternative!</span></p>
+                                    <p><span className="font-semibold">Cerca la città</span> che vorrai visitare, penseremo noi a cercare la <span className="font-semibold">casa perfetta</span> per te!</p>
+                                </div>
+                            </div>
+                        </>
+
                     ) : isFetchingNextPage || isLoading ? (
                         // Skeleton loading
                         <CardsSection classes="lg:!px-0 !pt-0" title="">
@@ -172,7 +185,7 @@ function SearchPropertyPage() {
                         </CardsSection>
                     ) : (
                         // Paginazione
-                        <CardsSection classes="lg:!px-0 !pt-4" title={title}>
+                        <CardsSection classes="lg:!px-0 !pt-4" title={`${data?.pages[0].total_quantity} ${title}`}>
                             <>
                                 {data?.pages.map((group, i) => (
                                     <Fragment key={i}>
