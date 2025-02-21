@@ -166,7 +166,7 @@ function InfoSection2() {
                 competitors: false,
               },
               {
-                servizio: "Protezione danni fino a 3.000.000 USD",
+                servizio: "Protezione danni fino a 3.000.000 EUR",
                 boolbnb: true,
                 competitors: false,
               },
@@ -197,7 +197,7 @@ function InfoSection2() {
               },
               {
                 servizio:
-                  "Assicurazione di responsabilità civile fino a 1.000.000 USD",
+                  "Assicurazione di responsabilità civile fino a 1.000.000 EUR",
                 boolbnb: true,
                 competitors: false,
               },
