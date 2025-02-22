@@ -101,12 +101,12 @@ function AddPropertyForm() {
                         <input
                             {...register("first_name")}
                             type="text"
-                            className={`w-full p-2 border rounded ${errors.name
+                            className={`w-full p-2 border rounded ${errors.first_name
                                 ? "border-red-500 placeholder:text-red-500"
                                 : "border-gray-300"
                                 }`}
                             placeholder={
-                                errors.name ? `${errors.name.message}` : "Es: Marcolino"
+                                errors.first_name ? `${errors.first_name.message}` : "Es: Marcolino"
                             }
                         />
                     </div>
@@ -115,12 +115,12 @@ function AddPropertyForm() {
                         <input
                             {...register("last_name")}
                             type="text"
-                            className={`w-full p-2 border rounded ${errors.surname
+                            className={`w-full p-2 border rounded ${errors.last_name
                                 ? "border-red-500 placeholder:text-red-500"
                                 : "border-gray-300"
                                 }`}
                             placeholder={
-                                errors.surname ? `${errors.surname.message}` : "Es: Rossi"
+                                errors.last_name ? `${errors.last_name.message}` : "Es: Rossi"
                             }
                         />
                     </div>
