@@ -24,8 +24,8 @@ function Jumbotron() {
     const style =
         document.documentElement.offsetWidth < 640
             ? {
-                  height: `calc(100vh - ${filterHeight + 15}px)`,
-              }
+                height: `calc(100vh - ${filterHeight + 15}px)`,
+            }
             : {};
 
     useEffect(() => {
@@ -40,9 +40,8 @@ function Jumbotron() {
             initial={animationConfig.section.initial}
             animate={animationConfig.section.animate}
             transition={animationConfig.section.transition}
-            className={`md:h-[65vh] lg:h-[80vh] relative z-30 bg-linear-90/oklch from-15% from-[#d4c685] to-[#a7d3a6] text-stone-800 text-center lg:text-start flex items-center p-6 px-3 lg:px-[10vw] lg:py-12 justify-center lg:gap-32 lg:[&>div]:w-1/2 rounded-b-4xl will-change-[opacity, transform, translate] ${
-                window.innerHeight < 640 && "landscape:hidden"
-            }`}
+            className={`md:h-[65vh] lg:h-[80vh] relative z-30 bg-linear-90/oklch from-15% from-[#d4c685] to-[#a7d3a6] text-stone-800 text-center lg:text-start flex items-center p-6 px-3 lg:px-[10vw] lg:py-12 justify-center lg:gap-32 lg:[&>div]:w-1/2 rounded-b-4xl will-change-[opacity, transform, translate] ${window.innerHeight < 640 && "landscape:hidden"
+                }`}
         >
             <JumboSlogan jumboRef={jumboRef} headerRef={headerRef} />
             <JumboImages />
@@ -75,17 +74,19 @@ function JumboSlogan({ headerRef, jumboRef }) {
             transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
         >
             <div className="flex flex-col gap-4">
-                <h1 className="text-[42px] leading-[42px] sm:leading-none sm:text-7xl md:text-6xl lg:text-5xl xl:text-6xl tracking-wide font-black">
+                <h1 className="text-[42px] leading-[42px] sm:leading-none sm:text-7xl lg:text-5xl xl:text-6xl tracking-wide font-black">
                     <span className="md:whitespace-nowrap">
                         Tutti i tuoi viaggi,
-                    </span>{" "}
+                    </span> <br />
                     <span> un unico portale</span>
                 </h1>
                 <h2
-                    className="font-black sm:tracking-wide text-lg text-stone-700 sm:text-2xl md:text-xl xl:text-2xl "
+                    className="font-black sm:tracking-wide text-lg text-stone-700 sm:text-2xl"
                 >
-                    Dal rifugio accogliente alla villa di lusso. Trova lo Spazio
-                    Perfetto per la Tua Prossima Avventura!
+                    <span>Dal rifugio accogliente alla villa di lusso.</span> <br /> <span>
+                        Trova lo Spazio
+                        Perfetto per la Tua Prossima Avventura!
+                    </span>
                 </h2>
             </div>
             <div className="flex flex-col rounded-lg p-2 sm:p-4 gap-4 shadow-lg border text-start w-full ">
