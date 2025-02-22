@@ -69,26 +69,26 @@ function JumboSlogan({ headerRef, jumboRef }) {
 
     return (
         <motion.div
-            className="flex flex-col gap-8 sm:gap-12 md:gap-8 items-center md:mx-20 lg:mx-0 lg:items-start "
+            className="flex flex-col gap-8 sm:gap-12 md:gap-8 items-center md:mx-20 lg:mx-0 lg:items-start px-2 sm:px-0"
             initial={initial}
             animate={{ opacity: 1, x: 0, y: 0 }}
             transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
         >
             <div className="flex flex-col gap-4">
-                <h1 className="text-5xl sm:text-7xl md:text-6xl lg:text-5xl xl:text-6xl tracking-wide font-black">
+                <h1 className="text-[42px] leading-[42px] sm:leading-none sm:text-7xl md:text-6xl lg:text-5xl xl:text-6xl tracking-wide font-black">
                     <span className="md:whitespace-nowrap">
                         Tutti i tuoi viaggi,
                     </span>{" "}
                     <span> un unico portale</span>
                 </h1>
                 <h2
-                    className="font-black tracking-wide text-xl text-stone-700 sm:text-2xl md:text-xl xl:text-2xl "
+                    className="font-black sm:tracking-wide text-lg text-stone-700 sm:text-2xl md:text-xl xl:text-2xl "
                 >
                     Dal rifugio accogliente alla villa di lusso. Trova lo Spazio
                     Perfetto per la Tua Prossima Avventura!
                 </h2>
             </div>
-            <div className="flex flex-col rounded-lg p-4 gap-4 shadow-lg border text-start w-full ">
+            <div className="flex flex-col rounded-lg p-2 sm:p-4 gap-4 shadow-lg border text-start w-full ">
                 <div className="text-sm lg:text-base whitespace-nowrap">
                     <span className="underline underline-offset-2">
                         Sai già dove andare?{" "}
