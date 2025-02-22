@@ -284,24 +284,25 @@ function SectionDetails({ property, savePost, reviewsCount, reviewsRef }) {
                 </div>
                 {/* Amato dagli ospiti */}
 
-                <div className="cursor-pointer mt-3" onClick={handleScroll}>
-                    <div className="rounded-lg flex items-center gap-5 w-fit px-8 py-2 boxShad font-semibold">
-                        <div className="flex justify-between">
-                            <img
-                                src="/images/left.png"
-                                alt=""
-                                className="scale-x-[-1] pl-1"
-                            />
-                            <p className="text-center text-xl">
-                                Amato <br /> dagli ospiti
-                            </p>
-                            <img src="/images/left.png" alt="" className="pl-1" />
-                        </div>
-                        <p className="text-center">
+                <div onClick={handleScroll} className="rounded-lg flex items-center justify-between gap-5 px-8 py-2 boxShad font-semibold cursor-pointer mt-3 w-full sm:w-fit mx-auto">
+                    <div className="flex gap-1">
+                        <img
+                            src="/images/left.png"
+                            alt=""
+                            className="-scale-x-100"
+                        />
+                        <p className="text-center text-xl">
+                            Amato <br /> dagli ospiti
+                        </p>
+                        <img src="/images/left.png" alt="" />
+                    </div>
+                    <div className="text-center">
+                        <p>
                             {reviewsCount && reviewsCount > 0
                                 ? `${reviewsCount} recensioni`
                                 : "Nessuna recensione"}
                         </p>
+                        <p className="text-[0.6rem] font-extralight hover:scale-105 transition-all">Visualizza tutte le recensioni</p>
                     </div>
                 </div>
             </section>

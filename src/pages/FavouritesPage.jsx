@@ -12,6 +12,8 @@ import { useRefsContext } from "../Context/RefsContext";
 import PayPalButton from "../components/PayPalButton";
 import { toast } from "react-toastify";
 import LostSVG from "../components/LostSVG";
+import TrashIcon from "../components/TrashIcon";
+import ArrowRightIcon from "../components/ArrowRightIcon";
 
 const settings = {
   dots: true,
@@ -65,7 +67,7 @@ function FavouritesPage() {
             </div>
             <div className="my-12 text-center">
               <h2 className=" text-lg font-semibold">Non hai ancora salvato nessun annuncio nei preferiti</h2>
-              <p>Abbiamo tanti <span className=" underline underline-offset-2">annunci</span> che potrebbero <span className="font-semibold">interessarti!</span></p>
+              <p>Abbiamo tanti <span className="font-semibold">annunci</span> che potrebbero <span className="font-semibold">interessarti!</span></p>
               <p> Scrivi la città che vorrai visitare sulla  <span className="font-semibold">barra di ricerca</span> in alto!</p>
             </div>
           </div>
@@ -135,20 +137,19 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
       </div>
 
       {/* Dettagli della proprietà */}
-      <section className="flex flex-col flex-wrap items-start gap-3 px-3 sm:pt-3 w-full">
+      <section className="flex flex-col justify-center flex-wrap items-start gap-3 px-3 sm:pt-3 w-full">
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider">
           {property.title}
         </h1>
-        <div className="font-semibold md:text-lg text-stone-900 hidden sm:block">
+        <div className="font-semibold md:text-lg text-stone-900">
           {property.description}
         </div>
 
         {/* Box "Cosa offre" nascosto su mobile */}
-        <div className="hidden sm:block">
+        <div className="">
           <span className="sm:text-xl font-bold">Cosa offre:</span>
           <div
             className="mt-1 grid grid-cols-2 grid-rows-2 sm:gap-y-2 text-base text-gray-500 sm:text-base border px-4 py-2 rounded-lg whitespace-nowrap w-full sm:w-auto"
-            style={{ maxWidth: "320px" }}
           >
             <span className="flex items-center gap-1">
               <MdBed />
@@ -169,73 +170,24 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-4 my-4 lg:justify-center items-center  text-white">
+        <div className="grid grid-cols-2 gap-4 my-4 lg:justify-center items-center  text-white">
           <button
             onClick={() => deleteFavourite(property.id)}
-            className="bg-red-600 group rounded-lg px-10 py-5 flex justify-center items-center gap-2 max-h-[50px] max-w-[250px] cursor-pointer hover:border-red-400 transition-all duration-300 ease-in-out"
+            className="bg-red-700 hover:bg-red-800 group rounded-lg px-10 py-5 flex justify-center items-center gap-2 max-h-[50px]  cursor-pointer hover:border-red-400 transition-all duration-300 ease-in-out"
           >
-            <div className=" relative p-2 flex flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-red-800 bg-red-400 hover:bg-red-600">
-              <svg
-                viewBox="0 0 1.625 1.625"
-                className="absolute -top-3 fill-white delay-100 group-hover:top-3 group-hover:animate-[spin_1s] group-hover:duration-1000"
-                height="10"
-                width="10"
-              >
-                <path d="M.471 1.024v-.52a.1.1 0 0 0-.098.098v.618c0 .054.044.098.098.098h.487a.1.1 0 0 0 .098-.099h-.39c-.107 0-.195 0-.195-.195"></path>
-                <path d="M1.219.601h-.163A.1.1 0 0 1 .959.504V.341A.033.033 0 0 0 .926.309h-.26a.1.1 0 0 0-.098.098v.618c0 .054.044.098.098.098h.487a.1.1 0 0 0 .098-.099v-.39a.033.033 0 0 0-.032-.033"></path>
-                <path d="m1.245.465-.15-.15a.02.02 0 0 0-.016-.006.023.023 0 0 0-.023.022v.108c0 .036.029.065.065.065h.107a.023.023 0 0 0 .023-.023.02.02 0 0 0-.007-.016"></path>
-              </svg>
-              <svg
-                width="12"
-                fill="none"
-                viewBox="0 0 39 7"
-                className="origin-right duration-500 group-hover:rotate-90"
-              >
-                <line
-                  strokeWidth="4"
-                  stroke="white"
-                  y2="5"
-                  x2="39"
-                  y1="5"
-                ></line>
-                <line
-                  strokeWidth="3"
-                  stroke="white"
-                  y2="1.5"
-                  x2="26.0357"
-                  y1="1.5"
-                  x1="12"
-                ></line>
-              </svg>
-              <svg width="10" fill="none" viewBox="0 0 33 39" className="">
-                <mask fill="white" id="path-1-inside-1_8_19">
-                  <path d="M0 0H33V35C33 37.2091 31.2091 39 29 39H4C1.79086 39 0 37.2091 0 35V0Z"></path>
-                </mask>
-                <path
-                  mask="url(#path-1-inside-1_8_19)"
-                  fill="white"
-                  d="M0 0H33H0ZM37 35C37 39.4183 33.4183 43 29 43H4C-0.418278 43 -4 39.4183 -4 35H4H29H37ZM4 43C-0.418278 43 -4 39.4183 -4 35V0H4V35V43ZM37 0V35C37 39.4183 33.4183 43 29 43V35V0H37Z"
-                ></path>
-                <path strokeWidth="4" stroke="white" d="M12 6L12 29"></path>
-                <path strokeWidth="4" stroke="white" d="M21 6V29"></path>
-              </svg>
+            <div className=" relative p-2 flex flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-red-800 bg-red-700 hover:bg-red-800">
+              <TrashIcon/>
             </div>
             <span>Elimina</span>
           </button>
           <Link
             to={`/detail/${property.id}`}
-            className="group  flex gap-2 justify-center items-center max-w-[250px] relative px-10 py-4 max-h-[50px] rounded-xl bg-green-600 hover:bg-green-600 transition-all  ease-in-out"
+            className="group  flex gap-2 justify-center items-center max-w-[250px] relative px-10 py-4 max-h-[50px] rounded-xl bg-[#71904f] hover:bg-[#617f41] transition-all ease-in-out"
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-5 h-5 transition-all duration-300 group-hover:translate-x-1"
-            >
-              <path d="M12 4L10.6 5.4L16.2 11H4V13H16.2L10.6 18.6L12 20L20 12L12 4Z"></path>
-            </svg>
-            <span>Vedi in Dettaglio</span>
+            <ArrowRightIcon/>
+            <span>Dettaglio</span>
           </Link>
-          <div className="w-full h-full text-black">
+          {/* <div className="w-full h-full text-black">
             <p className="flex justify-center font-bold">Prenota ora</p>
             <PayPalButton
               amount={100.0} // Passa il prezzo della proprietà
@@ -243,7 +195,7 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
               onSuccess={handlePaymentSuccess} // Funzione di successo
               onError={handlePaymentError} // Funzione di errore
             />
-          </div>
+          </div> */}
         </div>
       </section>
     </div>

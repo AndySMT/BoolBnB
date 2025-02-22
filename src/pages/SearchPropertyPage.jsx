@@ -168,7 +168,7 @@ function SearchPropertyPage() {
                                 </div>
                                 <div className="my-12 text-center">
                                     <h2 className=" text-lg font-semibold">La tua ricerca non ha prodotto nessun risultato</h2>
-                                    <p>Ma abbiamo per te molte altre <span className=" underline underline-offset-2">alternative!</span></p>
+                                    <p>Ma abbiamo <span className="font-semibold">per te</span> molte altre alternative!</p>
                                     <p><span className="font-semibold">Cerca la città</span> che vorrai visitare, penseremo noi a cercare la <span className="font-semibold">casa perfetta</span> per te!</p>
                                 </div>
                             </div>
