@@ -551,8 +551,8 @@ function SectionFormRecensioni({
                     />
                 </div>
                 <p className="text-red-500">{errors?.rating?.message}</p>
+                <input type="hidden" value={rating} {...register("rating")} />
                 {/* Nome */}
-                <input type="hidden" value={name} {...register("name")} />
                 <input
                     type="text"
                     placeholder="Inserisci il tuo nome "
@@ -561,7 +561,6 @@ function SectionFormRecensioni({
                 />
                 <p className="text-red-500">{errors?.name?.message}</p>
                 {/* TITOLO */}
-                <input type="hidden" value={rating} {...register("rating")} />
                 <input
                     type="text"
                     placeholder="Inserisci il titolo della recensione"
@@ -579,7 +578,7 @@ function SectionFormRecensioni({
                 <p className="text-red-500">{errors?.reviewText?.message}</p>
                 <button
                     type="submit"
-                    className="mt-2 px-3 sm:px-4 py-2 border bg-[#b6cf978c] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white rounded-lg text-lg cursor-pointer"
+                    className="mt-2 px-3 sm:px-4 py-2 border bg-[#b6cf978c] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white rounded-2xl cursor-pointer"
                 >
                     Invia recensione
                 </button>

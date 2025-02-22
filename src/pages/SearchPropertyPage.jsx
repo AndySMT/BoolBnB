@@ -139,7 +139,7 @@ function SearchPropertyPage() {
                             type="submit"
                             className={`${!inputValue.length &&
                                 "!cursor-not-allowed opacity-50"
-                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white bg-[#b6cf978c] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white transition-all`}
+                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white transition-all`}
                         >
                             Applica filtri
                         </button>
@@ -149,7 +149,7 @@ function SearchPropertyPage() {
                             type="reset"
                             className={`${!inputValue.length &&
                                 "!cursor-not-allowed opacity-50"
-                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white bg-[#b6cf978c] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white transition-all`}
+                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white transition-all`}
                         >
                             Cancella filtri
                         </button>

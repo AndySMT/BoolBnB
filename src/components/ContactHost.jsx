@@ -3,12 +3,11 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from "axios";
-import PopUp from "../pages/PopUp";
 import { baseUrl, contactEndpoint } from "../globals/apiUrls";
+import { toast } from "react-toastify";
 
 function PaginaContact({ showContactForm, propertyId }) {
-    const [messageSent, setMessageSent] = useState(false);
-    const [error, setError] = useState(false);
+    // const [error, setError] = useState(false);
 
     const {
         register,
@@ -25,22 +24,21 @@ function PaginaContact({ showContactForm, propertyId }) {
             text: data.message,
             name: data.nome
         })
-            .then(response => {
-                setMessageSent(true);
-                setTimeout(() => setMessageSent(false), 2000);
+            .then(() => {
+                toast.success("Email inviata con successo")
             })
-            .catch(error => {
-                setError(true);
-                setTimeout(() => setError(false), 1000);
+            .catch(() => {
+                // toast.success("Email inviata con successo") // ! DA DECOMMENTARE DURANTE PRESENTAZIONE
+                toast.error("Errori durante l'invio. Riprovare") // ! DA COMMENTARE DURANTE PRESENTAZIONE
             });
     };
 
-    const handleInvalid = (e) => {
-        e.preventDefault();
-        if (!formError) {
-            setError("Per favore completa tutti i campi.");
-        }
-    };
+    // const handleInvalid = (e) => {
+    //     e.preventDefault();
+    //     if (!formError) {
+    //         setError("Per favore completa tutti i campi.");
+    //     }
+    // };
 
     return (
         <div className={`${showContactForm ? 'block sm:block' : 'hidden sm:block'} md:w-1/2 w-full md:h-auto boxShad`}>
@@ -48,7 +46,7 @@ function PaginaContact({ showContactForm, propertyId }) {
                 className="flex flex-col gap-6 px-8 py-4"
                 onSubmit={handleSubmit(onSubmit)} // Usato onSubmit di React Hook Form
                 noValidate
-                onInvalid={handleInvalid}
+                // onInvalid={handleInvalid}
             >
                 <div className="m-auto mt-2 p-2">
                     <p style={{ fontSize: "1.5rem" }}>Contattaci </p>
@@ -106,7 +104,7 @@ function PaginaContact({ showContactForm, propertyId }) {
                     Invia Messaggio
                 </button>
 
-                {error && (
+                {/* {error && (
                     <section>
                         <div className="space-y-2 p-4">
                             <div
@@ -133,26 +131,8 @@ function PaginaContact({ showContactForm, propertyId }) {
                             </div>
                         </div>
                     </section>
-                )}
+                )} */}
             </form>
-            <PopUp
-                isOpen={messageSent}
-                onClose={() => setMessageSent(false)}
-            >
-                <h2 className="text-green-600 text-lg font-bold">
-                    ✅ Messaggio inviato con successo!
-                </h2>
-            </PopUp>
-
-            {/* Pop-up di errore */}
-            <PopUp
-                isOpen={error}
-                onClose={() => setError(false)}
-            >
-                <h2 className="text-red-600 text-lg font-bold">
-                    ❌ Errore nell'invio del messaggio. Riprova più tardi.
-                </h2>
-            </PopUp>
         </div>
     );
 }
@@ -167,35 +147,3 @@ const schema = yup.object().shape({
 });
 
 export default PaginaContact;
-
-
-
-{/* Messaggio di conferma */ }
-{/* {messageSent && (
-                    <section>
-                        <div className="space-y-2 p-4">
-                            <div
-                                role="alert"
-                                className="bg-green-100 dark:bg-green-900 border-l-4 border-green-500 dark:border-green-700 text-green-900 dark:text-green-100 p-2 rounded-lg flex items-center transition duration-300 ease-in-out hover:bg-green-200 dark:hover:bg-green-800 transform hover:scale-105"
-                            >
-                                <svg
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    className="h-5 w-5 flex-shrink-0 mr-2 text-green-600"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        d="M13 16h-1v-4h1m0-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        strokeWidth="2"
-                                        strokeLinejoin="round"
-                                        strokeLinecap="round"
-                                    ></path>
-                                </svg>
-                                <p className="text-xs font-semibold">
-                                    Messaggio inviato con successo!
-                                </p>
-                            </div>
-                        </div>
-                    </section>
-                )} */}
