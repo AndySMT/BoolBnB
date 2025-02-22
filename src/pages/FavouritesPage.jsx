@@ -62,7 +62,7 @@ function FavouritesPage() {
             />
           ))
         ) : (
-          <div className="mt-24 absolute top-1/2 -translate-1/2 left-1/2">
+          <div className="mt-24 sm:mt-45 absolute top-1/2 -translate-1/2 left-1/2">
             <div className="scale-125">
               <LostSVG />
             </div>

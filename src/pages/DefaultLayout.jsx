@@ -1,7 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Footer from "../components/Footer";
 import Header from "../components/Header";
 import Main from "../components/Main";
 import NavbarMobile from "../components/NavbarMobile";
@@ -34,5 +33,7 @@ function DefaultLayout() {
     </RefsProvider>
   );
 }
+
+
 
 export default DefaultLayout;

@@ -139,7 +139,7 @@ function SearchPropertyPage() {
                             type="submit"
                             className={`${!inputValue.length &&
                                 "!cursor-not-allowed opacity-50"
-                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white transition-all`}
+                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-700 hover:text-white transition-all text-[12px]`}
                         >
                             Applica filtri
                         </button>
@@ -149,7 +149,7 @@ function SearchPropertyPage() {
                             type="reset"
                             className={`${!inputValue.length &&
                                 "!cursor-not-allowed opacity-50"
-                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white transition-all`}
+                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-700 hover:text-white transition-all text-[12px]`}
                         >
                             Cancella filtri
                         </button>
@@ -255,13 +255,13 @@ const typeOptions = [
 
 // Stili personalizzati per i campi di selezione
 const customStyles = {
-    control: (baseStyles, state) => ({
+    control: (baseStyles) => ({
         ...baseStyles,
-        borderColor: state.isFocused ? "black" : "grey",
         borderRadius: "10px",
+        boxShadow: "2px 2px 10px -5px rgba(0,0,0,0.75)",
     }),
     option: (styles, state) => {
-        const backgroundColor = state.isFocused ? "black" : "white";
+        const backgroundColor = state.isFocused ? "#90aa72" : "white";
 
         return {
             ...styles,
@@ -297,7 +297,7 @@ const selectFields = [
 ];
 
 // Componente per i campi di selezione
-const Selects = ({ optSelected, setOptSelected, paramsObj }) => {
+const Selects = ({ optSelected, setOptSelected}) => {
     return (
         <>
             {selectFields.map(({ label, id, field, options }) => (
