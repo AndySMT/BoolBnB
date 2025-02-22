@@ -7,13 +7,14 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { imagesUrl } from "../globals/apiUrls";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useRefsContext } from "../Context/RefsContext";
 import PayPalButton from "../components/PayPalButton";
 import { toast } from "react-toastify";
 import LostSVG from "../components/LostSVG";
 import TrashIcon from "../components/TrashIcon";
 import ArrowRightIcon from "../components/ArrowRightIcon";
+import SkeleFavourites from "../components/SkeleFavourites";
 
 const settings = {
   dots: true,
@@ -98,6 +99,7 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   const { isLoading, isError, data } = useGetPropertyQuery(id);
+  const navigate = useNavigate();
 
   const deleteFavourite = (targetId) => {
     const updatedFavouritesIds = favouritesIds.filter((id) => id !== targetId);
@@ -105,8 +107,8 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
     localStorage.setItem("favourites", JSON.stringify(updatedFavouritesIds));
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <pre>Error</pre>;
+  if (isLoading) return <SkeleFavourites/>;
+  if (isError) navigate("/lost");
 
   const property = data.results[0];
 
@@ -173,18 +175,18 @@ function Favourites({ id, favouritesIds, setFavouritesIds }) {
         <div className="grid grid-cols-2 gap-4 my-4 lg:justify-center items-center  text-white">
           <button
             onClick={() => deleteFavourite(property.id)}
-            className="bg-red-700 hover:bg-red-800 group rounded-lg px-10 py-5 flex justify-center items-center gap-2 max-h-[50px]  cursor-pointer hover:border-red-400 transition-all duration-300 ease-in-out"
+            className="bg-red-700 hover:bg-red-800 group rounded-xl px-10 py-5 flex justify-center items-center gap-2 max-h-[50px]  cursor-pointer hover:border-red-400 transition-all duration-300 ease-in-out"
           >
-            <div className=" relative p-2 flex flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-red-800 bg-red-700 hover:bg-red-800">
-              <TrashIcon/>
+            <div className="relative p-2 flex flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-red-800 bg-red-700 hover:bg-red-800">
+              <TrashIcon />
             </div>
             <span>Elimina</span>
           </button>
           <Link
             to={`/detail/${property.id}`}
-            className="group  flex gap-2 justify-center items-center max-w-[250px] relative px-10 py-4 max-h-[50px] rounded-xl bg-[#71904f] hover:bg-[#617f41] transition-all ease-in-out"
+            className="group flex gap-2 justify-center items-center relative px-10 py-4 max-h-[50px] rounded-xl bg-[#71904f] hover:bg-[#617f41] transition-all ease-in-out"
           >
-            <ArrowRightIcon/>
+            <div><ArrowRightIcon /></div>
             <span>Dettaglio</span>
           </Link>
           {/* <div className="w-full h-full text-black">
