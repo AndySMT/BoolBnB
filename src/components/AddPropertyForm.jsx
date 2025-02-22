@@ -23,6 +23,7 @@ function AddPropertyForm() {
     const fileInputRef = useRef(null);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [showPreview, setShowPreview] = useState(false);
+    const previewRef = useRef(null)
     const navigate = useNavigate();
 
     const formData = watch(); // Ottieni i valori del form in tempo reale
@@ -82,6 +83,10 @@ function AddPropertyForm() {
             toast.error("Errore nell'invio del form, riprova");
         }
     }, [isSuccess, isError]);
+
+    useEffect(() => {
+        previewRef?.current?.scrollIntoView({ behavior: "smooth" });
+    }, [showPreview])
 
     return (
         <>
@@ -367,7 +372,7 @@ function AddPropertyForm() {
             </form>
             <div className="mt-6 px-6 sm:px-12 lg:px-48">
                 <button
-                    onClick={() => setShowPreview(true)}
+                    onClick={() => { if (showPreview) { previewRef?.current?.scrollIntoView({ behavior: "smooth" }) } setShowPreview(true) }}
                     className="w-full bg-[#b6cf97d4] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white py-2 rounded-lg transition-all cursor-pointer"
                 >
                     Visualizza l'anteprima
@@ -375,7 +380,7 @@ function AddPropertyForm() {
             </div>
 
             {showPreview && (
-                <section className="px-6 sm:px-12 lg:px-48">
+                <section ref={previewRef} className="px-6 sm:px-12 lg:px-48">
                     <PreviewFormCard
                         property={{ ...formData, files: selectedFiles }}
                         onConfirm={() => {
