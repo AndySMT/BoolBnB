@@ -24,12 +24,13 @@ function PaginaContact({ showContactForm, propertyId }) {
             text: data.message,
             name: data.nome
         })
-            .then(() => {
-                toast.success("Email inviata con successo")
+            .then((data) => {
+                toast.success(data.message || "Email inviata con successo")
             })
-            .catch(() => {
+            .catch((err) => {
+                console.log(err)
                 // toast.success("Email inviata con successo") // ! DA DECOMMENTARE DURANTE PRESENTAZIONE
-                toast.error("Errori durante l'invio. Riprovare") // ! DA COMMENTARE DURANTE PRESENTAZIONE
+                toast.error(err?.response?.data?.error || "Errori durante l'invio della mail. Riprovare") // ! DA COMMENTARE DURANTE PRESENTAZIONE
             });
     };
 

@@ -25,7 +25,7 @@ function DefaultLayout() {
         <ToastContainer
           className={"z-9999999"}
           position="bottom-right"
-          autoClose={700}
+          autoClose={1500}
         />
         <Outlet />
         <NavbarMobile />
