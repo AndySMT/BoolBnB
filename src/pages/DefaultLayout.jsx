@@ -22,11 +22,18 @@ function DefaultLayout() {
         </Suspense>
       )}
       <Main>
-        <ToastContainer
-          className={"z-9999999"}
-          position="bottom-right"
-          autoClose={1500}
-        />
+        {/* <div className="hidden sm:block">
+          <ToastContainer
+            className={"z-9999999"}
+            position="bottom-right"
+            autoClose={1500}
+          />
+        </div> */}
+          <ToastContainer
+            className={"z-9999999"}
+            position={document.documentElement.clientWidth < 640 ?  "top-right" : "bottom-right"}
+            autoClose={1500}
+          />
         <Outlet />
         <NavbarMobile />
       </Main>

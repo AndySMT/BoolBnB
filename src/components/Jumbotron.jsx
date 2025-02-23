@@ -92,7 +92,7 @@ function JumboSlogan({ headerRef, jumboRef }) {
             </div>
             <div className="flex flex-col rounded-lg p-2 sm:p-4 gap-4 shadow-lg border text-start w-full ">
                 <div className="text-sm lg:text-base whitespace-nowrap">
-                    <span className="underline underline-offset-2">
+                    <span>
                         Sai già dove andare?{" "}
                     </span>
                     <span className="font-black">

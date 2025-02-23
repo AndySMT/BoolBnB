@@ -30,6 +30,7 @@ function NavbarMobile() {
                         <span className="capitalize text-sm">Cerca</span>
                     </NavLink>
                     <NavLink
+                        onClick={() => window.scrollTo({behavior:"smooth", top: 0})}
                         to="/"
                         className={({ isActive }) =>
                             "flex justify-center items-center  flex-col " +

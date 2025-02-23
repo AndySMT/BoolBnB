@@ -105,7 +105,7 @@ function HeaderLink({ to, text, children }) {
             to={to}
             className={({ isActive }) =>
                 "flex items-center gap-1 pb-1 px-1 text-stone-900 hover:text-black " +
-                (isActive ? " text-stone-900 font-semibold" : "")
+                (isActive ? " text-stone-900 font-semibold scale-110" : "")
             }
         >
             {children}

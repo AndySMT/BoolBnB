@@ -6,8 +6,8 @@ import { motion } from 'framer-motion';
 
 function AiSearchPage() {
   const [messages, setMessages] = useState(() => {
-    // Try to get stored messages from localStorage on initial load
-    const storedMessages = localStorage.getItem('chatMessages');
+    // Try to get stored messages from sessionStorage on initial load
+    const storedMessages = sessionStorage.getItem('chatMessages');
     return storedMessages ? JSON.parse(storedMessages) : [{
       role: 'ai',
       content: 'Ciao! Hai domande sul tuo viaggio o ti serve una mano per trovare la casa perfetta per te?'
@@ -15,8 +15,8 @@ function AiSearchPage() {
   });
   
   const [relevantProperties, setRelevantProperties] = useState(() => {
-    // Try to get stored properties from localStorage
-    const storedProperties = localStorage.getItem('relevantProperties');
+    // Try to get stored properties from sessionStorage
+    const storedProperties = sessionStorage.getItem('relevantProperties');
     return storedProperties ? JSON.parse(storedProperties) : [];
   });
 
@@ -40,12 +40,12 @@ function AiSearchPage() {
 
   // Add this useEffect to save messages whenever they change
   useEffect(() => {
-    localStorage.setItem('chatMessages', JSON.stringify(messages));
+    sessionStorage.setItem('chatMessages', JSON.stringify(messages));
   }, [messages]);
 
   // Add this useEffect to save properties whenever they change
   useEffect(() => {
-    localStorage.setItem('relevantProperties', JSON.stringify(relevantProperties));
+    sessionStorage.setItem('relevantProperties', JSON.stringify(relevantProperties));
   }, [relevantProperties]);
 
 
@@ -55,8 +55,8 @@ function AiSearchPage() {
       content: 'Ciao! Come posso aiutarti a trovare la casa perfetta per te?'
     }]);
     setRelevantProperties([]);
-    localStorage.removeItem('chatMessages');
-    localStorage.removeItem('relevantProperties');
+    sessionStorage.removeItem('chatMessages');
+    sessionStorage.removeItem('relevantProperties');
   };
 
   const fetchPropertyDetails = async (propertyId) => {
@@ -190,7 +190,7 @@ function AiSearchPage() {
 
               {messages.map((message, index) => (
                 <div key={index} className={`flex gap-3 my-4 ${message.role === 'ai' ? 'justify-start' : 'justify-end'}`}>
-                  <div className={`max-w-[80%] rounded-lg p-4 ${message.role === 'ai' ? 'bg-gray-100' : 'bg-blue-100'}`}>
+                  <div className={`max-w-[80%] rounded-lg p-4 ${message.role === 'ai' ? 'bg-gray-100' : 'bg-[#b6cf978c]'}`}>
                     {message.role === 'ai' && index === messages.length - 1 && isTyping ? (
                       <p 
                         className="whitespace-pre-wrap"
@@ -213,7 +213,7 @@ function AiSearchPage() {
               )}
 
               {relevantProperties.length > 0 && !isTyping && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4 lg:mx-48">
                   {relevantProperties.map((property, index) => (
                     <motion.div
                       key={property.id}
@@ -229,7 +229,7 @@ function AiSearchPage() {
             </div>
           </div>
 
-          <div className="py-4 fixed bottom-[68px] md:bottom-0 left-0 right-0 bg-[#dbdbdb31] rounded-t-4xl w-full md:relative z-50">
+          <div className="py-4 fixed bottom-[68px] md:bottom-0 left-0 right-0 bg-gray-100 rounded-t-4xl w-full md:relative z-50">
             <div className="max-w-6xl mx-auto w-full px-4">
               <form onSubmit={handleSubmit} className="flex gap-2">
                 <input
@@ -241,7 +241,7 @@ function AiSearchPage() {
                 />
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  className="px-4 py-2 rounded-lg bg-[#b6cf978c] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white cursor-pointer"
                 >
                   Invia
                 </button>
