@@ -30,7 +30,7 @@ function AiSearchPage() {
     if (isTyping && displayedResponse.length < fullResponseRef.current.length) {
       const timer = setTimeout(() => {
         setDisplayedResponse(fullResponseRef.current.slice(0, displayedResponse.length + 1));
-      }, 5);
+      }, 2);
       return () => clearTimeout(timer);
     }
     if (displayedResponse.length === fullResponseRef.current.length) {
