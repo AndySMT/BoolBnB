@@ -98,7 +98,7 @@ function ChatBot({ propertyId }) {
       </button>
 
       {isOpen && (
-        <div className="fixed bottom-[9rem] md:bottom-[calc(4rem+1.5rem)] right-0 mr-4 bg-white p-6 rounded-lg border border-[#e5e7eb] w-[350px] md:w-[430px] h-[500px] md:h-[600px] shadow-sm">
+        <div className="fixed bottom-[9rem] md:bottom-[calc(4rem+1.5rem)] right-0 mr-4 bg-white p-6 rounded-lg border border-[#e5e7eb] w-[350px] md:w-[430px] h-[500px] md:h-[600px] shadow-sm z-50">
           <div className="flex flex-col space-y-1.5 pb-6">
             <h2 className="font-semibold text-lg tracking-tight">Chatbot</h2>
             <p className="text-sm text-[#6b7280] leading-3">Powered by AI</p>
