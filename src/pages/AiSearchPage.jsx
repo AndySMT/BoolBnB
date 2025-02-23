@@ -166,24 +166,28 @@ function AiSearchPage() {
     <div className="fixed inset-0 flex flex-col pt-[64px]">
       <div className="flex-1 relative w-full h-full overflow-hidden">
         <div className="absolute inset-0 flex flex-col px-4">
-          <div className="flex justify-end py-4">
-            <button
-              onClick={clearChat}
-              className="px-4 py-2 rounded-lg 
-                backdrop-blur-sm bg-white/30 
-                border border-gray-200 
-                shadow-sm 
-                transition-all duration-300
-                hover:bg-red-500 hover:text-white 
-                hover:border-red-500
-                text-gray-700"
-            >
-              Cancella chat
-            </button>
-          </div>
-
           <div className="flex-1 overflow-y-auto pb-[200px] md:pb-4">
             <div className="max-w-6xl mx-auto">
+              <div className="flex justify-between items-center py-4">
+                <div>
+                  <h2 className="font-semibold text-lg">Assistente Virtuale</h2>
+                  <p className="text-sm text-gray-500">Powered by AI</p>
+                </div>
+                <button
+                  onClick={clearChat}
+                  className="px-4 py-2 rounded-lg 
+                    backdrop-blur-sm bg-white/30 
+                    border border-gray-200 
+                    shadow-sm 
+                    transition-all duration-300
+                    hover:bg-red-500 hover:text-white 
+                    hover:border-red-500
+                    text-gray-700"
+                >
+                  Cancella chat
+                </button>
+              </div>
+
               {messages.map((message, index) => (
                 <div key={index} className={`flex gap-3 my-4 ${message.role === 'ai' ? 'justify-start' : 'justify-end'}`}>
                   <div className={`max-w-[80%] rounded-lg p-4 ${message.role === 'ai' ? 'bg-gray-100' : 'bg-blue-100'}`}>
