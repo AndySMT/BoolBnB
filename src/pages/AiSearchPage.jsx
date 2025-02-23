@@ -10,7 +10,7 @@ function AiSearchPage() {
     const storedMessages = localStorage.getItem('chatMessages');
     return storedMessages ? JSON.parse(storedMessages) : [{
       role: 'ai',
-      content: 'Ciao! Come posso aiutarti a trovare la casa perfetta per te?'
+      content: 'Ciao! Hai domande sul tuo viaggio o ti serve una mano per trovare la casa perfetta per te?'
     }];
   });
   
@@ -48,7 +48,7 @@ function AiSearchPage() {
     localStorage.setItem('relevantProperties', JSON.stringify(relevantProperties));
   }, [relevantProperties]);
 
-  // Optional: Add a function to clear the chat history
+
   const clearChat = () => {
     setMessages([{
       role: 'ai',
