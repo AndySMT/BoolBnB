@@ -25,14 +25,37 @@ function ChatBot({ propertyId }) {
       // Make API call to backend with propertyId
       const response = await axios.post(baseUrl + chatAi, {
         prompt: inputMessage,
-        propertyId: propertyId
+        propertyId
       });
 
       if (response.data.success) {
-        setMessages([
-          ...newMessages,
-          { role: 'ai', content: response.data.response }
+        // Insert a placeholder message for the AI response
+        setMessages(prev => [
+          ...prev,
+          { role: 'ai', content: '' }
         ]);
+
+        const typedResponse = response.data.response;
+        let i = 0;
+
+        // Add letters one by one with a 5ms delay
+        const interval = setInterval(() => {
+          i++;
+          setMessages(prev => {
+            const lastMessageIndex = prev.length - 1;
+            const lastMessage = prev[lastMessageIndex];
+            lastMessage.content = typedResponse.substring(0, i);
+
+            return [
+              ...prev.slice(0, lastMessageIndex),
+              lastMessage
+            ];
+          });
+
+          if (i >= typedResponse.length) {
+            clearInterval(interval);
+          }
+        }, 5);
       } else {
         setMessages([
           ...newMessages,
@@ -53,7 +76,7 @@ function ChatBot({ propertyId }) {
     <div className="md:block">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-4 right-4 inline-flex items-center justify-center text-sm font-medium disabled:pointer-events-none disabled:opacity-50 border rounded-full w-16 h-16 bg-black hover:bg-gray-700 m-0 cursor-pointer border-gray-200 bg-none p-0 normal-case leading-5 hover:text-gray-900"
+        className="fixed bottom-20 md:bottom-4 right-4 z-40 inline-flex items-center justify-center text-sm font-medium disabled:pointer-events-none disabled:opacity-50 border rounded-full w-16 h-16 bg-black hover:bg-gray-700 m-0 cursor-pointer border-gray-200 bg-none p-0 normal-case leading-5 hover:text-gray-900"
         type="button"
         aria-haspopup="dialog"
         aria-expanded={isOpen}
@@ -75,13 +98,13 @@ function ChatBot({ propertyId }) {
       </button>
 
       {isOpen && (
-        <div className="fixed bottom-[8rem] md:bottom-[calc(4rem+1.5rem)] right-0 mr-4 bg-white p-6 rounded-lg border border-[#e5e7eb] w-[400px] h-[500px] shadow-sm">
+        <div className="fixed bottom-[9rem] md:bottom-[calc(4rem+1.5rem)] right-0 mr-4 bg-white p-6 rounded-lg border border-[#e5e7eb] w-[350px] md:w-[380px] h-[500px] md:h-[600px] shadow-sm">
           <div className="flex flex-col space-y-1.5 pb-6">
             <h2 className="font-semibold text-lg tracking-tight">Chatbot</h2>
             <p className="text-sm text-[#6b7280] leading-3">Powered by AI</p>
           </div>
 
-          <div className="pr-4 h-[350px] overflow-y-auto">
+          <div className="pr-4 h-[340px] md:h-[440px] overflow-y-auto">
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -118,7 +141,17 @@ function ChatBot({ propertyId }) {
                   <span className="block font-bold text-gray-700">
                     {message.role === 'ai' ? 'AI' : 'You'}
                   </span>
-                  {message.content}
+                  {message.content.split(/(\*\*.*?\*\*\n?)/).map((part, i) => {
+                    if (part.startsWith('**') && part.endsWith('**')) {
+                      return (
+                        <React.Fragment key={i}>
+                          <strong>{part.slice(2, -2)}</strong>
+                          <br />
+                        </React.Fragment>
+                      );
+                    }
+                    return part;
+                  })}
                 </p>
               </div>
             ))}
