@@ -229,7 +229,7 @@ function AiSearchPage() {
             </div>
           </div>
 
-          <div className="py-4 fixed bottom-[68px] md:bottom-0 left-0 right-0 bg-white md:relative md:bottom-auto md:left-auto md:right-auto z-50">
+          <div className="py-4 fixed bottom-[68px] md:bottom-0 left-0 right-0 bg-[#dbdbdb31] rounded-t-4xl w-full md:relative z-50">
             <div className="max-w-6xl mx-auto w-full px-4">
               <form onSubmit={handleSubmit} className="flex gap-2">
                 <input

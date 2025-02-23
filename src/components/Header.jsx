@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IoIosStarOutline } from "react-icons/io";
+import { IoIosChatbubbles, IoIosStarOutline } from "react-icons/io";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import useScroll from "../hooks/useScroll";
 import { useRefsContext } from "../Context/RefsContext";
@@ -7,6 +7,7 @@ import { PiBookmarks } from "react-icons/pi";
 import FastPropertySearch from "./FastPropertySearch";
 import { IoMdSearch } from "react-icons/io";
 import HamburgerMenu from "./HamburgerMenu";
+import { IoChatbubblesOutline } from "react-icons/io5";
 
 const Header = () => {
     const { jumboRef, headerRef } = useRefsContext();
@@ -64,7 +65,10 @@ const Header = () => {
                     // </Link>
                 )}
                 {/* Nav */}
-                <nav className="hidden sm:flex sm:gap-2 lg:gap-8">
+                <nav className="hidden sm:flex sm:gap-2 items-center lg:gap-8">
+                    <HeaderLink to={"/ai-search"} text={"AI Advisor"}>
+                        <IoChatbubblesOutline className="text-xl" />
+                    </HeaderLink>
                     <HeaderLink
                         to={"/addproperty"}
                         text={"Affitta con BoolB&B"}
@@ -77,6 +81,9 @@ const Header = () => {
                 </nav>
                 {/* nav mobile */}
                 <HamburgerMenu>
+                    <HeaderLink to={"/ai-search"} text={"AI Advisor"}>
+                        <IoChatbubblesOutline className="text-xl" />
+                    </HeaderLink>
                     <HeaderLink
                         to={"/addproperty"}
                         text={"Affitta con BoolB&B"}
@@ -97,7 +104,7 @@ function HeaderLink({ to, text, children }) {
         <NavLink
             to={to}
             className={({ isActive }) =>
-                "flex items-center gap-1 pb-1 px-1 text-stone-600 hover:text-stone-900 " +
+                "flex items-center gap-1 pb-1 px-1 text-stone-900 hover:text-black " +
                 (isActive ? " text-stone-900 font-semibold" : "")
             }
         >

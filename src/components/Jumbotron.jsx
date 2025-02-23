@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useRefsContext } from "../Context/RefsContext";
 import { useEffect, useRef, useState } from "react";
 import FastPropertySearch from "./FastPropertySearch";
+import { Link } from "react-router-dom";
 
 const animationConfig = {
     section: {
@@ -105,6 +106,10 @@ function JumboSlogan({ headerRef, jumboRef }) {
                     >
                         Cerca
                     </FastPropertySearch>
+                </div>
+                <div className="text-xs flex gap-2">
+                    <span>Non hai idee? Il nostro assistente virtuale ti aiuterà!</span>
+                    <Link to={"/ai-search"} className="underline hover:scale-110">Clicca Qui!</Link>
                 </div>
             </div>
             <motion.button
