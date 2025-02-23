@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-r from-[#a39866] to-[#72bc71] text-black text-center p-4">
+    <footer className={` hidden sm:block bg-gradient-to-r from-[#a39866] to-[#72bc71] text-black text-center p-4`}>
       <div>
         <p>Project work made with React+Tailwind</p>
         <div className="flex flex-row justify-center items-center space-x-4 pt-2">

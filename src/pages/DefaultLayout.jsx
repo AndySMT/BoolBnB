@@ -7,6 +7,7 @@ import NavbarMobile from "../components/NavbarMobile";
 import { RefsProvider } from "../Context/RefsContext";
 import { lazy, Suspense } from "react";
 import SkeleJumbotron from "../components/SkeleJumbotron";
+import Footer from "../components/Footer";
 const LazyJumbotron = lazy(() => import("../components/Jumbotron"));
 
 function DefaultLayout() {
@@ -29,7 +30,11 @@ function DefaultLayout() {
         <Outlet />
         <NavbarMobile />
       </Main>
-      {/* <Footer /> */}
+      <>
+        {!(location.pathname === "/" || location.pathname.includes("search")) &&
+          <Footer />
+        }
+      </>
     </RefsProvider>
   );
 }

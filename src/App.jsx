@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DefaultLayout from "./pages/DefaultLayout";
-import FooterLayout from "./pages/FooterLayout";
 import SearchPropertyPage from "./pages/SearchPropertyPage";
 import AddPropertyPage from "./pages/AddPropertyPage";
 import PropertyDetail from "./pages/PropertyDetailPage";
@@ -32,8 +31,6 @@ function App() {
                             }
                         />
                         <Route path="search" Component={SearchPropertyPage} />
-                    </Route>
-                    <Route path="/" Component={FooterLayout}>
                         <Route
                             path="addproperty"
                             Component={AddPropertyPage}
