@@ -31,8 +31,8 @@ function SearchPropertyPage() {
 
     const navigate = useNavigate();
 
-    const headerHeight = headerRef?.current?.offsetHeight - 2;
-    const style = { top: `${headerHeight}px` };
+    const headerHeight = headerRef?.current?.offsetHeight - 2 || 56;
+    const style = { top: `${(headerHeight < 56) ? 56 : headerHeight}px` };
     const title = paramsObj?.city ? `risultati per: ${paramsObj.city}` : "I più cercati";
 
     // Hook per ottenere i dati delle proprietà
@@ -134,25 +134,29 @@ function SearchPropertyPage() {
                         className=" md:w-full px-6 py-2 grid grid-cols-2 gap-4 md:text-[10px] z-20 sm:grid-cols-3 lg:grid-cols-1 items-end"
                     >
                         <Selects optSelected={optSelected} setOptSelected={setOptSelected} paramsObj={paramsObj} />
-                        <button
-                            disabled={!inputValue.length}
-                            type="submit"
-                            className={`${!inputValue.length &&
-                                "!cursor-not-allowed opacity-50"
-                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-700 hover:text-white transition-all text-[12px]`}
-                        >
-                            Applica filtri
-                        </button>
-                        <button
-                            onClick={() => setOptSelected({})}
-                            disabled={!inputValue.length}
-                            type="reset"
-                            className={`${!inputValue.length &&
-                                "!cursor-not-allowed opacity-50"
-                                } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-700 hover:text-white transition-all text-[12px]`}
-                        >
-                            Cancella filtri
-                        </button>
+                        {/* div solo per avere ingombro in mobile */}
+                        {/* <div className="lg:hidden"></div>  */}
+                        <div className="col-span-full my-2 flex justify-between lg:flex-col [&>button]:w-1/2 [&>button]:lg:w-full gap-y-2 sm:gap-x-12">
+                            <button
+                                disabled={!inputValue.length}
+                                type="submit"
+                                className={`${!inputValue.length &&
+                                    "!cursor-not-allowed opacity-70"
+                                    } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-900 hover:text-white transition-all text-[12px]`}
+                            >
+                                Applica filtri
+                            </button>
+                            <button
+                                onClick={() => setOptSelected({})}
+                                disabled={!inputValue.length}
+                                type="reset"
+                                className={`${!inputValue.length &&
+                                    "!cursor-not-allowed opacity-70"
+                                    } px-4 md:py-3 py-2 md:mx-0 rounded-lg cursor-pointer mx-2 border border-black active:border-white active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-900 hover:text-white transition-all text-[12px]`}
+                            >
+                                Cancella filtri
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

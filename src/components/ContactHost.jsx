@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 
 function PaginaContact({ showContactForm, propertyId }) {
     // const [error, setError] = useState(false);
+    const [isBtnDisabled, setIsBtnDisabled] = useState(false)
 
     const {
         register,
@@ -17,7 +18,7 @@ function PaginaContact({ showContactForm, propertyId }) {
     } = useForm({ resolver: yupResolver(schema) }); // schema si trova sotto
 
     const onSubmit = (data) => {
-        reset(); // Reset del form dopo invio
+        setIsBtnDisabled(true);
         axios.post(baseUrl + contactEndpoint, {
             propertyId: propertyId,
             userMail: data.email,
@@ -25,12 +26,19 @@ function PaginaContact({ showContactForm, propertyId }) {
             name: data.nome
         })
             .then((data) => {
+                reset(); // Reset del form dopo invio
                 toast.success(data.message || "Email inviata con successo")
             })
             .catch((err) => {
                 console.log(err)
                 // toast.success("Email inviata con successo") // ! DA DECOMMENTARE DURANTE PRESENTAZIONE
                 toast.error(err?.response?.data?.error || "Errori durante l'invio della mail. Riprovare") // ! DA COMMENTARE DURANTE PRESENTAZIONE
+            })
+            .finally(() => {
+                let timer = setTimeout(() => {
+                    setIsBtnDisabled(false);
+                    clearTimeout(timer)
+                }, 2000);
             });
     };
 
@@ -47,7 +55,7 @@ function PaginaContact({ showContactForm, propertyId }) {
                 className="flex flex-col gap-6 px-8 py-4"
                 onSubmit={handleSubmit(onSubmit)} // Usato onSubmit di React Hook Form
                 noValidate
-                // onInvalid={handleInvalid}
+            // onInvalid={handleInvalid}
             >
                 <div className="m-auto mt-2 p-2">
                     <p style={{ fontSize: "1.5rem" }}>Contattaci </p>
@@ -101,7 +109,7 @@ function PaginaContact({ showContactForm, propertyId }) {
                     ></textarea>
                 </div>
 
-                <button type="submit" className="border rounded-xl py-2 cursor-pointer bg-[#b6cf978c] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white transition-all">
+                <button disabled={isBtnDisabled} type="submit" className={`${isBtnDisabled && "!cursor-not-allowed"} border rounded-xl py-2 cursor-pointer bg-[#b6cf978c] active:bg-[#6d8a4d] hover:bg-[#90aa72] text-stone-600 hover:text-white transition-all`}>
                     Invia Messaggio
                 </button>
 

@@ -221,17 +221,17 @@ function SectionDetails({ property, savePost, reviewsCount, reviewsRef }) {
             const newFavourites = favouritesIds.filter((id) => id !== property.id);
             localStorage.setItem("favourites", JSON.stringify(newFavourites));
             setIsSaved(false);
+            toast.warn("Annuncio tolto dai preferiti")
         } else {
             favouritesIds.push(property.id);
             localStorage.setItem("favourites", JSON.stringify(favouritesIds));
             setIsSaved(true);
-            toast.success("Proprietà salvata");
+            toast.success("Annuncio salvato nei preferiti");
         }
     };
 
     useEffect(() => {
         if (isHeartClicked) {
-            toast.success("Like aggiunto");
             const timer = setTimeout(() => {
                 setIsHeartClicked(false);
             }, 1000);
