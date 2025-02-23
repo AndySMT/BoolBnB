@@ -124,13 +124,7 @@ function InfoSection() {
         </h2>
       </div>
       <p className="md:col-span-2">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur cumque
-        labore facilis ipsam illum assumenda quidem nisi? Pariatur, excepturi.
-        Omnis ipsam autem officia dolor perferendis. Reiciendis aut cumque earum
-        molestias nulla eveniet id corrupti quis sunt nihil laudantium
-        blanditiis sint enim, quo omnis dicta esse! Facere voluptates cupiditate
-        veniam sapiente, porro eligendi, exercitationem soluta esse, asperiores
-        enim quae ipsum repudiandae eos. Nemo, opti
+        Grazie a BoolBnB, puoi mettere in affitto la tua casa in pochi semplici passaggi, creando un annuncio dettagliato e accattivante in modo intuitivo. La piattaforma ti offre strumenti avanzati per gestire prenotazioni, tariffe e disponibilità con la massima flessibilità, permettendoti di ottimizzare i tuoi guadagni senza complicazioni. Un sistema di verifica accurato e un servizio di assistenza sempre disponibile garantiscono sicurezza sia per te che per i tuoi ospiti, mentre le recensioni trasparenti favoriscono esperienze affidabili e soddisfacenti. Con BoolBnB, aprire le porte della tua casa a viaggiatori da tutto il mondo diventa un'opportunità semplice e vantaggiosa.
       </p>
     </section>
   );
@@ -158,7 +152,7 @@ function InfoSection2() {
               {
                 servizio: "Verifica dell'identità dell'ospite",
                 boolbnb: true,
-                competitors: false,
+                competitors: true,
               },
               {
                 servizio: "Controllo delle prenotazioni",
@@ -173,12 +167,12 @@ function InfoSection2() {
               {
                 servizio: "Open di chiave e oggetti di valore",
                 boolbnb: true,
-                competitors: false,
+                competitors: true,
               },
               {
                 servizio: "Vettura e attrezzature",
                 boolbnb: true,
-                competitors: false,
+                competitors: true,
               },
               {
                 servizio: "Danni causati dagli animali domestici",

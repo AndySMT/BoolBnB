@@ -19,7 +19,7 @@ function HamburgerMenu({ children }) {
             />
             {/* menu */}
             {isOpen && (
-                <nav className="backdrop-blur-md border rounded-lg max-w-[50vw] w-[200px]  p-4 flex flex-col gap-4 absolute top-full translate-y-2 right-0 z-50">
+                <nav className="backdrop-blur-md border rounded-lg max-w-[50vw] w-[200px]   p-4 flex flex-col gap-4 absolute top-full translate-y-2 right-0 z-50">
                     {children}
                 </nav>
             )}

@@ -10,6 +10,8 @@ import { lazy, Suspense } from "react";
 import FavouritesPage from "./pages/FavouritesPage";
 import AddPropertyForm from "./components/AddPropertyForm";
 import SkeleCardsSection from "./components/SkeleCardsSection";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
 const LazyHomePage = lazy(() => import("./pages/HomePage"));
 
 const queryClient = new QueryClient();
@@ -43,6 +45,8 @@ function App() {
                         <Route path="favourites" Component={FavouritesPage} />
                         <Route path="lost" Component={LostPage} />
                         <Route path="*" Component={ErrorPage} />
+                        <Route path="/privacy" Component={PrivacyPolicy}></Route>
+                        <Route path="/terms" Component={TermsAndConditions}></Route>
                     </Route>
                 </Routes>
             </BrowserRouter>
