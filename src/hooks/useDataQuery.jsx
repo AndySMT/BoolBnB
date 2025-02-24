@@ -9,6 +9,7 @@ import {
     addProperty,
     addReview,
     getLikesByPropsId,
+    getNewReviews,
     getProperties,
     getProperty,
     getReviews,
@@ -62,11 +63,23 @@ export const useAddPropertyQuery = () => {
     });
 };
 
-export const useGetReviewsQuery = (propertyId) => {
+export const useInfiniteGetRevsQuery = (property_id, params) => {
+    return useInfiniteQuery({
+        queryKey: ["reviews", property_id, params],
+        queryFn: async ({ pageParam }) => {
+            const res = await getReviews(property_id, {...params, page: pageParam });
+            return res.data;
+        },
+        initialPageParam: 1,
+        getNextPageParam: (_l, _all, lastPageParam) => lastPageParam + 1,
+    });
+};
+
+export const useGetNewReviewsQuery = (propertyId, count) => {
     return useQuery({
-        queryKey: ["reviews", propertyId],
+        queryKey: ["newReviews", propertyId],
         queryFn: async () => {
-            const res = await getReviews(propertyId);
+            const res = await getNewReviews(propertyId, { count });
             return res.data;
         },
     });
@@ -76,48 +89,64 @@ export const useAddReviewQuery = (id) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (newReview) => {
-            console.log(newReview)
             const res = await addReview(newReview);
             return res.data;
         },
-        //* optimistic update
-        // onMutate mostra gia la "risposta" non sincronizzata e salva in una var i vecchi dati di reviews
-        onMutate: async (newReview) => {
-            console.log(newReview);
-            await queryClient.cancelQueries({
-                queryKey: ["reviews", id],
-                exact: true,
-            });
-            const previousReviews = queryClient.getQueryData(["reviews", id]);
-            queryClient.setQueryData(["reviews", id], (oldQueryData) => {
-                return {
-                    ...oldQueryData,
-                    total_res: oldQueryData.total_res + 1,
-                    results: [
-                        ...oldQueryData.results,
-                        { id: findMaxId(oldQueryData.results) + 1, ...newReview },
-                    ],
-                };
-            });
-            return {
-                previousReviews,
-            };
-        },
-        // onError riprende i vecchi dati di reviews e li resetta nella cache con queryKey reviews in caso di errore
-        onError: (_error, _reviews, context) => {
-            console.log(_error);
-            queryClient.setQueryData(["reviews", id], context.previousReviews);
-        },
-        // effettivo sync dei dati tra client e server con fetch in background
-        onSettled: (data) => {
-            console.log(data);
-            queryClient.invalidateQueries({
-                queryKey: ["reviews", id],
-                exact: true,
-            });
-        },
+        // //* optimistic update
+        // // onMutate mostra gia la "risposta" non sincronizzata e salva in una var i vecchi dati di reviews
+        // onMutate: async (newReview) => {
+        //     // console.log(newReview);
+        //     await queryClient.cancelQueries({
+        //         queryKey: ["newReviews", id],
+        //         exact: true,
+        //     });
+        //     const previousReviews = queryClient.getQueryData([
+        //         "newReviews",
+        //         id,
+        //     ]);
+        //     queryClient.setQueryData(["newReviews", id], (oldQueryData) => {
+        //         console.log(oldQueryData);
+        //         return {
+        //             ...oldQueryData,
+        //             // total_res: oldQueryData.total_res + 1,
+        //             // results: [
+        //             //     ...oldQueryData.results,
+        //             //     { id: findMaxId(oldQueryData.results) + 1, ...newReview },
+        //             // ],
+        //             pages: [
+        //                 ...oldQueryData.pages,
+        //                 {
+        //                     ...oldQueryData.pages[0],
+        //                     results:
+        //                         oldQueryData.pages[0].results.unshift(
+        //                             newReview
+        //                         ),
+        //                 },
+        //             ],
+        //         };
+        //     });
+        //     return {
+        //         previousReviews,
+        //     };
+        // },
+        // // onError riprende i vecchi dati di newReviews e li resetta nella cache con queryKey newReviews in caso di errore
+        // onError: (_error, _reviews, context) => {
+        //     console.log(_error);
+        //     queryClient.setQueryData(
+        //         ["newReviews", id],
+        //         context.previousReviews
+        //     );
+        // },
+        // // effettivo sync dei dati tra client e server con fetch in background
+        // onSettled: (data) => {
+        //     console.log(data);
+        //     queryClient.invalidateQueries({
+        //         queryKey: ["newReviews", id],
+        //         exact: true,
+        //     });
+        // },
         // onSuccess: () => {
-        //     queryClient.invalidateQueries(["reviews", id]);
+        //     queryClient.invalidateQueries(["newReviews", id]);
         // },
     });
 };
@@ -141,7 +170,6 @@ export const useAddLikeQuery = (property_id) => {
             return res.data;
         },
         onSuccess: (data) => {
-            console.log(data);
             queryClient.invalidateQueries({
                 queryKey: ["likes", property_id],
                 exact: true,
@@ -161,11 +189,3 @@ function findMaxId(array) {
     return maxId;
 }
 
-// * CACHE: OLD reviews/10
-
-// * aggiorno reviews/10 perche ce un nuovo posto
-// * => nuova chiamata in post => uso la funzione di mutazione!
-// * SE la richiesta è success => allora esista un NEW reviews/10 fuori cache => e poi dico a react query di buttare OLD reviews/10
-// * e di rimpiazzarlo con NEW reviews/10 => come? usando invalidateQueries passandogli l'etichetta ( reviews/10 )
-
-// ! CACHE: properties properties/1 pr/2 reviews/1 reviews/7

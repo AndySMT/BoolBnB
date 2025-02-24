@@ -27,9 +27,10 @@ function NavbarMobile() {
                         }
                     >
                         <IoMdSearch className="text-2xl" />
-                        <span className="capitalize text-sm">explore</span>
+                        <span className="capitalize text-sm">Cerca</span>
                     </NavLink>
                     <NavLink
+                        onClick={() => window.scrollTo({behavior:"smooth", top: 0})}
                         to="/"
                         className={({ isActive }) =>
                             "flex justify-center items-center  flex-col " +
@@ -38,7 +39,7 @@ function NavbarMobile() {
                     >
                         <AiFillHome className="text-2xl" />
 
-                        <span className="capitalize text-sm">Home</span>
+                        <span className="capitalize text-sm">Esplora</span>
                     </NavLink>
                     <NavLink
                         to="/favourites"
@@ -48,7 +49,7 @@ function NavbarMobile() {
                         }
                     >
                         <PiBookmarks className="text-2xl" />
-                        <span className="capitalize text-sm">Saved</span>
+                        <span className="capitalize text-sm">Preferiti</span>
                     </NavLink>
                     <NavLink
                         to="/addproperty"
@@ -58,7 +59,7 @@ function NavbarMobile() {
                         }
                     >
                         <IoMdAddCircleOutline className="text-2xl" />
-                        <span className="capitalize text-sm">add property</span>
+                        <span className="capitalize text-sm">Affitta</span>
                     </NavLink>
                 </nav>
             )}

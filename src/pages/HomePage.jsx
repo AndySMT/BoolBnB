@@ -1,31 +1,42 @@
-import React, { useEffect, useState, memo, Fragment } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import CardsSection from "../components/CardsSection";
 import Card from "../components/Card";
-import {
-    useGetPropertiesQuery,
-    useInfiniteGetPropsQuery,
-} from "../hooks/useDataQuery";
+import { useInfiniteGetPropsQuery } from "../hooks/useDataQuery";
 import { useRefsContext } from "../Context/RefsContext";
 import SkeleCard from "../components/SkeleCard";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import LoadMoreButton from "../components/LoadMoreButton";
+import { motion } from "framer-motion";
 
 function HomePage() {
+    const { headerRef, jumboRef, filterRef } = useRefsContext();
+    // Ottiene i parametri di ricerca dalla query della URL
+    const [searchParams] = useSearchParams();
+    const paramsObj = Object.fromEntries(searchParams.entries());
     // Stato per i parametri di filtro
-    const [params, setParams] = useState({});
+    const [params, setParams] = useState(paramsObj);
+    // Stato per il numero di proprietà visualizzate
+    const [propsCount, setPropsCount] = useState(4); // ? numero di proprietà per pagina
+
+    // Scrolla alla sezione delle proprieta se la query params non e vuota
+    useEffect(() => {
+        Object.keys(paramsObj).length && window.scrollTo({
+            top: jumboRef?.current?.offsetHeight + headerRef?.current?.offsetHeight,
+            behavior: "smooth"
+        })
+    }, [])
 
     return (
         <>
             {/* Sezione di filtro */}
-            <FilterSection setParams={setParams} />
+            <FilterSection setParams={setParams} setPropsCount={setPropsCount} jumboRef={jumboRef} headerRef={headerRef} filterRef={filterRef} />
             {/* Container per far rerenderizzare solo CardsSection */}
-            <CardsSectionContainer params={params} />
+            <CardsSectionContainer params={params} propsCount={propsCount} setPropsCount={setPropsCount} />
         </>
     );
 }
 
-const CardsSectionContainer = ({ params }) => {
-    const [currPage, setCurrPage] = useState(1);
+const CardsSectionContainer = ({ params, propsCount, setPropsCount }) => {
     const {
         isLoading,
         isFetchingNextPage,
@@ -45,14 +56,14 @@ const CardsSectionContainer = ({ params }) => {
 
     useEffect(() => {
         // vai giu dopo il fetch e se sei dal 2 fetch in poi
-        if (currPage > 1 && isFetched) {
+        if (propsCount > 4 && isFetched) {
             window.scroll({
                 left: 0,
                 top: document.documentElement.scrollTop + 600, // ? offset da calcolare invece con l'altezza della card (useRefsContext)
                 behavior: "smooth",
             });
         }
-    }, [currPage]);
+    }, [propsCount]);
 
     // Gestione dello stato di caricamento e errore
     if (isError) {
@@ -60,7 +71,7 @@ const CardsSectionContainer = ({ params }) => {
     }
     return (
         <>
-            <CardsSection title={""}>
+            <CardsSection title={"I Preferiti Degli Ospiti"}>
                 <>
                     {/* paginazione */}
                     {data?.pages.map((group, i) => (
@@ -84,25 +95,27 @@ const CardsSectionContainer = ({ params }) => {
                     )}
                 </>
             </CardsSection>
-            <div className="flex justify-center">
-                <LoadMoreButton
-                    noMore={currPage * 4 >= data?.pages[0]?.total_quantity}
-                    // al click fetcha la prossima pagina e setta la prossima pagina
-                    onClick={() => {
-                        fetchNextPage();
-                        setCurrPage((curr) => curr + 1);
-                    }}
-                />
-            </div>
+            {propsCount < data?.pages[0].total_quantity && (
+                <div className="flex justify-center">
+                    <LoadMoreButton
+                        noMore={false}
+                        // al click fetcha la prossima pagina e setta la prossima pagina
+                        onClick={() => {
+                            fetchNextPage();
+                            setPropsCount(curr => curr + 4)
+                        }}
+                    />
+                </div>
+            )}
         </>
     );
 };
 
-function FilterSection({ setParams }) {
-    const { headerRef, jumboRef } = useRefsContext();
-
+function FilterSection({ setParams, setPropsCount, jumboRef, filterRef, headerRef }) {
     // Stato per il filtro attivo
     const [activeFilter, setActiveFilter] = useState(0);
+
+    const navigate = useNavigate();
 
     // Lista dei tipi di proprietà per il filtro
     const filters = [
@@ -117,35 +130,58 @@ function FilterSection({ setParams }) {
 
     // Funzione per applicare un filtro
     const handleFilterClick = (type, index) => {
-        setParams({ property_type: type === "tutti" ? "" : type });
+        setPropsCount(4);
+        const property_type = type === "tutti" ? "" : type
+        if (property_type === "") {
+            setParams({})
+            navigate(`/`);
+        } else {
+            setParams({ property_type: property_type });
+            navigate(`/?property_type=${encodeURIComponent(property_type)}`);
+        }
         setActiveFilter(index);
         window.scrollTo({
-            top: jumboRef.current.offsetHeight + headerRef.current.offsetHeight,
-            behavior: "smooth",
-        });
+            top: jumboRef?.current?.offsetHeight + headerRef?.current?.offsetHeight,
+            behavior: "smooth"
+        })
     };
 
+    const style =
+        document.documentElement.offsetWidth < 640
+            ? {
+                top: "-1px",
+            }
+            : { top: `${headerRef?.current?.offsetHeight - 1}px` };
+
+    // classes
+    const navClasses = `border-b p-3 bg-white w-screen border-gray-300 fixed md:sticky z-20 rounded-b-2xl`;
+
     return (
-        <div className="border-b p-3 bg-white w-screen border-gray-300 fixed md:sticky top-[-1px] sm:top-20 z-20 rounded-b-2xl">
+        <motion.nav
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0, 1] }}
+            transition={{ duration: 1.5, ease: "easeIn" }}
+            ref={filterRef}
+            style={style}
+            className={navClasses}
+        >
             <div className="overflow-x-auto">
                 <div className="flex justify-center gap-10 min-w-max px-2 [&>div]:w-[40px]">
                     {/* Mappa dei filtri e applicazione del filtro selezionato */}
                     {filters.map((filter, index) => (
                         <div
                             key={Object.keys(filter)[0]}
-                            className={`group flex flex-col items-center gap-2 cursor-pointer ${
-                                activeFilter === index
-                                    ? "opacity-100 font-semibold"
-                                    : "opacity-40"
-                            }`}
+                            className={`group flex flex-col items-center gap-2 cursor-pointer ${activeFilter === index
+                                ? "opacity-100 font-semibold"
+                                : "opacity-40"
+                                }`}
                             onClick={() =>
                                 handleFilterClick(Object.keys(filter)[0], index)
                             }
                         >
                             <img
-                                src={`/filter_imgs/${
-                                    Object.values(filter)[0]
-                                }.png`}
+                                src={`/filter_imgs/${Object.values(filter)[0]
+                                    }.png`}
                                 alt={Object.values(filter)[0]}
                                 className="w-6 h-6 group-hover:opacity-100"
                             />
@@ -156,7 +192,7 @@ function FilterSection({ setParams }) {
                     ))}
                 </div>
             </div>
-        </div>
+        </motion.nav>
     );
 }
 

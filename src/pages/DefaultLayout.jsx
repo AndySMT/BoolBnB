@@ -1,19 +1,18 @@
 import { Outlet, useLocation } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Footer from "../components/Footer";
 import Header from "../components/Header";
 import Main from "../components/Main";
 import NavbarMobile from "../components/NavbarMobile";
 import { RefsProvider } from "../Context/RefsContext";
 import { lazy, Suspense } from "react";
 import SkeleJumbotron from "../components/SkeleJumbotron";
-import Jumbotron from "../components/Jumbotron";
+import Footer from "../components/Footer";
 const LazyJumbotron = lazy(() => import("../components/Jumbotron"));
 
 function DefaultLayout() {
-  window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   const location = useLocation();
+  location.pathname !== "/" && window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   return (
     <RefsProvider>
       <Header />
@@ -23,17 +22,30 @@ function DefaultLayout() {
         </Suspense>
       )}
       <Main>
-        <ToastContainer
-          className={"z-9999999"}
-          position="bottom-right"
-          autoClose={700}
-        />
+        {/* <div className="hidden sm:block">
+          <ToastContainer
+            className={"z-9999999"}
+            position="bottom-right"
+            autoClose={1500}
+          />
+        </div> */}
+          <ToastContainer
+            className={"z-9999999"}
+            position={document.documentElement.clientWidth < 640 ?  "top-right" : "bottom-right"}
+            autoClose={1500}
+          />
         <Outlet />
         <NavbarMobile />
       </Main>
-      {/* <Footer /> */}
+      <>
+        {!(location.pathname === "/" || location.pathname.includes("search")) &&
+          <Footer />
+        }
+      </>
     </RefsProvider>
   );
 }
+
+
 
 export default DefaultLayout;

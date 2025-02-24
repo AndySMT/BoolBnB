@@ -5,9 +5,10 @@ const refsContext = createContext();
 const RefsProvider = ({ children }) => {
     const headerRef = useRef(null);
     const jumboRef = useRef(null);
+    const filterRef = useRef(null);
 
     return (
-        <refsContext.Provider value={{ headerRef, jumboRef }}>
+        <refsContext.Provider value={{ headerRef, jumboRef, filterRef }}>
             {children}
         </refsContext.Provider>
     );

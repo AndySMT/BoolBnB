@@ -67,7 +67,7 @@ function Card({ property, index }) {
                 ease: "easeInOut",
             }}
         >
-            <Link to={"detail/" + id} className="group cursor-pointer">
+            <Link to={"/detail/" + id + `?${title}`} className="group cursor-pointer">
                 {/* Image carousel */}
                 <div className="relative w-full aspect-square rounded-xl overflow-hidden">
                     {img_endpoints && img_endpoints.length > 0 ? (
@@ -88,7 +88,7 @@ function Card({ property, index }) {
                         </div>
                     )}
                     {/* hearth */}
-                    <div className="absolute top-3 right-3 p-2 transition-opacity z-10 ">
+                    <div className="absolute text-2xl top-3 right-3 p-2 transition-opacity z-10 ">
                         <Heart propertyId={property.id} />
                     </div>
                 </div>

@@ -1,32 +1,37 @@
-import React, { useEffect, useState } from "react";
-import { IoIosStarOutline } from "react-icons/io";
+import { useEffect, useState } from "react";
+import { IoIosChatbubbles, IoIosStarOutline } from "react-icons/io";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import useScroll from "../hooks/useScroll";
 import { useRefsContext } from "../Context/RefsContext";
 import { PiBookmarks } from "react-icons/pi";
+import FastPropertySearch from "./FastPropertySearch";
+import { IoMdSearch } from "react-icons/io";
+import HamburgerMenu from "./HamburgerMenu";
+import { IoChatbubblesOutline } from "react-icons/io5";
 
 const Header = () => {
     const { jumboRef, headerRef } = useRefsContext();
     const location = useLocation();
 
+    const offset =
+        window.innerWidth < 1024
+            ? headerRef.current?.offsetHeight + 100
+            : headerRef.current?.offsetHeight + 30;
     // booleano controllato dallo scroll della window, useScroll prende come param l'offset
-    const isVisible = useScroll(
-        jumboRef.current?.offsetHeight - (headerRef.current?.offsetHeight + 20)
-    );
+    const isVisible = useScroll(jumboRef.current?.offsetHeight - offset);
 
     // isVisible controlla la visibilita del bookLink
     // location limita l'animazione in HomePage ("/")
     const bookLinkClass = `
-        ${
-            !isVisible &&
-            "visible sm:opacity-100 sm:!translate-x-0 sm:!translate-y-0"
+        ${!isVisible &&
+        "visible sm:opacity-100 sm:!translate-x-0 sm:!translate-y-0"
         }  
-        ${
-            location.pathname === "/" &&
-            "invisible sm:opacity-0 sm:translate-x-[50px] sm:translate-y-[20px] lg:translate-x-[-250px] lg:translate-y-[20px] transition-all duration-500"
-        }  
-        hidden sm:block bg-[#d4c685] py-2 rounded-md border-2 border-stone-500 hover:bg-[#cabc7d] cursor-pointer
-        min-w-72 lg:px-16 text-lg font-semibold text-stone-900`;
+        ${location.pathname === "/" &&
+        window.innerHeight >= 640 &&
+        "invisible sm:opacity-0 sm:translate-x-[50px] lg:translate-x-[-150px] lg:translate-y-[15px] transition-all duration-500"
+        }  `;
+    // hidden sm:block bg-[#d4c685] py-2 rounded-md border-2 border-stone-500 hover:bg-[#cabc7d] cursor-pointer
+    // min-w-72 lg:px-16 text-lg font-semibold text-stone-900`;
 
     return (
         <>
@@ -36,7 +41,7 @@ const Header = () => {
                 isVisible={isVisible}
                 location={location}
             >
-                <Link to="/">
+                <Link onClick={() => window.scrollTo({ behavior: "smooth", top: 0 })} to="/">
                     <img
                         src="/bed-and-breakfast.png"
                         alt="logo"
@@ -44,11 +49,26 @@ const Header = () => {
                     />
                 </Link>
                 {/* Book Now */}
-                <Link to={"search"} className={bookLinkClass}>
-                    Cerca l'alloggio che fa per te
-                </Link>
+                {location.pathname !== "/search" && (
+                    <FastPropertySearch
+                        formClassName={`hidden sm:grid grid-cols-12 sm:!w-[300px] md:!w-[375px] xl:!w-[500px] gap-1 whitespace-nowrap  ${bookLinkClass}`}
+                        selectClassName={"col-span-5"}
+                        inputClassName={"col-span-5"}
+                        btnClassName={
+                            "col-span-2 sm:!text-base xl:!text-2xl !px-2"
+                        }
+                    >
+                        <IoMdSearch />
+                    </FastPropertySearch>
+                    // <Link to={"search"} className={bookLinkClass}>
+                    //     Cerca l'alloggio che fa per te
+                    // </Link>
+                )}
                 {/* Nav */}
-                <nav className="flex gap-8">
+                <nav className="hidden sm:flex sm:gap-2 items-center lg:gap-8">
+                    <HeaderLink to={"/ai-search"} text={"AI Advisor"}>
+                        <IoChatbubblesOutline className="text-xl" />
+                    </HeaderLink>
                     <HeaderLink
                         to={"/addproperty"}
                         text={"Affitta con BoolB&B"}
@@ -59,6 +79,21 @@ const Header = () => {
                         <PiBookmarks className="text-xl" />
                     </HeaderLink>
                 </nav>
+                {/* nav mobile */}
+                <HamburgerMenu>
+                    <HeaderLink to={"/ai-search"} text={"AI Advisor"}>
+                        <IoChatbubblesOutline className="text-xl" />
+                    </HeaderLink>
+                    <HeaderLink
+                        to={"/addproperty"}
+                        text={"Affitta con BoolB&B"}
+                    >
+                        <IoIosStarOutline className="text-xl" />
+                    </HeaderLink>
+                    <HeaderLink to={"/favourites"} text={"I tuoi preferiti"}>
+                        <PiBookmarks className="text-xl" />
+                    </HeaderLink>
+                </HamburgerMenu>
             </HeaderComp>
         </>
     );
@@ -69,8 +104,8 @@ function HeaderLink({ to, text, children }) {
         <NavLink
             to={to}
             className={({ isActive }) =>
-                "flex items-center gap-1 pb-1 px-1 text-stone-600" +
-                (isActive ? " text-stone-900 font-semibold" : "")
+                "flex items-center gap-1 pb-1 px-1 text-stone-900 hover:text-black " +
+                (isActive ? " text-stone-900 font-semibold scale-110" : "")
             }
         >
             {children}
@@ -89,18 +124,21 @@ function HeaderComp({
 
     // controllo della visibilita dell header in base alla location pathname
     useEffect(() => {
-        location.pathname === "/" ? setIsVisible(true) : setIsVisible(false);
+        location.pathname.includes("/detail")
+            ? setIsVisible(false)
+            : setIsVisible(true);
     }, [location.pathname]);
     return (
         <header
             ref={headerRef}
             //
-            className={`${!isNotTriggeredAnim && "-translate-y-20"} ${
-                !isVisible && "hidden sm:flex"
-            } 
-            lg:px-[4vw] items-center rounded-b-2xl sm:rounded-b-none sm:!-translate-0 flex 
-            bg-linear-90/oklch sm:drop-shadow-lg from-15% from-[#d4c685] to-[#a7d3a6] text-center p-5 
-            justify-between fixed sm:sticky w-screen top-[-1px] z-40 text-stone-800 text-sm transition-all duration-200 ease-in`}
+            className={`${!isNotTriggeredAnim &&
+                location.pathname === "/" &&
+                "-translate-y-40 duration-300"
+                } ${!isVisible && "hidden sm:flex"} 
+            lg:px-[4vw] items-center sm:!-translate-0 flex 
+            bg-linear-90/oklch from-15% from-[#d4c685] to-[#a7d3a6] sm:drop-shadow-lg text-center py-2 px-5 
+            justify-between gap-4 fixed sm:sticky w-screen top-[-1px] z-40 text-stone-800 text-sm transition-all duration-200 ease-in`}
         >
             {children}
         </header>
